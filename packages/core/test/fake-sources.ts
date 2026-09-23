@@ -31,17 +31,20 @@ export class MapSource implements Source {
  * Mirrors upstream's TestdataSource(/* aggregate= *\/ true): a request for
  * "data/CC" returns a single JSON object mapping every "data/CC[/<sub>]" id
  * (at any depth) to its rule, built from the same bundled dataset.
+ *
+ * Grouping matches testdata_source.cc's InitData exactly: a key belongs to
+ * the "data/CC" aggregate iff its first 7 characters ("data/CC") match —
+ * NOT iff it starts with "data/CC/". That's deliberate: language-suffixed
+ * country-level variants like "data/CA--fr" (a *sibling* of "data/CA", not
+ * a sub-path of it) must be included too, since PreloadSupplier looks
+ * those up directly at depth 0 when an address's language picks a non-
+ * default language. A "/"-based prefix check silently drops them.
  */
 export class FallbackAggregateSource implements Source {
   async get(key: string): Promise<SourceResult> {
-    const prefix = `${key}/`;
     const aggregate: Record<string, unknown> = {};
-    const own = FALLBACK_DATA[key];
-    if (own !== undefined) {
-      aggregate[key] = JSON.parse(own);
-    }
     for (const [dataKey, json] of Object.entries(FALLBACK_DATA)) {
-      if (dataKey.startsWith(prefix)) {
+      if (dataKey.startsWith(key)) {
         aggregate[dataKey] = JSON.parse(json);
       }
     }

@@ -1,32 +1,51 @@
-// Port of cpp/include/libaddressinput/address_validator.h (Apache-2.0, Google Inc.)
-//
-// STATUS: Phase 4 stub. Not yet implemented — see .planning/PLAN.md §6 Phase 4.
+// Port of cpp/include/libaddressinput/address_validator.h's
+// `AddressValidator::Validate` (Apache-2.0, Google Inc.). The actual
+// checks live in internal/validation-task.ts; this is the supplier-
+// resolution half — mirrors upstream's `ValidationTask::Run`.
 
 import type { AddressData } from "./address-data.js";
-import type { AddressField } from "./address-field.js";
-import type { AddressProblem } from "./problem.js";
+import { lookupKeyFromAddress } from "./internal/lookup-key.js";
+import { runValidationChecks } from "./internal/validation-task.js";
+import type { Supplier } from "./supplier/supplier.js";
 
-export interface ValidationProblem {
-  field: AddressField;
-  problem: AddressProblem;
-}
+export type { ValidationProblem } from "./internal/validation-task.js";
+import type { ValidationProblem } from "./internal/validation-task.js";
 
 export interface ValidateOptions {
+  /** Allow postal (non-physical) addresses, e.g. P.O. boxes. Default false. */
   allowPostal?: boolean;
+  /** Treat RECIPIENT as a required field. Default false. */
   requireName?: boolean;
-  /** Only report these field/problem pairs. */
+  /**
+   * Only report these field/problem pairs. If omitted or empty, every
+   * problem found is reported.
+   */
   filter?: ValidationProblem[];
 }
 
 /**
- * Validates an address against the loaded metadata for its region.
- * `supplier` is typed unknown for now until the supplier module (Phase 2)
- * lands. Not yet implemented.
+ * Validates an address against a Supplier's metadata. Mirrors
+ * `AddressValidator::Validate`.
  */
-export function validate(
-  _supplier: unknown,
-  _address: AddressData,
-  _options?: ValidateOptions,
-): ValidationProblem[] {
-  throw new Error("validate: not implemented yet (see .planning/PLAN.md Phase 4)");
+export async function validate(
+  supplier: Supplier,
+  address: AddressData,
+  options: ValidateOptions = {},
+): Promise<ValidationProblem[]> {
+  const { allowPostal = false, requireName = false, filter } = options;
+
+  const lookupKey = lookupKeyFromAddress(address);
+  const maxDepth = supplier.getLoadedRuleDepth(address.regionCode);
+  const { success, hierarchy } = await supplier.supplyGlobally(lookupKey);
+
+  if (!success) {
+    return [];
+  }
+
+  return runValidationChecks(address, hierarchy, {
+    allowPostal,
+    requireName,
+    filter,
+    maxDepth,
+  });
 }

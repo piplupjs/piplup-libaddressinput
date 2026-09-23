@@ -10,6 +10,8 @@ export {
   getStreetAddressLinesAsSingleLine,
 } from "./formatter.js";
 export { isFieldRequired, isFieldUsed } from "./metadata.js";
+export type { ValidateOptions, ValidationProblem } from "./validator.js";
+export { validate } from "./validator.js";
 export type { Source, SourceResult, FetchSourceOptions } from "./source.js";
 export { FetchSource } from "./source.js";
 export type { Storage, StorageResult } from "./storage.js";
