@@ -1,0 +1,129 @@
+#!/usr/bin/env node
+// Generates packages/core/src/data/fallback.ts from the aggregate dataset
+// checked into the upstream submodule at testdata/countryinfo.txt.
+//
+// See .planning/PLAN.md Phase 1/2: upstream's own `region_data_constants.cc`
+// (a compiled-in table with the same content) is generated at Google's
+// internal build time from CLDR and is NOT checked into the OSS repo, so we
+// treat testdata/countryinfo.txt — the exact same `data/<CC>[/<sub>]=<json>`
+// schema, and what upstream's own tests (testdata_source.cc) serve from —
+// as the source of truth instead.
+//
+// Usage: node --experimental-strip-types scripts/gen-fallback.ts
+
+import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
+const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const SOURCE = `${ROOT}/third_party/libaddressinput/testdata/countryinfo.txt`;
+const OUT = `${ROOT}/packages/core/src/data/fallback.ts`;
+
+interface Entry {
+  key: string; // e.g. "data/US" or "data/US/CA"
+  json: string; // the raw JSON object text, re-serialized compactly
+}
+
+function parseCountryInfo(text: string): Map<string, Entry> {
+  const entries = new Map<string, Entry>();
+  for (const rawLine of text.split("\n")) {
+    const line = rawLine.trim();
+    if (line.length === 0) continue;
+    const eq = line.indexOf("=");
+    if (eq === -1) continue;
+    const key = line.slice(0, eq);
+    // Only the address-data section is relevant; skip "examples[...]" and
+    // any other top-level sections upstream may add, plus the top-level
+    // "data" line itself (just the country list, not a rule).
+    if (key === "data" || !key.startsWith("data/")) continue;
+    const rawJson = line.slice(eq + 1);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch (err) {
+      throw new Error(`gen-fallback: failed to parse JSON for ${key}: ${String(err)}`);
+    }
+    entries.set(key, { key, json: JSON.stringify(parsed) });
+  }
+  return entries;
+}
+
+function computeMaxDepth(entries: Map<string, Entry>, regionCode: string): number {
+  let maxDepth = 0;
+  const prefix = `data/${regionCode}/`;
+  for (const key of entries.keys()) {
+    if (key === `data/${regionCode}` || !key.startsWith(prefix)) continue;
+    // "data/US/CA" -> 1 extra segment -> depth 1; "data/CN/xx/yy/zz" -> depth 3.
+    const depth = key.slice(prefix.length).split("/").length;
+    if (depth > maxDepth) maxDepth = depth;
+  }
+  return maxDepth;
+}
+
+function main(): void {
+  const text = readFileSync(SOURCE, "utf8");
+  const entries = parseCountryInfo(text);
+
+  const regionCodes = [...entries.keys()]
+    .filter((key) => /^data\/[A-Z]{2}$/.test(key) && key !== "data/ZZ")
+    .map((key) => key.slice("data/".length))
+    .sort();
+
+  const defaultEntry = entries.get("data/ZZ");
+  if (!defaultEntry) {
+    throw new Error("gen-fallback: data/ZZ (default rule) not found in source data");
+  }
+
+  const dataEntries = [...entries.entries()]
+    .filter(([key]) => key !== "data/ZZ")
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+
+  const maxDepths: Record<string, number> = {};
+  for (const code of regionCodes) {
+    const depth = computeMaxDepth(entries, code);
+    if (depth > 0) maxDepths[code] = depth;
+  }
+
+  const lines: string[] = [];
+  lines.push(
+    "// GENERATED FILE — do not edit by hand.",
+    "// Produced by scripts/gen-fallback.ts from",
+    "// third_party/libaddressinput/testdata/countryinfo.txt (Apache-2.0, Google Inc.),",
+    "// the real aggregate address-metadata dataset upstream's own tests use.",
+    "// See .planning/PLAN.md Phase 1/2 for why this replaces region_data_constants.cc.",
+    "//",
+    "// Regenerate with: node --experimental-strip-types scripts/gen-fallback.ts",
+    "",
+    "/** Every supported region code, sorted (matches RegionCodesSorted upstream). */",
+    `export const FALLBACK_REGION_CODES: readonly string[] = ${JSON.stringify(regionCodes)};`,
+    "",
+    "/**",
+    " * Raw JSON text for every \"data/<CC>\" and \"data/<CC>/<sub...>\" rule,",
+    " * keyed exactly as upstream's LookupKey.ToKeyString() would produce",
+    " * (no language suffix). Values are left as JSON strings (not parsed",
+    " * objects) so callers can feed them straight to internal/rule.ts's",
+    " * parseRule(), matching upstream's Rule::ParseSerializedRule(string).",
+    " */",
+    "export const FALLBACK_DATA: Readonly<Record<string, string>> = {",
+    ...dataEntries.map(([key, entry]) => `  ${JSON.stringify(key)}: ${JSON.stringify(entry.json)},`),
+    "};",
+    "",
+    "/** The \"ZZ\" default rule (data/ZZ), used when a region has no data of its own. */",
+    `export const FALLBACK_DEFAULT_REGION_DATA: string = ${JSON.stringify(defaultEntry.json)};`,
+    "",
+    "/**",
+    " * How many levels deep (0 = country only, 3 = country/admin/locality/",
+    " * dependent-locality) each region's data goes, computed from the deepest",
+    " * \"data/<CC>/...\" key present. Regions with no sub-region data at all",
+    " * (depth 0) are omitted; look up with `FALLBACK_MAX_LOOKUP_KEY_DEPTH[cc] ?? 0`.",
+    " */",
+    `export const FALLBACK_MAX_LOOKUP_KEY_DEPTH: Readonly<Record<string, number>> = ${JSON.stringify(maxDepths)};`,
+    "",
+  );
+
+  writeFileSync(OUT, lines.join("\n"), "utf8");
+  console.log(
+    `Wrote ${OUT}: ${regionCodes.length} regions, ${dataEntries.length} rule entries.`,
+  );
+}
+
+main();
