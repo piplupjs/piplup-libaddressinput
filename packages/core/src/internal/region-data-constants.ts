@@ -18,6 +18,7 @@ import {
   FALLBACK_MAX_LOOKUP_KEY_DEPTH,
   FALLBACK_REGION_CODES,
 } from "../data/fallback.js";
+import { parseRule, type Rule } from "./rule.js";
 
 export function isSupported(regionCode: string): boolean {
   return Object.prototype.hasOwnProperty.call(FALLBACK_DATA, `data/${regionCode}`);
@@ -44,4 +45,18 @@ export function getDefaultRegionData(): string {
 
 export function getMaxLookupKeyDepth(regionCode: string): number {
   return FALLBACK_MAX_LOOKUP_KEY_DEPTH[regionCode] ?? 0;
+}
+
+let defaultRule: Rule | undefined;
+
+/** The parsed "ZZ" default rule, mirroring `Rule::GetDefault()`. Cached. */
+export function getDefaultRule(): Rule {
+  if (defaultRule === undefined) {
+    const parsed = parseRule(FALLBACK_DEFAULT_REGION_DATA);
+    if (parsed === undefined) {
+      throw new Error("region-data-constants: default rule (data/ZZ) failed to parse");
+    }
+    defaultRule = parsed;
+  }
+  return defaultRule;
 }

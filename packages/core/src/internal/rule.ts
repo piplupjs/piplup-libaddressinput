@@ -165,7 +165,10 @@ function compilePostalCodeMatcher(zip: string): RegExp | undefined {
  * failure for; an empty object `{}` parses successfully into an empty rule,
  * matching `EmptyDictionaryIsValid`.
  */
-export function parseRule(serializedRule: string | unknown): Rule | undefined {
+export function parseRule(
+  serializedRule: string | unknown,
+  base?: Rule,
+): Rule | undefined {
   let json: unknown;
   if (typeof serializedRule === "string") {
     try {
@@ -179,12 +182,24 @@ export function parseRule(serializedRule: string | unknown): Rule | undefined {
   if (typeof json !== "object" || json === null || Array.isArray(json)) {
     return undefined;
   }
-  return parseJsonRule(json as Record<string, unknown>);
+  return parseJsonRule(json as Record<string, unknown>, base);
 }
 
-/** Parses an already-decoded rule object. Mirrors `Rule::ParseJsonRule`. */
-export function parseJsonRule(json: Record<string, unknown>): Rule {
-  const rule = createEmptyRule();
+/**
+ * Parses an already-decoded rule object. Mirrors `Rule::ParseJsonRule`.
+ *
+ * Pass `base` to merge onto an existing rule instead of a blank one — only
+ * the fields present in `json` are overwritten, the rest are inherited from
+ * `base`. This is how upstream builds a country-level rule (`rule.CopyFrom
+ * (Rule::GetDefault()); rule.ParseJsonRule(json)` in preload_supplier.cc) —
+ * see `mergeDefaultRule` below and getDefaultRule() in region-data-constants
+ * usage sites.
+ */
+export function parseJsonRule(
+  json: Record<string, unknown>,
+  base: Rule = createEmptyRule(),
+): Rule {
+  const rule = { ...base };
 
   const str = (key: string): string | undefined => {
     const value = json[key];

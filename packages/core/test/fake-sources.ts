@@ -26,3 +26,28 @@ export class MapSource implements Source {
     return { success: data !== undefined, data };
   }
 }
+
+/**
+ * Mirrors upstream's TestdataSource(/* aggregate= *\/ true): a request for
+ * "data/CC" returns a single JSON object mapping every "data/CC[/<sub>]" id
+ * (at any depth) to its rule, built from the same bundled dataset.
+ */
+export class FallbackAggregateSource implements Source {
+  async get(key: string): Promise<SourceResult> {
+    const prefix = `${key}/`;
+    const aggregate: Record<string, unknown> = {};
+    const own = FALLBACK_DATA[key];
+    if (own !== undefined) {
+      aggregate[key] = JSON.parse(own);
+    }
+    for (const [dataKey, json] of Object.entries(FALLBACK_DATA)) {
+      if (dataKey.startsWith(prefix)) {
+        aggregate[dataKey] = JSON.parse(json);
+      }
+    }
+    if (Object.keys(aggregate).length === 0) {
+      return { success: true, data: "{}" };
+    }
+    return { success: true, data: JSON.stringify(aggregate) };
+  }
+}
