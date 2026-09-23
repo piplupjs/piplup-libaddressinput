@@ -1,0 +1,11 @@
+@piplup/libaddressinput
+Copyright 2026 the @piplup/libaddressinput authors
+
+This product includes software ported from Google's libaddressinput
+(https://github.com/google/libaddressinput), which is licensed under the
+Apache License, Version 2.0:
+
+  Copyright Google Inc.
+
+Files ported or derived from libaddressinput retain a header noting their
+upstream origin.
