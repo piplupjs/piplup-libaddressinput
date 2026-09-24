@@ -89,10 +89,24 @@ describe("createAddressForm", () => {
     expect(state.dirty).toBe(true);
   });
 
-  it("setField debounces auto-validation", async () => {
+  it("setField does not auto-validate by default", async () => {
     vi.useFakeTimers();
     try {
-      const form = createAddressForm({ supplier, debounceMs: 100 });
+      const form = createAddressForm({ supplier });
+      await form.setRegion("US");
+      form.setField("postalCode", "123"); // invalid format for US
+
+      await vi.advanceTimersByTimeAsync(300); // wait longer than default debounce
+      expect(form.getState().problems).toEqual([]); // validation did not run
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("setField debounces auto-validation when enabled", async () => {
+    vi.useFakeTimers();
+    try {
+      const form = createAddressForm({ supplier, enableAutoValidation: true, debounceMs: 100 });
       await form.setRegion("US");
       form.setField("postalCode", "123"); // invalid format for US
 

@@ -60,8 +60,16 @@ export interface AddressFormOptions {
   /** Passed through to `validate()` on every auto- or manual validation. */
   validateOptions?: ValidateOptions;
   /**
-   * Milliseconds to debounce auto-validation after `setField`. `0` disables
-   * debouncing (validates on every call, still asynchronously). Default 300.
+   * Enable automatic validation on `setField` and `setRegion` calls.
+   * When disabled (default), call `validate()` manually for integration with
+   * external form libraries like react-hook-form or TanStack Form.
+   * Default `false`.
+   */
+  enableAutoValidation?: boolean;
+  /**
+   * Milliseconds to debounce auto-validation after `setField`. Only used when
+   * `enableAutoValidation` is true. `0` disables debouncing (validates on
+   * every call, still asynchronously). Default 300.
    */
   debounceMs?: number;
 }
@@ -129,7 +137,7 @@ function fieldToValueKey(field: AddressField): keyof AddressData | undefined {
 }
 
 export function createAddressForm(options: AddressFormOptions): AddressFormController {
-  const { supplier, uiLanguageTag = "en", validateOptions, debounceMs = 300 } = options;
+  const { supplier, uiLanguageTag = "en", validateOptions, enableAutoValidation = false, debounceMs = 300 } = options;
   const initialAddress = options.initial ?? EMPTY_ADDRESS;
 
   let state: AddressFormState = {
@@ -235,7 +243,9 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         userProblems: [],
         isValid: true,
       });
-      scheduleValidate();
+      if (enableAutoValidation) {
+        scheduleValidate();
+      }
     } catch (error) {
       if (requestId !== regionRequestId) return;
       setState({ loading: false, error });
@@ -269,7 +279,9 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         touched: { ...state.touched, [resolvedKey]: true },
         dirty: true,
       });
-      scheduleValidate();
+      if (enableAutoValidation) {
+        scheduleValidate();
+      }
     },
 
     setRegion,
