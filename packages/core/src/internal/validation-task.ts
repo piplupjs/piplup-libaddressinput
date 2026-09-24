@@ -110,7 +110,7 @@ export function runValidationChecks(
 
   // Checks which use only the bundled fallback metadata.
   checkUnexpectedField(address, regionCode, reportMaybe);
-  checkMissingRequiredField(address, regionCode, requireName, reportMaybe);
+  checkMissingRequiredField(address, hierarchy[0], requireName, reportMaybe);
 
   // Checks which use the supplier's loaded hierarchy. Note
   // checkPostalCodeFormatAndValue assumes checkUnexpectedField already ran.
@@ -140,12 +140,15 @@ function checkUnexpectedField(
 // A field is MISSING_REQUIRED_FIELD if it's empty but the region requires it.
 function checkMissingRequiredField(
   address: AddressData,
-  regionCode: string,
+  rule: Rule | undefined,
   requireName: boolean,
   reportMaybe: ReportFn,
 ): void {
+  if (rule === undefined) {
+    return;
+  }
   for (const field of MISSING_REQUIRED_FIELD_CHECK_FIELDS) {
-    if (isFieldEmpty(address, field) && isFieldRequired(field, regionCode)) {
+    if (isFieldEmpty(address, field) && rule.required.includes(field)) {
       reportMaybe(field, "MISSING_REQUIRED_FIELD");
     }
   }
