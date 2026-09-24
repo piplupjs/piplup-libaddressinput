@@ -26,9 +26,9 @@ jobs:
         run: pnpm dlx commitlint --from ${{ github.event.pull_request.base.sha || 'origin/main~1' }} --to HEAD
         if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
       - run: pnpm lint
+      - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test
-      - run: pnpm build
 
   deno:
     runs-on: [self-hosted, windows]
