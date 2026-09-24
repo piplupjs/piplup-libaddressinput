@@ -115,3 +115,28 @@ export class FallbackAggregateSource implements Source {
     return { success: true, data: JSON.stringify(aggregate) };
   }
 }
+
+/**
+ * A composite Source that queries a primary source (default: `FetchSource`) first,
+ * and transparently falls back to a secondary source (default: `FallbackAggregateSource`)
+ * if the primary fails, is unreachable, or encounters network errors.
+ */
+export class HybridSource implements Source {
+  constructor(
+    private readonly primary: Source = new FetchSource(),
+    private readonly fallback: Source = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    try {
+      const result = await this.primary.get(key);
+      if (result.success && result.data !== undefined) {
+        return result;
+      }
+    } catch {
+      // Primary source threw an unhandled error; proceed to fallback
+    }
+    return this.fallback.get(key);
+  }
+}
+

@@ -34,10 +34,20 @@
       "import": "./dist/form.js",
       "require": "./dist/form.cjs"
     },
+    "./ui": {
+      "types": "./dist/ui.d.ts",
+      "import": "./dist/ui.js",
+      "require": "./dist/ui.cjs"
+    },
     "./messages/en": {
       "types": "./dist/messages/en.d.ts",
       "import": "./dist/messages/en.js",
       "require": "./dist/messages/en.cjs"
+    },
+    "./labels/en": {
+      "types": "./dist/labels/en.d.ts",
+      "import": "./dist/labels/en.js",
+      "require": "./dist/labels/en.cjs"
     },
     "./package.json": "./package.json"
   },

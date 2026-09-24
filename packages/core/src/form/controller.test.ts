@@ -140,4 +140,48 @@ describe("createAddressForm", () => {
     await Promise.all([first, second]);
     expect(form.getState().values.regionCode).toBe("CA");
   });
+
+  it("exposes userProblems and isValid correctly in state", async () => {
+    const form = createAddressForm({ supplier });
+    await form.setRegion("US");
+    form.setField("locality", "Mountain View");
+    form.setField("administrativeArea", "CA");
+    form.setField("postalCode", "94043");
+    form.setField("addressLine", ["1600 Amphitheatre Pkwy"]);
+
+    await form.validate();
+    const state = form.getState();
+    // Raw problems may contain UNSUPPORTED_FIELD for locality/dependent locality
+    expect(state.problems.some((p) => p.problem === "UNSUPPORTED_FIELD")).toBe(true);
+    // userProblems filters them out, leaving 0 user errors
+    expect(state.userProblems).toHaveLength(0);
+    expect(state.isValid).toBe(true);
+
+    // Enter invalid postal code
+    form.setField("postalCode", "invalid");
+    await form.validate();
+    const invalidState = form.getState();
+    expect(invalidState.userProblems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
+    expect(invalidState.isValid).toBe(false);
+  });
+
+  it("setField accepts AddressField enums directly", async () => {
+    const form = createAddressForm({ supplier });
+    await form.setRegion("US");
+    form.setField("LOCALITY", "Sunnyvale");
+    form.setField("ADMIN_AREA", "California");
+    expect(form.getState().values.locality).toBe("Sunnyvale");
+    expect(form.getState().values.administrativeArea).toBe("California");
+  });
+
+  it("getSubRegions returns subregions from the loaded region tree", async () => {
+    const form = createAddressForm({ supplier });
+    expect(form.getSubRegions()).toEqual([]);
+
+    await form.setRegion("US");
+    const usSubRegions = form.getSubRegions();
+    expect(usSubRegions.length).toBeGreaterThan(0);
+    expect(usSubRegions.some((r) => r.key === "CA")).toBe(true);
+  });
 });
+

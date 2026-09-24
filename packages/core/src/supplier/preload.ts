@@ -67,7 +67,7 @@ export class PreloadSupplier implements Supplier {
    * Serializes every loaded region's raw data, so it can be handed to
    * `PreloadSupplier.from()` elsewhere (typically: load on a server, embed
    * the result in the page, and rehydrate on the client with no further
-   * network fetch — see examples/react-ssr).
+   * network fetch).
    */
   export(): Record<string, string> {
     return Object.fromEntries(this.rawDataByRegion);

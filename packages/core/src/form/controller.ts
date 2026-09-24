@@ -13,6 +13,8 @@ import { buildRegionTree, type RegionData } from "../region-data.js";
 import { normalize } from "../normalizer.js";
 import type { PreloadSupplier } from "../supplier/preload.js";
 import { validate, type ValidateOptions, type ValidationProblem } from "../validator.js";
+import { getUserProblems } from "../ui/problems.js";
+import { findSubRegions } from "../ui/regions.js";
 
 // The subset of AddressData fields a form field setter can target — every
 // field except `regionCode`, which has its own `setRegion()` because
@@ -34,6 +36,10 @@ export interface AddressFormState {
    */
   regionTree: RegionData | null;
   problems: ValidationProblem[];
+  /** Filtered list of problems containing only user-actionable errors (excludes UNSUPPORTED_FIELD). */
+  userProblems: ValidationProblem[];
+  /** True when userProblems is empty. */
+  isValid: boolean;
   /** True while a region's data is being loaded (`setRegion` in flight). */
   loading: boolean;
   error: unknown;
@@ -64,15 +70,18 @@ export interface AddressFormController {
   getState(): AddressFormState;
   /** Returns an unsubscribe function. The listener also fires once, immediately, on subscribe. */
   subscribe(listener: (state: AddressFormState) => void): () => void;
-  setField(field: FormField, value: string | string[] | undefined): void;
+  /** Sets a field value by FormField (e.g. "locality") or AddressField (e.g. "LOCALITY"). */
+  setField(field: FormField | AddressField, value: string | string[] | undefined): void;
   /** Loads the region's data, rebuilds `layout`/`regionTree`, and drops values for fields the new region doesn't use. */
   setRegion(regionCode: string): Promise<void>;
-  /** Runs validation immediately (bypassing the debounce) and updates `problems`. */
+  /** Runs validation immediately (bypassing the debounce) and updates `problems` and `userProblems`. */
   validate(): Promise<ValidationProblem[]>;
   /** Converts hierarchical field values (admin area, etc.) to their canonical form, in place in the state. */
   normalizeValues(): void;
   /** Restores `values` to `options.initial` (or an empty address) and re-runs `setRegion` if it has a region code. */
   reset(): void;
+  /** Returns subregions from the current region tree, optionally filtered by parent key/name. */
+  getSubRegions(parentKeyOrName?: string): RegionData[];
 }
 
 const EMPTY_ADDRESS: AddressData = { regionCode: "" };
@@ -123,6 +132,8 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     layout: null,
     regionTree: null,
     problems: [],
+    userProblems: [],
+    isValid: true,
     loading: false,
     error: undefined,
     touched: {},
@@ -141,11 +152,12 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
 
   async function runValidate(): Promise<ValidationProblem[]> {
     if (state.values.regionCode.length === 0) {
-      setState({ problems: [] });
+      setState({ problems: [], userProblems: [], isValid: true });
       return [];
     }
     const problems = await validate(supplier, state.values, validateOptions);
-    setState({ problems });
+    const userProblems = getUserProblems(problems);
+    setState({ problems, userProblems, isValid: userProblems.length === 0 });
     return problems;
   }
 
@@ -179,6 +191,8 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
           regionTree: null,
           loading: false,
           problems: [],
+          userProblems: [],
+          isValid: true,
         });
         return;
       }
@@ -204,7 +218,15 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         regionTree = null;
       }
 
-      setState({ values: nextValues, layout, regionTree, loading: false, problems: [] });
+      setState({
+        values: nextValues,
+        layout,
+        regionTree,
+        loading: false,
+        problems: [],
+        userProblems: [],
+        isValid: true,
+      });
       scheduleValidate();
     } catch (error) {
       if (requestId !== regionRequestId) return;
@@ -226,11 +248,17 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     },
 
     setField(field, value) {
-      const key: keyof AddressData = field;
-      const nextValues = { ...state.values, [key]: value } as AddressData;
+      const resolvedKey: FormField | undefined =
+        typeof field === "string" && fieldToValueKey(field as AddressField) !== undefined
+          ? (fieldToValueKey(field as AddressField) as FormField)
+          : (field as FormField);
+
+      if (resolvedKey === undefined) return;
+
+      const nextValues = { ...state.values, [resolvedKey]: value } as AddressData;
       setState({
         values: nextValues,
-        touched: { ...state.touched, [field]: true },
+        touched: { ...state.touched, [resolvedKey]: true },
         dirty: true,
       });
       scheduleValidate();
@@ -265,6 +293,8 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         layout: null,
         regionTree: null,
         problems: [],
+        userProblems: [],
+        isValid: true,
         loading: false,
         error: undefined,
         touched: {},
@@ -273,6 +303,14 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
       if (values.regionCode.length > 0) {
         void setRegion(values.regionCode);
       }
+    },
+
+    getSubRegions(parentKeyOrName?: string) {
+      if (state.regionTree === null) return [];
+      if (parentKeyOrName === undefined || parentKeyOrName === "") {
+        return state.regionTree.subRegions;
+      }
+      return findSubRegions(state.regionTree, parentKeyOrName);
     },
   };
 }

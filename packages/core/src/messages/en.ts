@@ -1,10 +1,8 @@
 // English message pack, extracted 1:1 from cpp/res/messages.grdp
 // (Apache-2.0, Google Inc.). `<ph name="X">$N<ex>...</ex></ph>` markup is
-// flattened to the bare `$N` placeholder; `formatMessage` below does the
-// same positional substitution as upstream's `DoReplaceStringPlaceholders`
-// (`$1`, `$2`, ...; `$$` for a literal `$`).
+// flattened to the bare `$N` placeholder.
 
-import type { MessageId, ProblemMessage } from "../messages.js";
+import type { MessageId } from "../messages.js";
 
 export const en: Record<MessageId, string> = {
   COUNTRY_OR_REGION_LABEL: "Country / Region",
@@ -60,20 +58,3 @@ export const en: Record<MessageId, string> = {
   PO_BOX_FORBIDDEN_VALUE:
     "This address line appears to contain a post office box. Please use a street or building address.",
 };
-
-/**
- * Substitutes `$1`, `$2`, ... in `template` with `params` (`$$` -> literal
- * `$`), matching upstream's `DoReplaceStringPlaceholders`.
- */
-export function formatMessage(template: string, params: string[] = []): string {
-  return template.replace(/\$(\$|\d+)/g, (_match, token: string) => {
-    if (token === "$") return "$";
-    const index = Number(token) - 1;
-    return index >= 0 && index < params.length ? params[index]! : "";
-  });
-}
-
-/** Convenience: resolves a `ProblemMessage` (see messages.ts) to English text. */
-export function formatProblemMessage(message: ProblemMessage): string {
-  return formatMessage(en[message.id], message.params);
-}

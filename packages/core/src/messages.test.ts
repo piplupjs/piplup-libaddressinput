@@ -2,8 +2,8 @@
 // reshaped for the id+params split (see messages.ts's header comment).
 
 import { describe, expect, it } from "vitest";
-import { getProblemMessage } from "./messages.js";
-import { formatMessage, formatProblemMessage } from "./messages/en.js";
+import { formatMessage, formatProblemMessage, getProblemMessage } from "./messages.js";
+import { en } from "./messages/en.js";
 import { createEmptyRule } from "./internal/rule.js";
 import type { AddressData } from "./address-data.js";
 
@@ -29,7 +29,7 @@ describe("getProblemMessage", () => {
   it("MISSING_REQUIRED_FIELD needs no params for a non-postal field", () => {
     const msg = getProblemMessage(address, "LOCALITY", "MISSING_REQUIRED_FIELD", createEmptyRule());
     expect(msg).toEqual({ id: "MISSING_REQUIRED_FIELD", params: [] });
-    expect(formatProblemMessage(msg)).toBe("You can't leave this empty.");
+    expect(formatProblemMessage(msg, en)).toBe("You can't leave this empty.");
   });
 
   it("UNKNOWN_VALUE includes the offending value", () => {
@@ -40,7 +40,7 @@ describe("getProblemMessage", () => {
       createEmptyRule(),
     );
     expect(msg).toEqual({ id: "UNKNOWN_VALUE", params: ["Cupertino"] });
-    expect(formatProblemMessage(msg)).toBe(
+    expect(formatProblemMessage(msg, en)).toBe(
       "Cupertino is not recognized as a known value for this field.",
     );
   });
@@ -60,8 +60,8 @@ describe("getProblemMessage", () => {
     const msg = getProblemMessage(address, "POSTAL_CODE", "MISSING_REQUIRED_FIELD", rule);
     expect(msg.id).toBe("MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL");
     expect(msg.params[0]).toBe("90291"); // first example only
-    expect(formatProblemMessage(msg)).toContain("90291");
-    expect(formatProblemMessage(msg)).toContain('<a href="https://tools.usps.com/">');
+    expect(formatProblemMessage(msg, en)).toContain("90291");
+    expect(formatProblemMessage(msg, en)).toContain('<a href="https://tools.usps.com/">');
   });
 
   it("POSTAL_CODE MISSING_REQUIRED_FIELD with no example/url falls back to the generic message", () => {

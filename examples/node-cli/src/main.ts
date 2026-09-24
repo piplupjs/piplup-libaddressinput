@@ -9,32 +9,15 @@
 //   pnpm start -- --help
 
 import {
-  FallbackAggregateSource,
-  FetchSource,
+  HybridSource,
   MemoryStorage,
   PreloadSupplier,
   formatAddress,
   normalize,
   validate,
+  getUserProblems,
   type AddressData,
-  type Source,
-  type SourceResult,
 } from "@piplup/libaddressinput";
-
-class NetworkWithOfflineFallbackSource implements Source {
-  constructor(
-    private readonly remote = new FetchSource(),
-    private readonly offline = new FallbackAggregateSource(),
-  ) {}
-
-  async get(key: string): Promise<SourceResult> {
-    const remoteResult = await this.remote.get(key);
-    if (remoteResult.success && remoteResult.data !== undefined) {
-      return remoteResult;
-    }
-    return this.offline.get(key);
-  }
-}
 
 function printHelp(): void {
   console.log(`Usage: node main.ts [options]
@@ -120,7 +103,7 @@ async function main(): Promise<void> {
   if (address === undefined) return; // --help
 
   const supplier = new PreloadSupplier(
-    new NetworkWithOfflineFallbackSource(),
+    new HybridSource(),
     new MemoryStorage(),
   );
   const loaded = await supplier.loadRules(address.regionCode);
@@ -137,8 +120,7 @@ async function main(): Promise<void> {
     console.log(`  ${line}`);
   }
 
-  const allProblems = await validate(supplier, normalized);
-  const problems = allProblems.filter((p) => p.problem !== "UNSUPPORTED_FIELD");
+  const problems = getUserProblems(await validate(supplier, normalized));
   if (problems.length === 0) {
     console.log("\nNo validation problems found.");
   } else {

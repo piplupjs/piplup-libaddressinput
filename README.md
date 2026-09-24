@@ -68,8 +68,6 @@ validation) without any rendering, see `createAddressForm()` and
   - [`react-form-controller`](examples/react-form-controller) — a small
     `useAddressForm` hook (copy-paste code, not part of the library) wiring
     `createAddressForm()` to React via `useSyncExternalStore`.
-  - [`react-ssr`](examples/react-ssr) — load address data once on the
-    server, hand it to the client with `PreloadSupplier.export()`/`.from()`.
 
 ## Development
 
@@ -89,7 +87,6 @@ pnpm --filter node-cli-example start -- --region US --admin-area CA \
 pnpm --filter vanilla-dom-example dev
 pnpm --filter react-basic-example dev
 pnpm --filter react-form-controller-example dev
-pnpm --filter react-ssr-example dev
 ```
 
 ## License

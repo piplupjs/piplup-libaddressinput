@@ -16,7 +16,7 @@ export { buildRegionTree } from "./region-data.js";
 export type { ValidateOptions, ValidationProblem } from "./validator.js";
 export { validate } from "./validator.js";
 export type { Source, SourceResult, FetchSourceOptions } from "./source.js";
-export { FetchSource, FallbackAggregateSource } from "./source.js";
+export { FetchSource, FallbackAggregateSource, HybridSource } from "./source.js";
 export type { Storage, StorageResult } from "./storage.js";
 export { MemoryStorage, NullStorage } from "./storage.js";
 export type {
@@ -35,7 +35,12 @@ export type {
 } from "./layout.js";
 export { buildLayout, getRegionCodes } from "./layout.js";
 export type { MessageId, ProblemMessage, GetProblemMessageOptions } from "./messages.js";
-export { getFieldLabelId, getProblemMessage } from "./messages.js";
+export {
+  getFieldLabelId,
+  getProblemMessage,
+  formatMessage,
+  formatProblemMessage,
+} from "./messages.js";
 export type {
   AddressFormState,
   AddressFormOptions,
@@ -43,3 +48,22 @@ export type {
   FormField,
 } from "./form/controller.js";
 export { createAddressForm } from "./form/controller.js";
+
+// Headless UI helpers
+export {
+  DEFAULT_FIELD_LABEL_IDS,
+  getFieldLabel,
+  FIELD_TO_DATA_KEY,
+  DATA_KEY_TO_FIELD,
+  FIELD_TO_AUTOCOMPLETE,
+  getFieldKey,
+  getFieldAutocomplete,
+  isUserProblem,
+  getUserProblems,
+  getProblemErrorMessage,
+  groupProblemsByField,
+  type RegionOption,
+  getRegionOptions,
+  formatRegionOption,
+  findSubRegions,
+} from "./ui/index.js";

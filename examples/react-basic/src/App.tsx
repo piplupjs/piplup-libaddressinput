@@ -4,72 +4,24 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  FallbackAggregateSource,
-  FetchSource,
+  HybridSource,
   MemoryStorage,
   PreloadSupplier,
   buildLayout,
-  getRegionCodes,
+  getRegionOptions,
+  getFieldLabel,
+  getFieldKey,
+  getFieldAutocomplete,
+  getUserProblems,
+  getProblemErrorMessage,
   validate,
   type AddressData,
   type LayoutField,
-  type Source,
-  type SourceResult,
   type ValidationProblem,
 } from "@piplup/libaddressinput";
-import { en } from "@piplup/libaddressinput/messages/en";
 
-class NetworkWithOfflineFallbackSource implements Source {
-  constructor(
-    private readonly remote = new FetchSource(),
-    private readonly offline = new FallbackAggregateSource(),
-  ) {}
-
-  async get(key: string): Promise<SourceResult> {
-    const remoteResult = await this.remote.get(key);
-    if (remoteResult.success && remoteResult.data !== undefined) {
-      return remoteResult;
-    }
-    return this.offline.get(key);
-  }
-}
-
-const supplier = new PreloadSupplier(
-  new NetworkWithOfflineFallbackSource(),
-  new MemoryStorage(),
-);
-
-const FIELD_KEYS: Record<LayoutField["field"], keyof AddressData | undefined> = {
-  COUNTRY: undefined,
-  ADMIN_AREA: "administrativeArea",
-  LOCALITY: "locality",
-  DEPENDENT_LOCALITY: "dependentLocality",
-  SORTING_CODE: "sortingCode",
-  POSTAL_CODE: "postalCode",
-  STREET_ADDRESS: "addressLine",
-  ORGANIZATION: "organization",
-  RECIPIENT: "recipient",
-};
-
-const DEFAULT_LABELS: Record<string, string> = {
-  LOCALITY: "City",
-  ADMIN_AREA: "State / Province",
-  DEPENDENT_LOCALITY: "District / Suburb",
-  POSTAL_CODE: "Postal code",
-  STREET_ADDRESS: "Street address",
-  ORGANIZATION: "Organization",
-  RECIPIENT: "Name",
-  SORTING_CODE: "Sorting code",
-  COUNTRY: "Country / Region",
-};
-
-function labelText(field: LayoutField): string {
-  if (field.labelId === "CEDEX") return "CEDEX";
-  if (field.labelId !== undefined && en[field.labelId] !== undefined) {
-    return en[field.labelId];
-  }
-  return DEFAULT_LABELS[field.field] ?? field.field;
-}
+const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
+const REGION_OPTIONS = getRegionOptions("en");
 
 export function App() {
   const [values, setValues] = useState<AddressData>({ regionCode: "US" });
@@ -93,8 +45,8 @@ export function App() {
   );
 
   function setField(field: LayoutField["field"], value: string): void {
-    const key = FIELD_KEYS[field];
-    if (key === undefined) return;
+    const key = getFieldKey(field);
+    if (key === "regionCode") return;
     setValues((prev) => ({
       ...prev,
       [key]: field === "STREET_ADDRESS" ? [value] : value,
@@ -103,7 +55,7 @@ export function App() {
 
   async function onValidate(): Promise<void> {
     const raw = await validate(supplier, values);
-    setProblems(raw.filter((p) => p.problem !== "UNSUPPORTED_FIELD"));
+    setProblems(getUserProblems(raw));
   }
 
   return (
@@ -114,24 +66,31 @@ export function App() {
         <select
           value={values.regionCode}
           onChange={(e) => setValues({ regionCode: e.target.value })}
-          style={{ display: "block", width: "100%" }}
+          style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
         >
-          {getRegionCodes().map((code) => (
+          {REGION_OPTIONS.map(({ code, name }) => (
             <option key={code} value={code}>
-              {code}
+              {name} ({code})
             </option>
           ))}
         </select>
       </label>
 
       {layout?.rows.flat().map((item) =>
-        item.kind === "field" && FIELD_KEYS[item.field] !== undefined ? (
+        item.kind === "field" && item.field !== "COUNTRY" ? (
           <label key={item.field} style={{ display: "block", marginTop: "0.75rem" }}>
-            {labelText(item)}
+            {getFieldLabel(item)}
             {item.required ? " *" : ""}
             <input
               type="text"
-              style={{ display: "block", width: "100%", boxSizing: "border-box" }}
+              autoComplete={getFieldAutocomplete(item.field)}
+              style={{
+                display: "block",
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "0.5rem",
+                marginTop: "0.25rem",
+              }}
               onChange={(e) => setField(item.field, e.target.value)}
             />
           </label>
@@ -142,16 +101,25 @@ export function App() {
         type="button"
         onClick={() => void onValidate()}
         disabled={!loaded}
-        style={{ marginTop: "1rem" }}
+        style={{
+          marginTop: "1.25rem",
+          padding: "0.6rem 1.25rem",
+          background: "#0052cc",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          fontWeight: 600,
+          cursor: loaded ? "pointer" : "not-allowed",
+        }}
       >
         {loaded ? "Validate" : "Loading rules…"}
       </button>
 
       {problems.length > 0 && (
-        <ul>
+        <ul style={{ color: "#b00020", marginTop: "1rem" }}>
           {problems.map((p, i) => (
             <li key={i}>
-              {p.field}: {p.problem}
+              {getFieldLabel(p.field)}: {getProblemErrorMessage(p)}
             </li>
           ))}
         </ul>

@@ -254,3 +254,28 @@ function getPostalCodeProblemMessage(
 
   throw new Error(`getProblemMessage: unsupported postal-code problem: ${problem}`);
 }
+
+/**
+ * Substitutes `$1`, `$2`, ... in `template` with `params` (`$$` -> literal
+ * `$`), matching upstream's `DoReplaceStringPlaceholders`.
+ */
+export function formatMessage(template: string, params: string[] = []): string {
+  return template.replace(/\$(\$|\d+)/g, (_match, token: string) => {
+    if (token === "$") return "$";
+    const index = Number(token) - 1;
+    return index >= 0 && index < params.length ? params[index]! : "";
+  });
+}
+
+/**
+ * Resolves a `ProblemMessage` to formatted text using a given message dictionary.
+ */
+export function formatProblemMessage(
+  message: ProblemMessage,
+  dictionary: Record<string, string>,
+): string {
+  const template = dictionary[message.id];
+  if (!template) return message.id;
+  return formatMessage(template, message.params);
+}
+
