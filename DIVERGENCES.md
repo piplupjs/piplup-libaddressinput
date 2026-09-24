@@ -45,6 +45,7 @@ Divergences fall into two categories:
 | `Rule` JSON keys | (an earlier draft of this project's own plan incorrectly claimed `Rule` also parses `upper`, `lang`, `key`, `sub_names`, `sub_lnames`, `sub_isoids`, `sub_zips`, `sub_mores`, `width_overrides`) | Not parsed — matches what `Rule::ParseJsonRule` in `rule.cc` actually reads | Verified directly against the vendored submodule; sub-region display names come from each sub-key's own rule, not arrays on the parent | [`internal/rule.ts`](packages/core/src/internal/rule.ts) |
 | Form state (`createAddressForm`) | No upstream equivalent (Java's `AddressWidget`, the closest analog, isn't in this vendored submodule snapshot) | New design, no rendering, `subscribe`/`getState` is the only guaranteed contract | See `.planning/PLAN.md` §5/§6 Phase 7 | [`form/controller.ts`](packages/core/src/form/controller.ts) |
 | React/Vue/etc. bindings | N/A | Not part of this library at all | Headless-by-design; see `examples/` | `.planning/PLAN.md` §7a |
+| `FetchSource` default URL | `https://chromium-i18n.appspot.com/ssl-aggregate-address/` | `https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/` with fallback to legacy | In modern Google infrastructure the App Engine URL 302-redirects to GStatic CDN; querying GStatic directly eliminates the 302 round-trip and avoids CORS redirect failures and adblockers blocking `*.appspot.com` | [`source.ts`](packages/core/src/source.ts) |
 
 ## Data divergences
 

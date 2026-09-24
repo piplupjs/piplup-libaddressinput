@@ -16,7 +16,7 @@ export { buildRegionTree } from "./region-data.js";
 export type { ValidateOptions, ValidationProblem } from "./validator.js";
 export { validate } from "./validator.js";
 export type { Source, SourceResult, FetchSourceOptions } from "./source.js";
-export { FetchSource } from "./source.js";
+export { FetchSource, FallbackAggregateSource } from "./source.js";
 export type { Storage, StorageResult } from "./storage.js";
 export { MemoryStorage, NullStorage } from "./storage.js";
 export type {

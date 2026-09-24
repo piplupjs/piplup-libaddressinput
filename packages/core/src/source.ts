@@ -30,13 +30,22 @@ export interface FetchSourceOptions {
   baseUrl?: string;
 }
 
-const DEFAULT_BASE_URL = "https://chromium-i18n.appspot.com/ssl-aggregate-address/";
+import { FALLBACK_DATA } from "./data/fallback.js";
+
+const DEFAULT_BASE_URL =
+  "https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/";
+const LEGACY_BASE_URL =
+  "https://chromium-i18n.appspot.com/ssl-aggregate-address/";
 
 /**
  * A Source backed by `fetch`. Matches the real endpoint's documented
  * behavior (see testdata_source.cc in the vendored submodule): any request
  * for a key with no data still returns 200 with `"{}"`, so `success` here
  * tracks the HTTP response status, not "was there data for this key".
+ *
+ * Defaults to Google's canonical GStatic CDN endpoint (which avoids the 302
+ * redirect and adblocker/CORS redirect issues associated with the legacy
+ * chromium-i18n.appspot.com URL), with transparent fallback to the legacy URL.
  */
 export class FetchSource implements Source {
   private readonly fetchImpl: typeof globalThis.fetch;
@@ -56,12 +65,53 @@ export class FetchSource implements Source {
   async get(key: string): Promise<SourceResult> {
     try {
       const response = await this.fetchImpl(this.baseUrl + key);
-      if (!response.ok) {
-        return { success: false, data: undefined };
+      if (response.ok) {
+        return { success: true, data: await response.text() };
       }
-      return { success: true, data: await response.text() };
     } catch {
-      return { success: false, data: undefined };
+      // Primary fetch failed (network error, offline, CORS, adblocker, etc.)
     }
+
+    // If using the default URL and it failed, try the legacy App Engine URL as fallback.
+    // Vice versa if the caller explicitly configured the legacy App Engine URL.
+    const fallbackUrl =
+      this.baseUrl === DEFAULT_BASE_URL
+        ? LEGACY_BASE_URL
+        : this.baseUrl === LEGACY_BASE_URL
+          ? DEFAULT_BASE_URL
+          : undefined;
+
+    if (fallbackUrl !== undefined) {
+      try {
+        const response = await this.fetchImpl(fallbackUrl + key);
+        if (response.ok) {
+          return { success: true, data: await response.text() };
+        }
+      } catch {
+        // Fallback fetch also failed
+      }
+    }
+
+    return { success: false, data: undefined };
+  }
+}
+
+/**
+ * A Source backed by the bundled offline dataset (parsed from upstream's
+ * `countryinfo.txt`). Requires no network I/O; useful for offline environments,
+ * testing, SSR, or as a fallback when `FetchSource` is unreachable.
+ */
+export class FallbackAggregateSource implements Source {
+  async get(key: string): Promise<SourceResult> {
+    const aggregate: Record<string, unknown> = {};
+    for (const [dataKey, json] of Object.entries(FALLBACK_DATA)) {
+      if (dataKey.startsWith(key)) {
+        aggregate[dataKey] = JSON.parse(json);
+      }
+    }
+    if (Object.keys(aggregate).length === 0) {
+      return { success: true, data: "{}" };
+    }
+    return { success: true, data: JSON.stringify(aggregate) };
   }
 }

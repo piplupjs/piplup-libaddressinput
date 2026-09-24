@@ -4,17 +4,38 @@
 
 import { useState } from "react";
 import {
+  FallbackAggregateSource,
   FetchSource,
   MemoryStorage,
   PreloadSupplier,
   getRegionCodes,
   type LayoutField,
   type RegionData,
+  type Source,
+  type SourceResult,
 } from "@piplup/libaddressinput";
 import { en } from "@piplup/libaddressinput/messages/en";
 import { useAddressForm } from "./useAddressForm.js";
 
-const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+class NetworkWithOfflineFallbackSource implements Source {
+  constructor(
+    private readonly remote = new FetchSource(),
+    private readonly offline = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    const remoteResult = await this.remote.get(key);
+    if (remoteResult.success && remoteResult.data !== undefined) {
+      return remoteResult;
+    }
+    return this.offline.get(key);
+  }
+}
+
+const supplier = new PreloadSupplier(
+  new NetworkWithOfflineFallbackSource(),
+  new MemoryStorage(),
+);
 
 const FIELD_KEYS: Record<string, "administrativeArea" | "locality" | "dependentLocality" | "sortingCode" | "postalCode" | "organization" | "recipient" | undefined> = {
   ADMIN_AREA: "administrativeArea",

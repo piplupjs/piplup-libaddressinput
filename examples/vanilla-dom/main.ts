@@ -3,6 +3,7 @@
 // hand-written; the library never touches the DOM itself (see PLAN.md §1).
 
 import {
+  FallbackAggregateSource,
   FetchSource,
   MemoryStorage,
   PreloadSupplier,
@@ -11,10 +12,31 @@ import {
   validate,
   type AddressData,
   type LayoutField,
+  type Source,
+  type SourceResult,
 } from "@piplup/libaddressinput";
 import { en } from "@piplup/libaddressinput/messages/en";
 
-const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+// Try live network first, fall back to bundled offline data if offline or unreachable.
+class NetworkWithOfflineFallbackSource implements Source {
+  constructor(
+    private readonly remote = new FetchSource(),
+    private readonly offline = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    const remoteResult = await this.remote.get(key);
+    if (remoteResult.success && remoteResult.data !== undefined) {
+      return remoteResult;
+    }
+    return this.offline.get(key);
+  }
+}
+
+const supplier = new PreloadSupplier(
+  new NetworkWithOfflineFallbackSource(),
+  new MemoryStorage(),
+);
 
 const regionSelect = document.querySelector<HTMLSelectElement>("#region")!;
 const fieldsForm = document.querySelector<HTMLFormElement>("#fields")!;
@@ -84,14 +106,16 @@ function renderFields(): void {
 
 async function loadRegion(regionCode: string): Promise<void> {
   values = { regionCode };
-  result.textContent = "Loading address data…";
+  // buildLayout() only requires bundled metadata — render the form layout immediately!
+  renderFields();
+
+  result.textContent = "Loading validation rules…";
   const loaded = await supplier.loadRules(regionCode);
   if (!loaded.success) {
-    result.textContent = `Failed to load data for ${regionCode}.`;
+    result.textContent = `Failed to load validation rules for ${regionCode}.`;
     return;
   }
   result.textContent = "";
-  renderFields();
 }
 
 regionSelect.addEventListener("change", () => {
@@ -100,6 +124,10 @@ regionSelect.addEventListener("change", () => {
 
 validateButton.addEventListener("click", () => {
   void (async () => {
+    if (!supplier.isLoaded(values.regionCode)) {
+      result.textContent = `Validation rules for ${values.regionCode} are not loaded.`;
+      return;
+    }
     const problems = await validate(supplier, values);
     if (problems.length === 0) {
       result.textContent = "✓ No problems found.";

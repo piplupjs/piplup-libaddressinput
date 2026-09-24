@@ -8,12 +8,30 @@ import http from "node:http";
 import { renderToString } from "react-dom/server";
 import { createElement } from "react";
 import {
+  FallbackAggregateSource,
   FetchSource,
   MemoryStorage,
   PreloadSupplier,
+  type Source,
+  type SourceResult,
 } from "@piplup/libaddressinput";
 import { createServer as createViteServer } from "vite";
 import { App } from "./src/App.js";
+
+class NetworkWithOfflineFallbackSource implements Source {
+  constructor(
+    private readonly remote = new FetchSource(),
+    private readonly offline = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    const remoteResult = await this.remote.get(key);
+    if (remoteResult.success && remoteResult.data !== undefined) {
+      return remoteResult;
+    }
+    return this.offline.get(key);
+  }
+}
 
 const INITIAL_REGION = "US";
 const PORT = 5183;
@@ -36,7 +54,10 @@ async function main(): Promise<void> {
 
     // Server-side load: this is the one and only network fetch for this
     // region's address data, for every client that requests this page.
-    const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+    const supplier = new PreloadSupplier(
+      new NetworkWithOfflineFallbackSource(),
+      new MemoryStorage(),
+    );
     const loaded = await supplier.loadRules(INITIAL_REGION);
     if (!loaded.success) {
       res.statusCode = 502;

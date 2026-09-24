@@ -9,6 +9,7 @@
 //   pnpm start -- --help
 
 import {
+  FallbackAggregateSource,
   FetchSource,
   MemoryStorage,
   PreloadSupplier,
@@ -16,7 +17,24 @@ import {
   normalize,
   validate,
   type AddressData,
+  type Source,
+  type SourceResult,
 } from "@piplup/libaddressinput";
+
+class NetworkWithOfflineFallbackSource implements Source {
+  constructor(
+    private readonly remote = new FetchSource(),
+    private readonly offline = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    const remoteResult = await this.remote.get(key);
+    if (remoteResult.success && remoteResult.data !== undefined) {
+      return remoteResult;
+    }
+    return this.offline.get(key);
+  }
+}
 
 function printHelp(): void {
   console.log(`Usage: node main.ts [options]
@@ -101,7 +119,10 @@ async function main(): Promise<void> {
   const address = parseArgs(process.argv.slice(2));
   if (address === undefined) return; // --help
 
-  const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+  const supplier = new PreloadSupplier(
+    new NetworkWithOfflineFallbackSource(),
+    new MemoryStorage(),
+  );
   const loaded = await supplier.loadRules(address.regionCode);
   if (!loaded.success) {
     console.error(`Could not load address data for region "${address.regionCode}".`);

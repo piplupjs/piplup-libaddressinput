@@ -4,6 +4,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
+  FallbackAggregateSource,
   FetchSource,
   MemoryStorage,
   PreloadSupplier,
@@ -12,11 +13,31 @@ import {
   validate,
   type AddressData,
   type LayoutField,
+  type Source,
+  type SourceResult,
   type ValidationProblem,
 } from "@piplup/libaddressinput";
 import { en } from "@piplup/libaddressinput/messages/en";
 
-const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+class NetworkWithOfflineFallbackSource implements Source {
+  constructor(
+    private readonly remote = new FetchSource(),
+    private readonly offline = new FallbackAggregateSource(),
+  ) {}
+
+  async get(key: string): Promise<SourceResult> {
+    const remoteResult = await this.remote.get(key);
+    if (remoteResult.success && remoteResult.data !== undefined) {
+      return remoteResult;
+    }
+    return this.offline.get(key);
+  }
+}
+
+const supplier = new PreloadSupplier(
+  new NetworkWithOfflineFallbackSource(),
+  new MemoryStorage(),
+);
 
 const FIELD_KEYS: Record<LayoutField["field"], keyof AddressData | undefined> = {
   COUNTRY: undefined,
@@ -53,8 +74,8 @@ export function App() {
   }, [values.regionCode]);
 
   const layout = useMemo(
-    () => (loaded ? buildLayout(values.regionCode, "en") : null),
-    [loaded, values.regionCode],
+    () => buildLayout(values.regionCode, "en"),
+    [values.regionCode],
   );
 
   function setField(field: LayoutField["field"], value: string): void {
@@ -102,8 +123,13 @@ export function App() {
         ) : null,
       )}
 
-      <button type="button" onClick={() => void onValidate()} style={{ marginTop: "1rem" }}>
-        Validate
+      <button
+        type="button"
+        onClick={() => void onValidate()}
+        disabled={!loaded}
+        style={{ marginTop: "1rem" }}
+      >
+        {loaded ? "Validate" : "Loading rules…"}
       </button>
 
       {problems.length > 0 && (
