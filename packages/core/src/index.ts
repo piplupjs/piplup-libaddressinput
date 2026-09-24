@@ -36,3 +36,10 @@ export type {
 export { buildLayout, getRegionCodes } from "./layout.js";
 export type { MessageId, ProblemMessage, GetProblemMessageOptions } from "./messages.js";
 export { getFieldLabelId, getProblemMessage } from "./messages.js";
+export type {
+  AddressFormState,
+  AddressFormOptions,
+  AddressFormController,
+  FormField,
+} from "./form/controller.js";
+export { createAddressForm } from "./form/controller.js";

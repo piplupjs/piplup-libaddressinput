@@ -119,4 +119,33 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
     await supplier.loadRules("ZW");
     expect(supplier.getLoadedRuleDepth("ZW")).toBe(1);
   });
+
+  describe("export / from (server-to-client hand-off)", () => {
+    it("rehydrates a supplier with no network access, matching the original", async () => {
+      await supplier.loadRules("US");
+      const exported = supplier.export();
+      expect(Object.keys(exported)).toEqual(["US"]);
+
+      // A source that fails every request: from() must not need it for the
+      // regions already in `exported`.
+      const offline = { async get() { return { success: false, data: undefined }; } };
+      const rehydrated = PreloadSupplier.from(offline, new NullStorage(), exported);
+
+      expect(rehydrated.isLoaded("US")).toBe(true);
+      const key = lookupKeyFromAddress({ regionCode: "US", administrativeArea: "CA" });
+      expect(rehydrated.getRule(key)?.id).toBe(supplier.getRule(key)?.id);
+    });
+
+    it("from() can still load further regions given a working source", async () => {
+      await supplier.loadRules("US");
+      const exported = supplier.export();
+      const rehydrated = PreloadSupplier.from(new FallbackAggregateSource(), new NullStorage(), exported);
+      expect(rehydrated.isLoaded("US")).toBe(true);
+      expect(rehydrated.isLoaded("CA")).toBe(false);
+
+      const result = await rehydrated.loadRules("CA");
+      expect(result.success).toBe(true);
+      expect(rehydrated.isLoaded("CA")).toBe(true);
+    });
+  });
 });

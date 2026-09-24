@@ -57,9 +57,42 @@ export class PreloadSupplier implements Supplier {
   private readonly ruleIndex = new Map<string, Rule>();
   private readonly languageRuleIndex = new Map<string, Rule>();
   private readonly regionRules = new Map<string, Map<string, Rule>>();
+  private readonly rawDataByRegion = new Map<string, string>();
 
   constructor(source: Source, storage: Storage) {
     this.retriever = new Retriever(source, storage);
+  }
+
+  /**
+   * Serializes every loaded region's raw data, so it can be handed to
+   * `PreloadSupplier.from()` elsewhere (typically: load on a server, embed
+   * the result in the page, and rehydrate on the client with no further
+   * network fetch — see examples/react-ssr).
+   */
+  export(): Record<string, string> {
+    return Object.fromEntries(this.rawDataByRegion);
+  }
+
+  /**
+   * Creates a `PreloadSupplier` pre-populated from a previous instance's
+   * `export()` output — synchronously, no `source`/`storage` I/O. `source`
+   * and `storage` are still required for loading any *further* regions
+   * later via `loadRules()`.
+   */
+  static from(
+    source: Source,
+    storage: Storage,
+    exported: Record<string, string>,
+  ): PreloadSupplier {
+    const supplier = new PreloadSupplier(source, storage);
+    for (const [regionCode, data] of Object.entries(exported)) {
+      const key = keyFromRegionCode(regionCode);
+      const result = supplier.processAggregateData(regionCode, key, data);
+      if (result.success) {
+        supplier.rawDataByRegion.set(regionCode, data);
+      }
+    }
+    return supplier;
   }
 
   /**
@@ -93,7 +126,22 @@ export class PreloadSupplier implements Supplier {
     if (!success) {
       return { success: false, regionCode, ruleCount: 0 };
     }
+    const result = this.processAggregateData(regionCode, key, data);
+    if (result.success) {
+      this.rawDataByRegion.set(regionCode, data);
+    }
+    return result;
+  }
 
+  // Parses and indexes one region's already-fetched aggregate JSON text.
+  // Shared by doLoad() (data just came from the retriever) and the
+  // export()/from() hydration path below (data was serialized earlier, e.g.
+  // on a server, and handed to us directly with no fetch at all).
+  private processAggregateData(
+    regionCode: string,
+    key: string,
+    data: string,
+  ): LoadRulesResult {
     let parsed: unknown;
     try {
       parsed = JSON.parse(data);

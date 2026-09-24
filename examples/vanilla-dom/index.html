@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>vanilla-dom example — @piplup/libaddressinput</title>
+    <style>
+      body { font: 14px/1.4 system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
+      label { display: block; margin-top: 0.75rem; font-weight: 600; }
+      input, select { width: 100%; box-sizing: border-box; padding: 0.4rem; margin-top: 0.15rem; }
+      .row { display: flex; gap: 0.5rem; }
+      .row > div { flex: 1; }
+      .error { color: #b00020; font-size: 0.85em; margin-top: 0.1rem; }
+      #result { white-space: pre-wrap; background: #f4f4f4; padding: 0.75rem; margin-top: 1rem; }
+    </style>
+  </head>
+  <body>
+    <h1>Address form (vanilla DOM)</h1>
+    <p>No framework — this page maps <code>buildLayout()</code> output directly to hand-written DOM elements.</p>
+
+    <label for="region">Region</label>
+    <select id="region"></select>
+
+    <form id="fields"></form>
+
+    <button id="validate" type="button">Validate</button>
+    <pre id="result"></pre>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
