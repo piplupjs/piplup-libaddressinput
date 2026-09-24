@@ -51,3 +51,25 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @piplup/libaddressinput build
       - run: bun run packages/core/dist/index.js
+
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @piplup/libaddressinput build
+      # Each example's own tsconfig.json is standalone (doesn't extend the
+      # monorepo's tsconfig.base.json — see .planning/PLAN.md Phase 7), so
+      # typechecking them here also guards against that staying true.
+      - run: pnpm --filter node-cli-example typecheck
+      - run: pnpm --filter vanilla-dom-example build
+      - run: pnpm --filter react-basic-example build
+      - run: pnpm --filter react-form-controller-example build
+      - run: pnpm --filter react-ssr-example typecheck
+      # Smoke test: node-cli's --help exits 0 with no network access needed.
+      - run: pnpm --filter node-cli-example start -- --help

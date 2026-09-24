@@ -50,10 +50,15 @@ function combineLinesForLanguage(lines: string[], languageTag: string | undefine
  * `addressLine` entry.
  */
 export function formatAddress(address: AddressData): string[] {
-  const rule = parseRule(
-    RegionDataConstants.getRegionData(address.regionCode),
-    RegionDataConstants.getDefaultRule(),
-  )!;
+  // Matches upstream exactly: it never checks ParseSerializedRule's return
+  // value here, so a region with no data (or an unsupported/empty region
+  // code) just keeps using the default-only rule instead of failing —
+  // parseRule() returns undefined in that case (see internal/rule.ts), so
+  // fall back to the default rule explicitly rather than asserting non-null.
+  const defaultRule = RegionDataConstants.getDefaultRule();
+  const rule =
+    parseRule(RegionDataConstants.getRegionData(address.regionCode), defaultRule) ??
+    defaultRule;
 
   const language = parseLanguage(address.languageCode ?? "");
   const format: FormatElement[] =

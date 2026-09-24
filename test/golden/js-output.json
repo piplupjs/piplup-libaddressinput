@@ -1,0 +1,2113 @@
+[
+  {
+    "input": {
+      "address": {
+        "regionCode": "US",
+        "addressLine": [
+          "1600 Amphitheatre Pkwy"
+        ],
+        "administrativeArea": "CA",
+        "locality": "Mountain View",
+        "postalCode": "94043",
+        "recipient": "Jane Doe"
+      }
+    },
+    "normalized": {
+      "regionCode": "US",
+      "addressLine": [
+        "1600 Amphitheatre Pkwy"
+      ],
+      "administrativeArea": "CA",
+      "locality": "Mountain View",
+      "postalCode": "94043",
+      "recipient": "Jane Doe"
+    },
+    "formatted": [
+      "Jane Doe",
+      "1600 Amphitheatre Pkwy",
+      "Mountain View CA 94043"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "US",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "ZIP_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "US",
+        "postalCode": "123"
+      }
+    },
+    "normalized": {
+      "regionCode": "US",
+      "postalCode": "123"
+    },
+    "formatted": [
+      "123"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "US",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "ZIP_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "US"
+      }
+    },
+    "normalized": {
+      "regionCode": "US"
+    },
+    "formatted": [],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "US",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "ZIP_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "CH",
+        "addressLine": [
+          "Brandschenkestrasse 110"
+        ],
+        "locality": "Zürich",
+        "postalCode": "8002",
+        "languageCode": "de"
+      }
+    },
+    "normalized": {
+      "regionCode": "CH",
+      "addressLine": [
+        "Brandschenkestrasse 110"
+      ],
+      "locality": "Zürich",
+      "postalCode": "8002",
+      "languageCode": "de"
+    },
+    "formatted": [
+      "Brandschenkestrasse 110",
+      "CH-8002 Zürich"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "CH",
+      "languageTag": "de",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "CH",
+        "postalCode": "123"
+      }
+    },
+    "normalized": {
+      "regionCode": "CH",
+      "postalCode": "123"
+    },
+    "formatted": [
+      "CH-123"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "CH",
+      "languageTag": "de",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "JP",
+        "addressLine": [
+          "Roppongi Hills"
+        ],
+        "administrativeArea": "Tokyo",
+        "languageCode": "ja_Latn"
+      }
+    },
+    "normalized": {
+      "regionCode": "JP",
+      "addressLine": [
+        "Roppongi Hills"
+      ],
+      "administrativeArea": "Tokyo",
+      "languageCode": "ja_Latn"
+    },
+    "formatted": [
+      "Roppongi Hills",
+      "Tokyo"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "JP",
+      "languageTag": "ja-Latn",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "PREFECTURE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "JP",
+        "addressLine": [
+          "徳島市..."
+        ],
+        "administrativeArea": "徳島県",
+        "postalCode": "770-0847",
+        "languageCode": "ja"
+      }
+    },
+    "normalized": {
+      "regionCode": "JP",
+      "addressLine": [
+        "徳島市..."
+      ],
+      "administrativeArea": "徳島県",
+      "postalCode": "770-0847",
+      "languageCode": "ja"
+    },
+    "formatted": [
+      "〒770-0847",
+      "徳島県",
+      "徳島市..."
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "JP",
+      "languageTag": "ja-Latn",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "PREFECTURE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "TW",
+        "addressLine": [
+          "台灣信義路三段33號"
+        ],
+        "administrativeArea": "台北市",
+        "locality": "大安區",
+        "postalCode": "106",
+        "languageCode": "zh-Hant"
+      }
+    },
+    "normalized": {
+      "regionCode": "TW",
+      "addressLine": [
+        "台灣信義路三段33號"
+      ],
+      "administrativeArea": "台北市",
+      "locality": "大安區",
+      "postalCode": "106",
+      "languageCode": "zh-Hant"
+    },
+    "formatted": [
+      "106",
+      "台北市大安區",
+      "台灣信義路三段33號"
+    ],
+    "problems": [
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "TW",
+      "languageTag": "zh-Latn",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "COUNTY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "CA",
+        "addressLine": [
+          "5 Rue du Tresor",
+          "Apt. 4"
+        ],
+        "administrativeArea": "QC",
+        "locality": "Montmagny",
+        "postalCode": "G1R 123",
+        "languageCode": "fr"
+      }
+    },
+    "normalized": {
+      "regionCode": "CA",
+      "addressLine": [
+        "5 Rue du Tresor",
+        "Apt. 4"
+      ],
+      "administrativeArea": "QC",
+      "locality": "Montmagny",
+      "postalCode": "G1R 123",
+      "languageCode": "fr"
+    },
+    "formatted": [
+      "5 Rue du Tresor",
+      "Apt. 4",
+      "Montmagny QC G1R 123"
+    ],
+    "problems": [
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "CA",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "PROVINCE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "CI",
+        "addressLine": [
+          "32 Boulevard Carde"
+        ],
+        "locality": "Abidjan",
+        "sortingCode": "64",
+        "languageCode": "zh-Hant"
+      }
+    },
+    "normalized": {
+      "regionCode": "CI",
+      "addressLine": [
+        "32 Boulevard Carde"
+      ],
+      "locality": "Abidjan",
+      "sortingCode": "64",
+      "languageCode": "zh-Hant"
+    },
+    "formatted": [
+      "64 32 Boulevard Carde Abidjan 64"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "CI",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "SORTING_CODE",
+            "labelId": "CEDEX",
+            "required": false,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": true
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "AX"
+      }
+    },
+    "normalized": {
+      "regionCode": "AX"
+    },
+    "formatted": [
+      "ÅLAND"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "AX",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ],
+        []
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "AX",
+        "locality": "City",
+        "postalCode": "123"
+      }
+    },
+    "normalized": {
+      "regionCode": "AX",
+      "locality": "City",
+      "postalCode": "123"
+    },
+    "formatted": [
+      "AX-123 City",
+      "ÅLAND"
+    ],
+    "problems": [
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "AX",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ],
+        []
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "MX",
+        "addressLine": [
+          "Av Gregorio Méndez Magaña 1400"
+        ],
+        "administrativeArea": "TAB",
+        "locality": "Villahermosa",
+        "postalCode": "86070",
+        "languageCode": "es"
+      }
+    },
+    "normalized": {
+      "regionCode": "MX",
+      "addressLine": [
+        "Av Gregorio Méndez Magaña 1400"
+      ],
+      "administrativeArea": "TAB",
+      "locality": "Villahermosa",
+      "postalCode": "86070",
+      "languageCode": "es"
+    },
+    "formatted": [
+      "Av Gregorio Méndez Magaña 1400",
+      "86070 Villahermosa, TAB"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNKNOWN_VALUE"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "MX",
+      "languageTag": "es",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "DEPENDENT_LOCALITY",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": false,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "MX",
+        "addressLine": [
+          "Av Gregorio Méndez Magaña 1400"
+        ],
+        "administrativeArea": "TAB",
+        "locality": "Villahermosa",
+        "postalCode": "80000",
+        "languageCode": "es"
+      }
+    },
+    "normalized": {
+      "regionCode": "MX",
+      "addressLine": [
+        "Av Gregorio Méndez Magaña 1400"
+      ],
+      "administrativeArea": "TAB",
+      "locality": "Villahermosa",
+      "postalCode": "80000",
+      "languageCode": "es"
+    },
+    "formatted": [
+      "Av Gregorio Méndez Magaña 1400",
+      "80000 Villahermosa, TAB"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNKNOWN_VALUE"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "MX",
+      "languageTag": "es",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "DEPENDENT_LOCALITY",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": false,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "GB",
+        "addressLine": [
+          "10 Downing Street"
+        ],
+        "locality": "London",
+        "postalCode": "SW1A 2AA"
+      }
+    },
+    "normalized": {
+      "regionCode": "GB",
+      "addressLine": [
+        "10 Downing Street"
+      ],
+      "locality": "London",
+      "postalCode": "SW1A 2AA"
+    },
+    "formatted": [
+      "10 Downing Street",
+      "London",
+      "SW1A 2AA"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "GB",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "COUNTY",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "DE",
+        "addressLine": [
+          "Unter den Linden 1"
+        ],
+        "locality": "Berlin",
+        "postalCode": "10117"
+      }
+    },
+    "normalized": {
+      "regionCode": "DE",
+      "addressLine": [
+        "Unter den Linden 1"
+      ],
+      "locality": "Berlin",
+      "postalCode": "10117"
+    },
+    "formatted": [
+      "Unter den Linden 1",
+      "10117 Berlin"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "DE",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "FR",
+        "addressLine": [
+          "1 Rue de Rivoli"
+        ],
+        "locality": "Paris",
+        "postalCode": "75001"
+      }
+    },
+    "normalized": {
+      "regionCode": "FR",
+      "addressLine": [
+        "1 Rue de Rivoli"
+      ],
+      "locality": "Paris",
+      "postalCode": "75001"
+    },
+    "formatted": [
+      "1 Rue de Rivoli",
+      "75001 Paris"
+    ],
+    "problems": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "FR",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "SORTING_CODE",
+            "labelId": "CEDEX",
+            "required": false,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "AU",
+        "addressLine": [
+          "1 Bondi Rd"
+        ],
+        "administrativeArea": "NSW",
+        "locality": "Sydney",
+        "postalCode": "2026"
+      }
+    },
+    "normalized": {
+      "regionCode": "AU",
+      "addressLine": [
+        "1 Bondi Rd"
+      ],
+      "administrativeArea": "NSW",
+      "locality": "Sydney",
+      "postalCode": "2026"
+    },
+    "formatted": [
+      "1 Bondi Rd",
+      "Sydney NSW 2026"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "AU",
+      "languageTag": "en",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "BR",
+        "addressLine": [
+          "Rodovia Raposo Tavares, 6388-6682"
+        ],
+        "administrativeArea": "São Paulo",
+        "locality": "Presidente Prudente",
+        "postalCode": "19063-008",
+        "languageCode": "pt"
+      }
+    },
+    "normalized": {
+      "regionCode": "BR",
+      "addressLine": [
+        "Rodovia Raposo Tavares, 6388-6682"
+      ],
+      "administrativeArea": "SP",
+      "locality": "Presidente Prudente",
+      "postalCode": "19063-008",
+      "languageCode": "pt"
+    },
+    "formatted": [
+      "Rodovia Raposo Tavares, 6388-6682",
+      "Presidente Prudente-SP",
+      "19063-008"
+    ],
+    "problems": [
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "BR",
+      "languageTag": "pt",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          },
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "STATE",
+            "required": true,
+            "length": "short",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "KR",
+        "administrativeArea": "강원",
+        "languageCode": "ko-KR"
+      }
+    },
+    "normalized": {
+      "regionCode": "KR",
+      "administrativeArea": "강원도",
+      "languageCode": "ko-KR"
+    },
+    "formatted": [
+      "강원도"
+    ],
+    "problems": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
+    "layout": {
+      "regionCode": "KR",
+      "languageTag": "ko-Latn",
+      "rows": [
+        [
+          {
+            "kind": "field",
+            "field": "RECIPIENT",
+            "labelId": "RECIPIENT_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ORGANIZATION",
+            "labelId": "ORGANIZATION_LABEL",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "STREET_ADDRESS",
+            "labelId": "ADDRESS_LINE_1_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": true
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "DEPENDENT_LOCALITY",
+            "required": false,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "LOCALITY",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "ADMIN_AREA",
+            "labelId": "DO_SI",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ],
+        [
+          {
+            "kind": "field",
+            "field": "POSTAL_CODE",
+            "labelId": "POSTAL_CODE_LABEL",
+            "required": true,
+            "length": "long",
+            "multiline": false
+          }
+        ]
+      ]
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "QZ"
+      }
+    },
+    "normalized": {
+      "regionCode": "QZ"
+    },
+    "formatted": [],
+    "problems": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
+    ],
+    "layout": {
+      "regionCode": "QZ",
+      "languageTag": "",
+      "rows": []
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": ""
+      }
+    },
+    "normalized": {
+      "regionCode": ""
+    },
+    "formatted": [],
+    "problems": [
+      {
+        "field": "COUNTRY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      }
+    ]
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "rrr",
+        "addressLine": [
+          "aaa",
+          "P.O. Box",
+          "aaa"
+        ]
+      }
+    },
+    "normalized": {
+      "regionCode": "rrr",
+      "addressLine": [
+        "aaa",
+        "P.O. Box",
+        "aaa"
+      ]
+    },
+    "formatted": [
+      "aaa",
+      "P.O. Box",
+      "aaa"
+    ],
+    "problems": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
+    ],
+    "layout": {
+      "regionCode": "rrr",
+      "languageTag": "",
+      "rows": []
+    }
+  },
+  {
+    "input": {
+      "address": {
+        "regionCode": "rrr",
+        "addressLine": [
+          "aaa",
+          "P.O. Box",
+          "aaa"
+        ]
+      },
+      "validateOptions": {
+        "allowPostal": true
+      }
+    },
+    "normalized": {
+      "regionCode": "rrr",
+      "addressLine": [
+        "aaa",
+        "P.O. Box",
+        "aaa"
+      ]
+    },
+    "formatted": [
+      "aaa",
+      "P.O. Box",
+      "aaa"
+    ],
+    "problems": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
+    ],
+    "layout": {
+      "regionCode": "rrr",
+      "languageTag": "",
+      "rows": []
+    }
+  }
+]
