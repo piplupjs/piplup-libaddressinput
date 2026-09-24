@@ -56,23 +56,6 @@ jobs:
       # Smoke test: node-cli's --help exits 0 with no network access needed.
       - run: pnpm --filter node-cli-example start -- --help
 
-  golden-crosscheck:
-    runs-on: [self-hosted, windows]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - name: Setup C++ build tools
-        uses: microsoft/setup-msbuild@v2
-      - name: Install CMake and Ninja
-        run: choco install cmake ninja -y
-        shell: powershell
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @piplup/libaddressinput build
-      - name: Run C++ golden cross-check
-        run: powershell -Command "cd test/golden/cpp-harness; bash build.sh"
+  # golden-crosscheck: C++ cross-validation with Linux bash scripts
+  # Requires cmake, ninja, and Linux build tools - not practical on Windows
+  # Can be restored in a separate Linux-only workflow if needed
