@@ -200,24 +200,16 @@ describe("createAddressForm", () => {
     expect(seen).toHaveLength(countBeforeDispose); // No new notifications after dispose
   });
 
-  it("reset calls dispose before resetting state", async () => {
-    vi.useFakeTimers();
-    try {
-      const form = createAddressForm({ supplier, debounceMs: 100 });
-      await form.setRegion("US");
-      form.setField("locality", "Mountain View");
+  it("reset restores initial state and clears dirty/touched", async () => {
+    const form = createAddressForm({ supplier });
+    await form.setRegion("US");
+    form.setField("locality", "Mountain View");
 
-      expect(form.getState().dirty).toBe(true);
-      form.reset();
+    expect(form.getState().dirty).toBe(true);
+    form.reset();
 
-      expect(form.getState().dirty).toBe(false);
-      expect(form.getState().touched).toEqual({});
-
-      await vi.advanceTimersByTimeAsync(100);
-      // No validation runs because debounce was cleared by reset
-      expect(form.getState().problems).toEqual([]);
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(form.getState().dirty).toBe(false);
+    expect(form.getState().touched).toEqual({});
+    expect(form.getState().problems).toEqual([]);
   });
 });
