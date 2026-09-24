@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         node: [18, 20, 22]
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,7 +31,7 @@ jobs:
       - run: pnpm build
 
   deno:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -45,7 +45,7 @@ jobs:
       - run: deno run --no-config packages/core/dist/index.js
 
   bun:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -59,7 +59,7 @@ jobs:
       - run: bun run packages/core/dist/index.js
 
   examples:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -81,7 +81,7 @@ jobs:
       - run: pnpm --filter node-cli-example start -- --help
 
   golden-crosscheck:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, windows]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,9 +91,12 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - name: Install C++ toolchain
-        run: sudo apt-get update && sudo apt-get install -y g++ cmake ninja-build
+      - name: Setup C++ build tools
+        uses: microsoft/setup-msbuild@v2
+      - name: Install CMake and Ninja
+        run: choco install cmake ninja -y
+        shell: powershell
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @piplup/libaddressinput build
       - name: Run C++ golden cross-check
-        run: bash test/golden/cpp-harness/build.sh
+        run: powershell -Command "cd test/golden/cpp-harness; bash build.sh"
