@@ -50,10 +50,11 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Publish to npm
-        run: pnpm -r publish --access public
-        # npm automatically uses GitHub OIDC token for Trusted Publisher authentication
-        # No explicit token needed - npm detects id-token: write permission and uses OIDC
+        run: npm exec pnpm -- -r publish --access public
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
