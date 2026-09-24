@@ -21,7 +21,15 @@ const BANNED_GLOBALS = [
 
 export default tseslint.config(
   {
-    ignores: ["**/dist/**", "**/node_modules/**", "third_party/**"],
+    // test/golden/cpp-harness/*.cjs: plain Node CommonJS maintenance
+    // scripts for the golden cross-check (see test/golden/README.md), not
+    // part of the TS/ESM app — out of scope for these rules.
+    ignores: [
+      "**/dist/**",
+      "**/node_modules/**",
+      "third_party/**",
+      "test/golden/cpp-harness/**/*.cjs",
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

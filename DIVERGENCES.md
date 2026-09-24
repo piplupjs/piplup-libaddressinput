@@ -18,7 +18,11 @@ Divergences fall into two categories:
   These are *not* bugs in the port — the porting algorithm is verified
   correct against the data actually shipped — but they mean this library's
   output can differ from a Chromium build using upstream's live data server,
-  for the specific fields called out below.
+  for the specific fields called out below. "Verified correct" isn't just
+  asserted: `test/golden/` cross-checks `formatAddress()` against a real,
+  independently-compiled build of upstream's own C++ `GetFormattedNationalAddress`,
+  fed the exact same `testdata/countryinfo.txt` data — 24/24 entries in the
+  committed corpus match byte-for-byte. See `test/golden/README.md`.
 
 ## Design divergences
 

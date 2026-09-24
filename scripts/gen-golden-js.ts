@@ -48,6 +48,16 @@ async function main(): Promise<void> {
     let problems: unknown;
     let loadError: string | undefined;
 
+    // formatAddress() never itself normalizes (matches upstream:
+    // GetFormattedNationalAddress doesn't call AddressNormalizer) — this is
+    // the address exactly as given, useful for comparing against a minimal
+    // C++ harness that has no AddressNormalizer wired up (it needs a
+    // PreloadSupplier, out of scope for that harness — see
+    // test/golden/README.md). `formatted` (below) is the more realistic
+    // "what a consumer following the README's quick start actually gets"
+    // value, post-normalization.
+    const formattedRaw = formatAddress(address);
+
     if (regionCode.length > 0) {
       const loaded = await supplier.loadRules(regionCode);
       if (loaded.success) {
@@ -58,7 +68,7 @@ async function main(): Promise<void> {
         loadError = `failed to load region data for "${regionCode}"`;
       }
     } else {
-      formatted = formatAddress(address);
+      formatted = formattedRaw;
       problems = await validate(supplier, address, validateOptions);
     }
 
@@ -67,6 +77,7 @@ async function main(): Promise<void> {
     results.push({
       input: entry,
       normalized,
+      formattedRaw,
       formatted,
       problems,
       layout,

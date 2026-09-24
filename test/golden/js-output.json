@@ -22,6 +22,11 @@
       "postalCode": "94043",
       "recipient": "Jane Doe"
     },
+    "formattedRaw": [
+      "Jane Doe",
+      "1600 Amphitheatre Pkwy",
+      "Mountain View CA 94043"
+    ],
     "formatted": [
       "Jane Doe",
       "1600 Amphitheatre Pkwy",
@@ -110,6 +115,9 @@
       "regionCode": "US",
       "postalCode": "123"
     },
+    "formattedRaw": [
+      "123"
+    ],
     "formatted": [
       "123"
     ],
@@ -210,6 +218,7 @@
     "normalized": {
       "regionCode": "US"
     },
+    "formattedRaw": [],
     "formatted": [],
     "problems": [
       {
@@ -320,6 +329,10 @@
       "postalCode": "8002",
       "languageCode": "de"
     },
+    "formattedRaw": [
+      "Brandschenkestrasse 110",
+      "CH-8002 Zürich"
+    ],
     "formatted": [
       "Brandschenkestrasse 110",
       "CH-8002 Zürich"
@@ -403,6 +416,9 @@
       "regionCode": "CH",
       "postalCode": "123"
     },
+    "formattedRaw": [
+      "CH-123"
+    ],
     "formatted": [
       "CH-123"
     ],
@@ -505,6 +521,10 @@
       "administrativeArea": "Tokyo",
       "languageCode": "ja_Latn"
     },
+    "formattedRaw": [
+      "Roppongi Hills",
+      "Tokyo"
+    ],
     "formatted": [
       "Roppongi Hills",
       "Tokyo"
@@ -612,6 +632,11 @@
       "postalCode": "770-0847",
       "languageCode": "ja"
     },
+    "formattedRaw": [
+      "〒770-0847",
+      "徳島県",
+      "徳島市..."
+    ],
     "formatted": [
       "〒770-0847",
       "徳島県",
@@ -718,6 +743,11 @@
       "postalCode": "106",
       "languageCode": "zh-Hant"
     },
+    "formattedRaw": [
+      "106",
+      "台北市大安區",
+      "台灣信義路三段33號"
+    ],
     "formatted": [
       "106",
       "台北市大安區",
@@ -816,6 +846,11 @@
       "postalCode": "G1R 123",
       "languageCode": "fr"
     },
+    "formattedRaw": [
+      "5 Rue du Tresor",
+      "Apt. 4",
+      "Montmagny QC G1R 123"
+    ],
     "formatted": [
       "5 Rue du Tresor",
       "Apt. 4",
@@ -918,6 +953,9 @@
       "sortingCode": "64",
       "languageCode": "zh-Hant"
     },
+    "formattedRaw": [
+      "64 32 Boulevard Carde Abidjan 64"
+    ],
     "formatted": [
       "64 32 Boulevard Carde Abidjan 64"
     ],
@@ -996,6 +1034,9 @@
     "normalized": {
       "regionCode": "AX"
     },
+    "formattedRaw": [
+      "ÅLAND"
+    ],
     "formatted": [
       "ÅLAND"
     ],
@@ -1093,6 +1134,10 @@
       "locality": "City",
       "postalCode": "123"
     },
+    "formattedRaw": [
+      "AX-123 City",
+      "ÅLAND"
+    ],
     "formatted": [
       "AX-123 City",
       "ÅLAND"
@@ -1197,6 +1242,10 @@
       "postalCode": "86070",
       "languageCode": "es"
     },
+    "formattedRaw": [
+      "Av Gregorio Méndez Magaña 1400",
+      "86070 Villahermosa, TAB"
+    ],
     "formatted": [
       "Av Gregorio Méndez Magaña 1400",
       "86070 Villahermosa, TAB"
@@ -1309,6 +1358,10 @@
       "postalCode": "80000",
       "languageCode": "es"
     },
+    "formattedRaw": [
+      "Av Gregorio Méndez Magaña 1400",
+      "80000 Villahermosa, TAB"
+    ],
     "formatted": [
       "Av Gregorio Méndez Magaña 1400",
       "80000 Villahermosa, TAB"
@@ -1417,6 +1470,11 @@
       "locality": "London",
       "postalCode": "SW1A 2AA"
     },
+    "formattedRaw": [
+      "10 Downing Street",
+      "London",
+      "SW1A 2AA"
+    ],
     "formatted": [
       "10 Downing Street",
       "London",
@@ -1521,6 +1579,10 @@
       "locality": "Berlin",
       "postalCode": "10117"
     },
+    "formattedRaw": [
+      "Unter den Linden 1",
+      "10117 Berlin"
+    ],
     "formatted": [
       "Unter den Linden 1",
       "10117 Berlin"
@@ -1612,6 +1674,10 @@
       "locality": "Paris",
       "postalCode": "75001"
     },
+    "formattedRaw": [
+      "1 Rue de Rivoli",
+      "75001 Paris"
+    ],
     "formatted": [
       "1 Rue de Rivoli",
       "75001 Paris"
@@ -1713,6 +1779,10 @@
       "locality": "Sydney",
       "postalCode": "2026"
     },
+    "formattedRaw": [
+      "1 Bondi Rd",
+      "Sydney NSW 2026"
+    ],
     "formatted": [
       "1 Bondi Rd",
       "Sydney NSW 2026"
@@ -1812,6 +1882,11 @@
       "postalCode": "19063-008",
       "languageCode": "pt"
     },
+    "formattedRaw": [
+      "Rodovia Raposo Tavares, 6388-6682",
+      "Presidente Prudente-São Paulo",
+      "19063-008"
+    ],
     "formatted": [
       "Rodovia Raposo Tavares, 6388-6682",
       "Presidente Prudente-SP",
@@ -1900,6 +1975,9 @@
       "administrativeArea": "강원도",
       "languageCode": "ko-KR"
     },
+    "formattedRaw": [
+      "강원"
+    ],
     "formatted": [
       "강원도"
     ],
@@ -2005,6 +2083,7 @@
     "normalized": {
       "regionCode": "QZ"
     },
+    "formattedRaw": [],
     "formatted": [],
     "problems": [
       {
@@ -2027,6 +2106,7 @@
     "normalized": {
       "regionCode": ""
     },
+    "formattedRaw": [],
     "formatted": [],
     "problems": [
       {
@@ -2054,6 +2134,11 @@
         "aaa"
       ]
     },
+    "formattedRaw": [
+      "aaa",
+      "P.O. Box",
+      "aaa"
+    ],
     "formatted": [
       "aaa",
       "P.O. Box",
@@ -2093,6 +2178,11 @@
         "aaa"
       ]
     },
+    "formattedRaw": [
+      "aaa",
+      "P.O. Box",
+      "aaa"
+    ],
     "formatted": [
       "aaa",
       "P.O. Box",

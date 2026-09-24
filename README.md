@@ -16,8 +16,7 @@ differs from upstream.
 
 This library returns plain, serializable data and functions — never DOM
 nodes, components, or CSS. Bring your own UI (React, Vue, Svelte, a CLI, a
-server template, or none at all). See `.planning/PLAN.md` §1 and §7a, and the
-runnable examples in [`examples/`](examples).
+server template, or none at all). See runnable examples in [`examples/`](examples).
 
 ## Quick start
 
