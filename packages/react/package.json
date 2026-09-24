@@ -1,6 +1,6 @@
 {
   "name": "@piplup/libaddressinput-react",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Headless React hooks and context for @piplup/libaddressinput",
   "license": "Apache-2.0",
   "type": "module",
