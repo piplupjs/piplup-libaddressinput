@@ -18,6 +18,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -51,8 +52,7 @@ jobs:
 
       - name: Publish to npm
         run: pnpm -r publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Uses GitHub's OIDC token for Trusted Publisher authentication
         # pnpm automatically converts workspace:* to actual versions during publish
 
       - name: Create GitHub Release
