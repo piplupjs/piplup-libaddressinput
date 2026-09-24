@@ -44,7 +44,13 @@ export function App() {
   }
 
   return (
-    <main style={{ maxWidth: "32rem", margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
+    <main
+      style={{
+        maxWidth: "32rem",
+        margin: "2rem auto",
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
       <h1>Address form (react-form-controller)</h1>
 
       <AddressProvider value={address}>
@@ -101,7 +107,12 @@ function RegionSelector({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
+        style={{
+          display: "block",
+          width: "100%",
+          padding: "0.5rem",
+          marginTop: "0.25rem",
+        }}
       >
         {countries.map(({ code, name }) => (
           <option key={code} value={code}>
@@ -191,7 +202,11 @@ function AddressFields({
                   {errors.map((msg, i) => (
                     <div
                       key={i}
-                      style={{ color: "#b00020", fontSize: "0.85em", marginTop: "0.25rem" }}
+                      style={{
+                        color: "#b00020",
+                        fontSize: "0.85em",
+                        marginTop: "0.25rem",
+                      }}
                     >
                       {msg}
                     </div>

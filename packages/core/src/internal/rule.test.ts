@@ -37,9 +37,7 @@ describe("parseRule", () => {
     )!;
     expect(first.format).not.toEqual([]);
     expect(first.adminAreaNameMessageId).toBe("IDS_LIBADDRESSINPUT_AREA");
-    expect(first.postalCodeNameMessageId).toBe(
-      "IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL",
-    );
+    expect(first.postalCodeNameMessageId).toBe("IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL");
     expect(first.solePostalCode).toBe("1234");
     expect(first.postalCodeExample).toBe("1234");
     expect(first.postServiceUrl).toBe("http://www.testpost.com");
@@ -105,9 +103,7 @@ describe("parseRule", () => {
   });
 
   it("parses the post service URL correctly (ParsesPostServiceUrlCorrectly)", () => {
-    const rule = parseRule(
-      JSON.stringify({ posturl: "http://www.testpost.com" }),
-    )!;
+    const rule = parseRule(JSON.stringify({ posturl: "http://www.testpost.com" }))!;
     expect(rule.postServiceUrl).toBe("http://www.testpost.com");
   });
 
@@ -140,9 +136,9 @@ describe("parseRule name-type message ids", () => {
     ["zip", "IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL"],
   ];
   it.each(postalCodeCases)("zip_name_type %s (AllPostalCodeNames)", (type, id) => {
-    expect(parseRule(JSON.stringify({ zip_name_type: type }))!.postalCodeNameMessageId).toBe(
-      id,
-    );
+    expect(
+      parseRule(JSON.stringify({ zip_name_type: type }))!.postalCodeNameMessageId,
+    ).toBe(id);
   });
 
   const localityCases: [string, NameTypeMessageId][] = [
@@ -151,9 +147,9 @@ describe("parseRule name-type message ids", () => {
     ["district", "IDS_LIBADDRESSINPUT_DISTRICT"],
   ];
   it.each(localityCases)("locality_name_type %s (AllLocalityNames)", (type, id) => {
-    expect(parseRule(JSON.stringify({ locality_name_type: type }))!.localityNameMessageId).toBe(
-      id,
-    );
+    expect(
+      parseRule(JSON.stringify({ locality_name_type: type }))!.localityNameMessageId,
+    ).toBe(id);
   });
 
   const sublocalityCases: [string, NameTypeMessageId][] = [
@@ -186,8 +182,8 @@ describe("parseRule name-type message ids", () => {
     ["state", "IDS_LIBADDRESSINPUT_STATE"],
   ];
   it.each(adminAreaCases)("state_name_type %s (AllAdminAreaNames)", (type, id) => {
-    expect(parseRule(JSON.stringify({ state_name_type: type }))!.adminAreaNameMessageId).toBe(
-      id,
-    );
+    expect(
+      parseRule(JSON.stringify({ state_name_type: type }))!.adminAreaNameMessageId,
+    ).toBe(id);
   });
 });

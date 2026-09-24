@@ -4,28 +4,34 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   test:
     strategy:
       matrix:
         node: [18, 20, 22]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Validate commit messages
+        run: pnpm dlx commitlint --from ${{ github.event.pull_request.base.sha || 'origin/main~1' }} --to HEAD
+        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
 
   deno:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -39,7 +45,7 @@ jobs:
       - run: deno run --no-config packages/core/dist/index.js
 
   bun:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -53,7 +59,7 @@ jobs:
       - run: bun run packages/core/dist/index.js
 
   examples:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -75,7 +81,7 @@ jobs:
       - run: pnpm --filter node-cli-example start -- --help
 
   golden-crosscheck:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -91,4 +97,3 @@ jobs:
       - run: pnpm --filter @piplup/libaddressinput build
       - name: Run C++ golden cross-check
         run: bash test/golden/cpp-harness/build.sh
-

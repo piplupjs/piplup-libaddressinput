@@ -30,6 +30,7 @@ export default tseslint.config(
       "third_party/**",
       ".build-deps/**",
       "test/golden/cpp-harness/**/*.cjs",
+      "scripts/**", // Node.js utility scripts, not part of the ESM library
     ],
   },
   js.configs.recommended,

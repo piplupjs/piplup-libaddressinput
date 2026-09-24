@@ -36,7 +36,9 @@ export function getProblemErrorMessage(
     case "MISSING_REQUIRED_FIELD":
       return messages["MISSING_REQUIRED_FIELD"] ?? "You can't leave this empty.";
     case "INVALID_FORMAT":
-      return messages["UNRECOGNIZED_FORMAT_POSTAL_CODE"] ?? "Invalid format for this field.";
+      return (
+        messages["UNRECOGNIZED_FORMAT_POSTAL_CODE"] ?? "Invalid format for this field."
+      );
     case "UNKNOWN_VALUE":
       return "This value is not recognized.";
     case "MISMATCHING_VALUE":

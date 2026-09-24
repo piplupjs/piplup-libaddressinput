@@ -14,10 +14,7 @@
 // extra keys; that was wrong and has been corrected.
 
 import type { AddressField } from "../address-field.js";
-import {
-  parseAddressFieldsRequired,
-  parseFormatRule,
-} from "./address-field-util.js";
+import { parseAddressFieldsRequired, parseFormatRule } from "./address-field-util.js";
 import type { FormatElement } from "./format-element.js";
 
 const SEPARATOR = "~";

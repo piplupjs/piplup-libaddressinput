@@ -82,12 +82,17 @@ export interface AddressFormController {
   reset(): void;
   /** Returns subregions from the current region tree, optionally filtered by parent key/name. */
   getSubRegions(parentKeyOrName?: string): RegionData[];
+  /** Cleanup pending timers and listeners. Automatically called by reset(); use explicitly when discarding the form without reset(). */
+  dispose(): void;
 }
 
 const EMPTY_ADDRESS: AddressData = { regionCode: "" };
 
 function cloneAddress(address: AddressData): AddressData {
-  return { ...address, addressLine: address.addressLine ? [...address.addressLine] : undefined };
+  return {
+    ...address,
+    addressLine: address.addressLine ? [...address.addressLine] : undefined,
+  };
 }
 
 function usedFields(layout: AddressLayout): Set<AddressField> {
@@ -178,7 +183,10 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         const result = await supplier.loadRules(regionCode);
         if (requestId !== regionRequestId) return; // superseded by a later call
         if (!result.success) {
-          setState({ loading: false, error: new Error(`Failed to load region "${regionCode}"`) });
+          setState({
+            loading: false,
+            error: new Error(`Failed to load region "${regionCode}"`),
+          });
           return;
         }
       }
@@ -206,7 +214,7 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         const key = fieldToValueKey(field);
         if (key === undefined) continue;
         const prev = state.values[key];
-        if (prev !== undefined) (nextValues as unknown as Record<string, unknown>)[key] = prev;
+        if (prev !== undefined) Object.assign(nextValues, { [key]: prev });
       }
 
       let regionTree: RegionData | null = null;
@@ -275,18 +283,17 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     },
 
     normalizeValues() {
-      if (state.values.regionCode.length === 0 || !supplier.isLoaded(state.values.regionCode)) {
+      if (
+        state.values.regionCode.length === 0 ||
+        !supplier.isLoaded(state.values.regionCode)
+      ) {
         return;
       }
       setState({ values: normalize(supplier, state.values) });
     },
 
     reset() {
-      if (debounceHandle !== undefined) {
-        clearTimeout(debounceHandle);
-        debounceHandle = undefined;
-      }
-      regionRequestId++; // cancel any in-flight setRegion
+      this.dispose();
       const values = cloneAddress(initialAddress);
       setState({
         values,
@@ -303,6 +310,15 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
       if (values.regionCode.length > 0) {
         void setRegion(values.regionCode);
       }
+    },
+
+    dispose() {
+      if (debounceHandle !== undefined) {
+        clearTimeout(debounceHandle);
+        debounceHandle = undefined;
+      }
+      listeners.clear();
+      regionRequestId++;
     },
 
     getSubRegions(parentKeyOrName?: string) {

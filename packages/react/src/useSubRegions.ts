@@ -1,5 +1,9 @@
 import { useContext, useMemo } from "react";
-import { findSubRegions, formatRegionOption, type AddressField } from "@piplup/libaddressinput";
+import {
+  findSubRegions,
+  formatRegionOption,
+  type AddressField,
+} from "@piplup/libaddressinput";
 import { AddressContext } from "./context.js";
 import type { SubRegion, SubRegionsOptions } from "./types.js";
 

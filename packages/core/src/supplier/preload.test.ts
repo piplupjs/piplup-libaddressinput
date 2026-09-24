@@ -108,7 +108,10 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
   });
 
   it("dedupes concurrent loadRules calls for the same region", async () => {
-    const [a, b] = await Promise.all([supplier.loadRules("FR"), supplier.loadRules("FR")]);
+    const [a, b] = await Promise.all([
+      supplier.loadRules("FR"),
+      supplier.loadRules("FR"),
+    ]);
     expect(a).toEqual(b);
     expect(supplier.isLoaded("FR")).toBe(true);
   });
@@ -128,7 +131,11 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
 
       // A source that fails every request: from() must not need it for the
       // regions already in `exported`.
-      const offline = { async get() { return { success: false, data: undefined }; } };
+      const offline = {
+        async get() {
+          return { success: false, data: undefined };
+        },
+      };
       const rehydrated = PreloadSupplier.from(offline, new NullStorage(), exported);
 
       expect(rehydrated.isLoaded("US")).toBe(true);
@@ -139,7 +146,11 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
     it("from() can still load further regions given a working source", async () => {
       await supplier.loadRules("US");
       const exported = supplier.export();
-      const rehydrated = PreloadSupplier.from(new FallbackAggregateSource(), new NullStorage(), exported);
+      const rehydrated = PreloadSupplier.from(
+        new FallbackAggregateSource(),
+        new NullStorage(),
+        exported,
+      );
       expect(rehydrated.isLoaded("US")).toBe(true);
       expect(rehydrated.isLoaded("CA")).toBe(false);
 

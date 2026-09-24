@@ -23,7 +23,8 @@ const mockState: AddressState = {
   loading: false,
   error: null,
   supplier: {} as unknown as AddressState["supplier"],
-  getField: (query) => (query === "POSTAL_CODE" || query === "postalCode" ? mockField : undefined),
+  getField: (query) =>
+    query === "POSTAL_CODE" || query === "postalCode" ? mockField : undefined,
 };
 
 describe("useField", () => {

@@ -50,8 +50,6 @@ describe("formatElementsEqual", () => {
 
   it("never equates elements of different kinds", () => {
     expect(formatElementsEqual(newlineElement(), literalElement("\n"))).toBe(false);
-    expect(formatElementsEqual(fieldElement("COUNTRY"), literalElement("R"))).toBe(
-      false,
-    );
+    expect(formatElementsEqual(fieldElement("COUNTRY"), literalElement("R"))).toBe(false);
   });
 });

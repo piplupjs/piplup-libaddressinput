@@ -1,7 +1,4 @@
-export {
-  DEFAULT_FIELD_LABEL_IDS,
-  getFieldLabel,
-} from "./labels.js";
+export { DEFAULT_FIELD_LABEL_IDS, getFieldLabel } from "./labels.js";
 
 export {
   FIELD_TO_DATA_KEY,

@@ -62,10 +62,11 @@ function getCompiledMatcher(languageTag: string): RegExp | undefined {
  * `"und"` (English-like defaults) plus one per base language the country's
  * rule declares. Mirrors `PostBoxMatchers::GetMatchers`.
  */
-export function getPostBoxMatchers(
-  countryRule: Pick<Rule, "languages">,
-): RegExp[] {
-  const languageTags = ["und", ...countryRule.languages.map((tag) => parseLanguage(tag).base)];
+export function getPostBoxMatchers(countryRule: Pick<Rule, "languages">): RegExp[] {
+  const languageTags = [
+    "und",
+    ...countryRule.languages.map((tag) => parseLanguage(tag).base),
+  ];
   const matchers: RegExp[] = [];
   for (const tag of languageTags) {
     const matcher = getCompiledMatcher(tag);

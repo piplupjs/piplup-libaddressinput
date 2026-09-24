@@ -38,10 +38,7 @@ function fieldValue(address: AddressData, field: AddressField): string {
 // Mirrors ShouldSetLanguageForKey in lookup_key.cc. `languageTagNoLatn` is
 // assumed to already have any "-Latn" script subtag stripped, as upstream
 // requires of its caller.
-function shouldSetLanguageForKey(
-  languageTagNoLatn: string,
-  regionCode: string,
-): boolean {
+function shouldSetLanguageForKey(languageTagNoLatn: string, regionCode: string): boolean {
   // We only need a language in the key if there is subregion data at all.
   if (RegionDataConstants.getMaxLookupKeyDepth(regionCode) === 0) {
     return false;

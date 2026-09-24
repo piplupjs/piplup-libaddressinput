@@ -31,8 +31,8 @@ parsing `testdata/countryinfo.txt` at startup — the same file
 `scripts/gen-fallback.ts` parses for the JS port's fallback data (see
 `DIVERGENCES.md`: upstream's real `region_data_constants.cc` is generated at
 Google's internal build time and isn't in the OSS repo). Both sides of the
-comparison read the exact same input file (`countryinfo.txt`), so matches confirm the *porting
-algorithms* are correct, independent of any data-source difference.
+comparison read the exact same input file (`countryinfo.txt`), so matches confirm the _porting
+algorithms_ are correct, independent of any data-source difference.
 
 ## Scope: what's covered, what isn't
 

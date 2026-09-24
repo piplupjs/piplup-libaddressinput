@@ -25,7 +25,10 @@ describe("buildLayout (AddressUiTest)", () => {
 
   it("returns a non-empty layout for every supported region (ComponentsAreValid, partial)", () => {
     for (const regionCode of getRegionCodes()) {
-      expect(buildLayout(regionCode, UI_LANGUAGE_TAG).rows.length, regionCode).toBeGreaterThan(0);
+      expect(
+        buildLayout(regionCode, UI_LANGUAGE_TAG).rows.length,
+        regionCode,
+      ).toBeGreaterThan(0);
     }
   });
 

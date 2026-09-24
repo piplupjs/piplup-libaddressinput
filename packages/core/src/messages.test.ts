@@ -27,7 +27,12 @@ describe("getProblemMessage", () => {
   const address: AddressData = { regionCode: "US" };
 
   it("MISSING_REQUIRED_FIELD needs no params for a non-postal field", () => {
-    const msg = getProblemMessage(address, "LOCALITY", "MISSING_REQUIRED_FIELD", createEmptyRule());
+    const msg = getProblemMessage(
+      address,
+      "LOCALITY",
+      "MISSING_REQUIRED_FIELD",
+      createEmptyRule(),
+    );
     expect(msg).toEqual({ id: "MISSING_REQUIRED_FIELD", params: [] });
     expect(formatProblemMessage(msg, en)).toBe("You can't leave this empty.");
   });
@@ -46,7 +51,12 @@ describe("getProblemMessage", () => {
   });
 
   it("USES_P_O_BOX needs no params", () => {
-    const msg = getProblemMessage(address, "STREET_ADDRESS", "USES_P_O_BOX", createEmptyRule());
+    const msg = getProblemMessage(
+      address,
+      "STREET_ADDRESS",
+      "USES_P_O_BOX",
+      createEmptyRule(),
+    );
     expect(msg.id).toBe("PO_BOX_FORBIDDEN_VALUE");
   });
 
@@ -65,7 +75,12 @@ describe("getProblemMessage", () => {
   });
 
   it("POSTAL_CODE MISSING_REQUIRED_FIELD with no example/url falls back to the generic message", () => {
-    const msg = getProblemMessage(address, "POSTAL_CODE", "MISSING_REQUIRED_FIELD", createEmptyRule());
+    const msg = getProblemMessage(
+      address,
+      "POSTAL_CODE",
+      "MISSING_REQUIRED_FIELD",
+      createEmptyRule(),
+    );
     expect(msg).toEqual({ id: "MISSING_REQUIRED_FIELD", params: [] });
   });
 
@@ -85,10 +100,16 @@ describe("getProblemMessage", () => {
       postalCodeExample: "90291",
       postServiceUrl: "https://tools.usps.com/",
     };
-    const msg = getProblemMessage(address, "POSTAL_CODE", "MISSING_REQUIRED_FIELD", rule, {
-      enableExamples: false,
-      enableLinks: false,
-    });
+    const msg = getProblemMessage(
+      address,
+      "POSTAL_CODE",
+      "MISSING_REQUIRED_FIELD",
+      rule,
+      {
+        enableExamples: false,
+        enableLinks: false,
+      },
+    );
     expect(msg).toEqual({ id: "MISSING_REQUIRED_FIELD", params: [] });
   });
 });

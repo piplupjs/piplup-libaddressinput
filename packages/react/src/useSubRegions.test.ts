@@ -39,7 +39,9 @@ const mockState: AddressState = {
 
 describe("useSubRegions", () => {
   it("extracts top-level subregions for ADMIN_AREA", () => {
-    const { result } = renderHook(() => useSubRegions("ADMIN_AREA", { state: mockState }));
+    const { result } = renderHook(() =>
+      useSubRegions("ADMIN_AREA", { state: mockState }),
+    );
     expect(result.current.length).toBe(2);
     expect(result.current[0]).toEqual({
       key: "CA",
@@ -63,7 +65,9 @@ describe("useSubRegions", () => {
 
   it("returns empty array when tree is null", () => {
     const emptyState = { ...mockState, tree: null };
-    const { result } = renderHook(() => useSubRegions("ADMIN_AREA", { state: emptyState }));
+    const { result } = renderHook(() =>
+      useSubRegions("ADMIN_AREA", { state: emptyState }),
+    );
     expect(result.current).toEqual([]);
   });
 });

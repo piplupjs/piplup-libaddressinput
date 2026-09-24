@@ -8,13 +8,24 @@
 // rule can come back with an `id` different from the key requested; this
 // cache is keyed by the returned rule's `id`, same as upstream.
 
-import { LOOKUP_KEY_HIERARCHY, lookupKeyDepth, lookupKeyRegionCode, lookupKeyToString, type LookupKey } from "../internal/lookup-key.js";
+import {
+  LOOKUP_KEY_HIERARCHY,
+  lookupKeyDepth,
+  lookupKeyRegionCode,
+  lookupKeyToString,
+  type LookupKey,
+} from "../internal/lookup-key.js";
 import * as RegionDataConstants from "../internal/region-data-constants.js";
 import { parseRule, type Rule } from "../internal/rule.js";
 import { Retriever } from "../internal/retriever.js";
 import type { Source } from "../source.js";
 import type { Storage } from "../storage.js";
-import { createEmptyRuleHierarchy, type RuleHierarchy, type Supplier, type SupplyResult } from "./supplier.js";
+import {
+  createEmptyRuleHierarchy,
+  type RuleHierarchy,
+  type Supplier,
+  type SupplyResult,
+} from "./supplier.js";
 
 export class OndemandSupplier implements Supplier {
   private readonly retriever: Retriever;

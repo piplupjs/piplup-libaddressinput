@@ -194,12 +194,10 @@ function checkPostalCodeFormatAndValue(
 ): void {
   const countryRule = hierarchy[0]!;
 
-  if (
-    !(
-      shouldReport(filter, "POSTAL_CODE", "INVALID_FORMAT") ||
-      shouldReport(filter, "POSTAL_CODE", "MISMATCHING_VALUE")
-    )
-  ) {
+  if (!(
+    shouldReport(filter, "POSTAL_CODE", "INVALID_FORMAT") ||
+    shouldReport(filter, "POSTAL_CODE", "MISMATCHING_VALUE")
+  )) {
     return;
   }
   if (isFieldEmpty(address, "POSTAL_CODE")) {

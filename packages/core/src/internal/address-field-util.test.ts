@@ -1,10 +1,7 @@
 // Ported from cpp/test/address_field_util_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from "vitest";
-import {
-  parseAddressFieldsRequired,
-  parseFormatRule,
-} from "./address-field-util.js";
+import { parseAddressFieldsRequired, parseFormatRule } from "./address-field-util.js";
 import {
   fieldElement,
   literalElement,
@@ -48,10 +45,7 @@ describe("parseFormatRule", () => {
 
 describe("parseAddressFieldsRequired", () => {
   it("parses required field tokens (RequiredParseDefault)", () => {
-    expect(parseAddressFieldsRequired("AC")).toEqual([
-      "STREET_ADDRESS",
-      "LOCALITY",
-    ]);
+    expect(parseAddressFieldsRequired("AC")).toEqual(["STREET_ADDRESS", "LOCALITY"]);
   });
 
   it("returns nothing for an empty string (RequiredEmptyString)", () => {

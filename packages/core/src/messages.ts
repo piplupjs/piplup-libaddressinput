@@ -186,13 +186,17 @@ export function getProblemMessage(
   }
   if (problem === "UNKNOWN_VALUE") {
     const value =
-      field === "STREET_ADDRESS" ? (address.addressLine?.[0] ?? "") : getFieldValue(address, field);
+      field === "STREET_ADDRESS"
+        ? (address.addressLine?.[0] ?? "")
+        : getFieldValue(address, field);
     return { id: "UNKNOWN_VALUE", params: [value] };
   }
   if (problem === "USES_P_O_BOX") {
     return { id: "PO_BOX_FORBIDDEN_VALUE", params: [] };
   }
-  throw new Error(`getProblemMessage: unsupported (field, problem) pair: (${field}, ${problem})`);
+  throw new Error(
+    `getProblemMessage: unsupported (field, problem) pair: (${field}, ${problem})`,
+  );
 }
 
 function getPostalCodeProblemMessage(
@@ -236,7 +240,9 @@ function getPostalCodeProblemMessage(
         : "UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE";
       params.push(postalCodeExample);
     } else {
-      id = usesPostalCodeAsLabel ? "UNRECOGNIZED_FORMAT_POSTAL_CODE" : "UNRECOGNIZED_FORMAT_ZIP";
+      id = usesPostalCodeAsLabel
+        ? "UNRECOGNIZED_FORMAT_POSTAL_CODE"
+        : "UNRECOGNIZED_FORMAT_ZIP";
     }
     return { id, params };
   }
@@ -244,10 +250,14 @@ function getPostalCodeProblemMessage(
   if (problem === "MISMATCHING_VALUE") {
     let id: MessageId;
     if (postServiceUrl.length > 0) {
-      id = usesPostalCodeAsLabel ? "MISMATCHING_VALUE_POSTAL_CODE_URL" : "MISMATCHING_VALUE_ZIP_URL";
+      id = usesPostalCodeAsLabel
+        ? "MISMATCHING_VALUE_POSTAL_CODE_URL"
+        : "MISMATCHING_VALUE_ZIP_URL";
       pushUrlParams(postServiceUrl, params);
     } else {
-      id = usesPostalCodeAsLabel ? "MISMATCHING_VALUE_POSTAL_CODE" : "MISMATCHING_VALUE_ZIP";
+      id = usesPostalCodeAsLabel
+        ? "MISMATCHING_VALUE_POSTAL_CODE"
+        : "MISMATCHING_VALUE_ZIP";
     }
     return { id, params };
   }
@@ -278,4 +288,3 @@ export function formatProblemMessage(
   if (!template) return message.id;
   return formatMessage(template, message.params);
 }
-

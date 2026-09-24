@@ -19,11 +19,7 @@ export type { Source, SourceResult, FetchSourceOptions } from "./source.js";
 export { FetchSource, FallbackAggregateSource, HybridSource } from "./source.js";
 export type { Storage, StorageResult } from "./storage.js";
 export { MemoryStorage, NullStorage } from "./storage.js";
-export type {
-  Supplier,
-  RuleHierarchy,
-  SupplyResult,
-} from "./supplier/supplier.js";
+export type { Supplier, RuleHierarchy, SupplyResult } from "./supplier/supplier.js";
 export { PreloadSupplier, type LoadRulesResult } from "./supplier/preload.js";
 export { OndemandSupplier } from "./supplier/ondemand.js";
 export type {

@@ -34,8 +34,7 @@ import { FALLBACK_DATA } from "./data/fallback.js";
 
 const DEFAULT_BASE_URL =
   "https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/";
-const LEGACY_BASE_URL =
-  "https://chromium-i18n.appspot.com/ssl-aggregate-address/";
+const LEGACY_BASE_URL = "https://chromium-i18n.appspot.com/ssl-aggregate-address/";
 
 /**
  * A Source backed by `fetch`. Matches the real endpoint's documented
@@ -139,4 +138,3 @@ export class HybridSource implements Source {
     return this.fallback.get(key);
   }
 }
-

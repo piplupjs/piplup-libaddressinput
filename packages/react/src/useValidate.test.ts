@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { act, renderHook } from "@testing-library/react";
-import { FallbackAggregateSource, MemoryStorage, PreloadSupplier } from "@piplup/libaddressinput";
+import {
+  FallbackAggregateSource,
+  MemoryStorage,
+  PreloadSupplier,
+} from "@piplup/libaddressinput";
 import { createValidator, useValidate } from "./useValidate.js";
 
 const supplier = new PreloadSupplier(new FallbackAggregateSource(), new MemoryStorage());

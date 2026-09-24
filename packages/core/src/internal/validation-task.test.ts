@@ -61,9 +61,7 @@ const DEFAULT_TEST_FILTER: ValidationProblem[] = [
   { field: "COUNTRY", problem: "MISSING_REQUIRED_FIELD" },
   { field: "RECIPIENT", problem: "UNEXPECTED_FIELD" },
   { field: "RECIPIENT", problem: "MISSING_REQUIRED_FIELD" },
-  ...ALL_FIELDS.flatMap((field) =>
-    BROAD_PROBLEMS.map((problem) => ({ field, problem })),
-  ),
+  ...ALL_FIELDS.flatMap((field) => BROAD_PROBLEMS.map((problem) => ({ field, problem }))),
 ];
 
 function run(

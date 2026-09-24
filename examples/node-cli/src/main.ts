@@ -102,10 +102,7 @@ async function main(): Promise<void> {
   const address = parseArgs(process.argv.slice(2));
   if (address === undefined) return; // --help
 
-  const supplier = new PreloadSupplier(
-    new HybridSource(),
-    new MemoryStorage(),
-  );
+  const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
   const loaded = await supplier.loadRules(address.regionCode);
   if (!loaded.success) {
     console.error(`Could not load address data for region "${address.regionCode}".`);

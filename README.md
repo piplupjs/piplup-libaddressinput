@@ -22,8 +22,13 @@ server template, or none at all). See runnable examples in [`examples/`](example
 
 ```ts
 import {
-  PreloadSupplier, FetchSource, MemoryStorage,
-  formatAddress, normalize, validate, buildLayout,
+  PreloadSupplier,
+  FetchSource,
+  MemoryStorage,
+  formatAddress,
+  normalize,
+  validate,
+  buildLayout,
 } from "@piplup/libaddressinput";
 import { en } from "@piplup/libaddressinput/messages/en";
 

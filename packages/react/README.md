@@ -1,30 +1,31 @@
 # @piplup/libaddressinput-react
 
-Headless React hooks and context for [`@piplup/libaddressinput`](https://github.com/google/libaddressinput) (Google's address input library).
+[![npm version](https://img.shields.io/npm/v/@piplup/libaddressinput-react)](https://www.npmjs.com/package/@piplup/libaddressinput-react)
+[![npm downloads](https://img.shields.io/npm/dm/@piplup/libaddressinput-react)](https://www.npmjs.com/package/@piplup/libaddressinput-react)
+[![license](https://img.shields.io/npm/l/@piplup/libaddressinput-react)](https://github.com/piplup/libaddressinput/blob/master/LICENSE)
 
-Zero DOM opinions, zero CSS, 100% form-library agnostic. Works with **React Hook Form**, **TanStack Form**, standard React state, or native HTML forms across **Web** and **React Native**.
+Headless React hooks and context for [@piplup/libaddressinput](../core).
 
----
+Zero DOM opinions, zero CSS, 100% form-library agnostic. Works with **React Hook Form**, **TanStack Form**, **Formik**, standard React state, or native HTML forms.
+
+## Features
+
+✅ **Form-library agnostic** - Works with React Hook Form, TanStack Form, Formik, or useState  
+✅ **Context + hooks** - Share state across components without prop drilling  
+✅ **Dynamic layouts** - Auto-format fields for 200+ regions  
+✅ **Cascading selectors** - Sub-regions, states, cities via `useSubRegions()`  
+✅ **Localized** - Country names, field labels, error messages in any language  
+✅ **Autofill support** - Standard `autocomplete` tokens on all fields  
+✅ **TypeScript** - Full type safety  
+✅ **SSR ready** - Hydration-safe, `"use client"` directive included
 
 ## Installation
 
 ```bash
-npm install @piplup/libaddressinput @piplup/libaddressinput-react
-# or
-pnpm add @piplup/libaddressinput @piplup/libaddressinput-react
+npm install @piplup/libaddressinput @piplup/libaddressinput-react react
 ```
 
----
-
-## Key Features
-
-- **Form-Library Agnostic**: Plugs seamlessly into `register(...)` from React Hook Form, `<form.Field>` from TanStack Form, or simple `useState`.
-- **Context & Control Pattern**: Inspired by React Hook Form (`FormProvider` and `useController`). Use `<AddressProvider>` and `useField()` to access field metadata anywhere in your component tree without prop drilling.
-- **Dynamic Google Address Layouts**: Automatically formats layout rows, field order, required indicators, and localized field names (e.g. "PIN code" in India, "ZIP code" in the US, "Prefecture" in Japan).
-- **Cascading Subregions**: Instant access to states, provinces, and districts via `useSubRegions()`.
-- **Intl Country Options**: Localized country names sorted and prioritized with `useCountries()`.
-- **WHATWG Autofill**: Exposes standard autocomplete tokens (`street-address`, `postal-code`, etc.) on all fields.
-- **SSR & React 18+ Concurrent Ready**: Includes `"use client"` directive, hydration-safe, zero DOM globals.
+Requires React 18+ and @piplup/libaddressinput as peer dependency.
 
 ---
 
@@ -32,11 +33,7 @@ pnpm add @piplup/libaddressinput @piplup/libaddressinput-react
 
 ```tsx
 import { useForm, FormProvider } from "react-hook-form";
-import {
-  PreloadSupplier,
-  HybridSource,
-  MemoryStorage,
-} from "@piplup/libaddressinput";
+import { PreloadSupplier, HybridSource, MemoryStorage } from "@piplup/libaddressinput";
 import {
   AddressProvider,
   useAddress,
@@ -127,11 +124,16 @@ Similar to React Hook Form's `useController`, you can isolate individual field l
 ```tsx
 function PostalCodeInput() {
   const { label, required, autoComplete, key } = useField("POSTAL_CODE");
-  const { register, formState: { errors } } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <div>
-      <label>{label} {required && "*"}</label>
+      <label>
+        {label} {required && "*"}
+      </label>
       <input type="text" autoComplete={autoComplete} {...register(key)} />
       {errors[key] && <p className="error">{errors[key]?.message}</p>}
     </div>
@@ -144,7 +146,9 @@ function PostalCodeInput() {
 ## API Reference
 
 ### `useAddress(options)`
+
 Creates the reactive address instance.
+
 - **Parameters**:
   - `supplier`: Address data supplier (e.g. `PreloadSupplier`).
   - `region`: ISO 3166-1 alpha-2 country code (e.g. `"US"`, `"IN"`).
@@ -154,21 +158,27 @@ Creates the reactive address instance.
 - **Returns**: `AddressState` (`region`, `rows`, `fields`, `tree`, `loading`, `error`, `getField`).
 
 ### `useCountries(options?)`
+
 Returns a localized list of countries formatted using `Intl.DisplayNames`.
+
 - **Options**:
   - `locale?`: Locale tag (default `"en"`).
   - `priority?`: Array of country codes to pin to the top of the list (e.g. `["US", "IN"]`).
 
 ### `useSubRegions(field, options?)`
+
 Provides choices for administrative areas (states, provinces) or localities (cities).
+
 - **Options**:
   - `parentKey?`: Parent region key for cascading dropdowns (e.g. state code to get cities).
   - `state?`: Explicit `AddressState` if used outside `<AddressProvider>`.
 
 ### `useValidate(supplier)` & `createValidator(supplier)`
+
 Validates an address object, filtering internal metadata flags so only user-correctable errors are reported.
 
 ### `useFormat(supplier)`
+
 Provides envelope and single-line address formatting utilities.
 
 ---

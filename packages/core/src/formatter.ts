@@ -39,7 +39,10 @@ function getLineSeparatorForLanguage(languageTag: string | undefined): string {
   return COMMA_SEPARATOR;
 }
 
-function combineLinesForLanguage(lines: string[], languageTag: string | undefined): string {
+function combineLinesForLanguage(
+  lines: string[],
+  languageTag: string | undefined,
+): string {
   return lines.join(getLineSeparatorForLanguage(languageTag));
 }
 
@@ -91,7 +94,8 @@ export function formatAddress(address: AddressData): string[] {
     const notAfterDroppedField =
       prev === undefined ||
       prev.kind !== "field" ||
-      (prunedFormat.length > 0 && prunedFormat[prunedFormat.length - 1]!.kind === "field");
+      (prunedFormat.length > 0 &&
+        prunedFormat[prunedFormat.length - 1]!.kind === "field");
     if (notBeforeEmptyField && notAfterDroppedField) {
       prunedFormat.push(element);
     }

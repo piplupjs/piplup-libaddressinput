@@ -46,7 +46,9 @@ describe("ui/problems", () => {
 
     expect(
       getProblemErrorMessage({ field: "STREET_ADDRESS", problem: "USES_P_O_BOX" }),
-    ).toBe("This address line appears to contain a post office box. Please use a street or building address.");
+    ).toBe(
+      "This address line appears to contain a post office box. Please use a street or building address.",
+    );
   });
 
   it("groups user problems by field", () => {

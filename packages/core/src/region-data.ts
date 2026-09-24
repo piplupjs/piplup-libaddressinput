@@ -62,12 +62,20 @@ function buildRegionTreeRecursively(
     }
 
     const localName = rule.name.length === 0 ? key : rule.name;
-    const name = preferLatinName && rule.latinName.length > 0 ? rule.latinName : localName;
+    const name =
+      preferLatinName && rule.latinName.length > 0 ? rule.latinName : localName;
     const region: RegionData = { key, name, subRegions: [] };
     parentRegion.subRegions.push(region);
 
     if (rule.subKeys.length > 0 && regionMaxDepth > lookupKeyDepth(parentKey)) {
-      buildRegionTreeRecursively(rules, childKey, region, rule.subKeys, preferLatinName, regionMaxDepth);
+      buildRegionTreeRecursively(
+        rules,
+        childKey,
+        region,
+        rule.subKeys,
+        preferLatinName,
+        regionMaxDepth,
+      );
     }
   }
 }
@@ -80,7 +88,9 @@ function buildRegion(
   const lookupKey = lookupKeyFromAddress({ regionCode });
   const rootRule = rules.get(lookupKeyToString(lookupKey, MAX_LOOKUP_KEY_DEPTH));
   if (rootRule === undefined) {
-    throw new Error(`buildRegionTree: no rule for region "${regionCode}" (is it loaded?)`);
+    throw new Error(
+      `buildRegionTree: no rule for region "${regionCode}" (is it loaded?)`,
+    );
   }
 
   const region: RegionData = { key: regionCode, name: regionCode, subRegions: [] };

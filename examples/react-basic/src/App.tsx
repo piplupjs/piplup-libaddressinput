@@ -29,14 +29,25 @@ export function App() {
   }
 
   return (
-    <main style={{ maxWidth: "32rem", margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
+    <main
+      style={{
+        maxWidth: "32rem",
+        margin: "2rem auto",
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
       <h1>Address form (react-basic)</h1>
       <label>
         Region
         <select
           value={regionCode}
           onChange={(e) => handleRegionChange(e.target.value)}
-          style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
+          style={{
+            display: "block",
+            width: "100%",
+            padding: "0.5rem",
+            marginTop: "0.25rem",
+          }}
         >
           {countries.map(({ code, name }) => (
             <option key={code} value={code}>

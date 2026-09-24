@@ -23,5 +23,5 @@ export function useCountries(opts?: CountriesOptions): Country[] {
 
     const remaining = list.filter((c) => !prioritySet.has(c.code));
     return [...prioritized, ...remaining];
-  }, [locale, priority]);
+  }, [locale, priority?.join(",")]);
 }

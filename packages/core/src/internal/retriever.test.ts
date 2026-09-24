@@ -6,7 +6,12 @@
 
 import { describe, expect, it } from "vitest";
 import { FallbackDataSource, MapSource } from "../../test/fake-sources.js";
-import { MemoryStorage, NullStorage, type Storage, type StorageResult } from "../storage.js";
+import {
+  MemoryStorage,
+  NullStorage,
+  type Storage,
+  type StorageResult,
+} from "../storage.js";
 import { Retriever } from "./retriever.js";
 
 const KEY = "data/CA/AB--fr";

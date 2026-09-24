@@ -31,7 +31,11 @@ export interface GetFieldLabelOptions {
 function isOptionsObject(
   options?: GetFieldLabelOptions | Record<string, string>,
 ): options is GetFieldLabelOptions {
-  return typeof options === "object" && options !== null && ("messages" in options || "labels" in options);
+  return (
+    typeof options === "object" &&
+    options !== null &&
+    ("messages" in options || "labels" in options)
+  );
 }
 
 /**

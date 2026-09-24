@@ -102,9 +102,9 @@ export function useAddress(opts: AddressOptions): AddressState {
               : false;
 
           if (!isLoaded) {
-            const res = await (sup["loadRules"] as (code: string) => Promise<{ success: boolean }>)(
-              region,
-            );
+            const res = await (
+              sup["loadRules"] as (code: string) => Promise<{ success: boolean }>
+            )(region);
             if (!res.success && !cancelled) {
               setError(new Error(`Failed to load address rules for region "${region}"`));
               setLoading(false);
@@ -143,7 +143,7 @@ export function useAddress(opts: AddressOptions): AddressState {
 
   const rows = useMemo(() => {
     return buildFieldMetaRows(initialLayout, tree, opts);
-  }, [initialLayout, tree, opts]);
+  }, [initialLayout, tree, opts.labels, opts.messages]);
 
   const fields = useMemo(() => rows.flat(), [rows]);
 

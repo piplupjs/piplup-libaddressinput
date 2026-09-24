@@ -1,1 +1,233 @@
-[{"regionCode":"US","formatted":["Jane Doe","1600 Amphitheatre Pkwy","Mountain View CA 94043"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"US","formatted":["123"],"problems":[{"field":"ADMIN_AREA","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"INVALID_FORMAT"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"US","formatted":[],"problems":[{"field":"ADMIN_AREA","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"MISSING_REQUIRED_FIELD"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"CH","formatted":["Brandschenkestrasse 110","CH-8002 Zürich"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"CH","formatted":["CH-123"],"problems":[{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"INVALID_FORMAT"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"JP","formatted":["Roppongi Hills","Tokyo"],"problems":[{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"JP","formatted":["〒770-0847","徳島県","徳島市..."],"problems":[{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"TW","formatted":["106","台北市大安區","台灣信義路三段33號"],"problems":[{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"CA","formatted":["5 Rue du Tresor","Apt. 4","Montmagny QC G1R 123"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"INVALID_FORMAT"}],"validateSuccess":true},{"regionCode":"CI","formatted":["64 32 Boulevard Carde Abidjan 64"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"AX","formatted":["ÅLAND"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"MISSING_REQUIRED_FIELD"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"AX","formatted":["AX-123 City","ÅLAND"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"INVALID_FORMAT"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"MX","formatted":["Av Gregorio Méndez Magaña 1400","86070 Villahermosa, TAB"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"MX","formatted":["Av Gregorio Méndez Magaña 1400","80000 Villahermosa, TAB"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"MISMATCHING_VALUE"}],"validateSuccess":true},{"regionCode":"GB","formatted":["10 Downing Street","London","SW1A 2AA"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"DE","formatted":["Unter den Linden 1","10117 Berlin"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"FR","formatted":["1 Rue de Rivoli","75001 Paris"],"problems":[{"field":"ADMIN_AREA","problem":"UNSUPPORTED_FIELD"},{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"AU","formatted":["1 Bondi Rd","Sydney NSW 2026"],"problems":[{"field":"LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"BR","formatted":["Rodovia Raposo Tavares, 6388-6682","Presidente Prudente-São Paulo","19063-008"],"problems":[{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"}],"validateSuccess":true},{"regionCode":"KR","formatted":["강원"],"problems":[{"field":"LOCALITY","problem":"MISSING_REQUIRED_FIELD"},{"field":"DEPENDENT_LOCALITY","problem":"UNSUPPORTED_FIELD"},{"field":"POSTAL_CODE","problem":"MISSING_REQUIRED_FIELD"},{"field":"STREET_ADDRESS","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"QZ","formatted":[],"problems":[{"field":"COUNTRY","problem":"UNKNOWN_VALUE"}],"validateSuccess":true},{"regionCode":"","formatted":[],"problems":[{"field":"COUNTRY","problem":"MISSING_REQUIRED_FIELD"}],"validateSuccess":true},{"regionCode":"rrr","formatted":["aaa","P.O. Box","aaa"],"problems":[{"field":"COUNTRY","problem":"UNKNOWN_VALUE"}],"validateSuccess":true},{"regionCode":"rrr","formatted":["aaa","P.O. Box","aaa"],"problems":[{"field":"COUNTRY","problem":"UNKNOWN_VALUE"}],"validateSuccess":true}]
+[
+  {
+    "regionCode": "US",
+    "formatted": ["Jane Doe", "1600 Amphitheatre Pkwy", "Mountain View CA 94043"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "US",
+    "formatted": ["123"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "INVALID_FORMAT" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "US",
+    "formatted": [],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "CH",
+    "formatted": ["Brandschenkestrasse 110", "CH-8002 Zürich"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "CH",
+    "formatted": ["CH-123"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "INVALID_FORMAT" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "JP",
+    "formatted": ["Roppongi Hills", "Tokyo"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "JP",
+    "formatted": ["〒770-0847", "徳島県", "徳島市..."],
+    "problems": [
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "TW",
+    "formatted": ["106", "台北市大安區", "台灣信義路三段33號"],
+    "problems": [{ "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "CA",
+    "formatted": ["5 Rue du Tresor", "Apt. 4", "Montmagny QC G1R 123"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "INVALID_FORMAT" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "CI",
+    "formatted": ["64 32 Boulevard Carde Abidjan 64"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "AX",
+    "formatted": ["ÅLAND"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "AX",
+    "formatted": ["AX-123 City", "ÅLAND"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "INVALID_FORMAT" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "MX",
+    "formatted": ["Av Gregorio Méndez Magaña 1400", "86070 Villahermosa, TAB"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "MX",
+    "formatted": ["Av Gregorio Méndez Magaña 1400", "80000 Villahermosa, TAB"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "MISMATCHING_VALUE" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "GB",
+    "formatted": ["10 Downing Street", "London", "SW1A 2AA"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "DE",
+    "formatted": ["Unter den Linden 1", "10117 Berlin"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "FR",
+    "formatted": ["1 Rue de Rivoli", "75001 Paris"],
+    "problems": [
+      { "field": "ADMIN_AREA", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "AU",
+    "formatted": ["1 Bondi Rd", "Sydney NSW 2026"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "BR",
+    "formatted": [
+      "Rodovia Raposo Tavares, 6388-6682",
+      "Presidente Prudente-São Paulo",
+      "19063-008"
+    ],
+    "problems": [{ "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" }],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "KR",
+    "formatted": ["강원"],
+    "problems": [
+      { "field": "LOCALITY", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "DEPENDENT_LOCALITY", "problem": "UNSUPPORTED_FIELD" },
+      { "field": "POSTAL_CODE", "problem": "MISSING_REQUIRED_FIELD" },
+      { "field": "STREET_ADDRESS", "problem": "MISSING_REQUIRED_FIELD" }
+    ],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "QZ",
+    "formatted": [],
+    "problems": [{ "field": "COUNTRY", "problem": "UNKNOWN_VALUE" }],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "",
+    "formatted": [],
+    "problems": [{ "field": "COUNTRY", "problem": "MISSING_REQUIRED_FIELD" }],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "rrr",
+    "formatted": ["aaa", "P.O. Box", "aaa"],
+    "problems": [{ "field": "COUNTRY", "problem": "UNKNOWN_VALUE" }],
+    "validateSuccess": true
+  },
+  {
+    "regionCode": "rrr",
+    "formatted": ["aaa", "P.O. Box", "aaa"],
+    "problems": [{ "field": "COUNTRY", "problem": "UNKNOWN_VALUE" }],
+    "validateSuccess": true
+  }
+]

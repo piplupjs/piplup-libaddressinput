@@ -138,7 +138,10 @@ describe("JSON-serializability: every public output survives a round-trip unchan
   });
 
   it("ValidationProblem[]", async () => {
-    const supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
+    const supplier = new PreloadSupplier(
+      new FallbackAggregateSource(),
+      new NullStorage(),
+    );
     await Promise.all(SAMPLE_REGIONS.map((r) => supplier.loadRules(r)));
 
     await fc.assert(

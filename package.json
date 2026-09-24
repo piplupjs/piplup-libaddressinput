@@ -1,5 +1,6 @@
 {
   "name": "piplup-libaddressinput",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "description": "Headless JS/TS port of Google's libaddressinput",
@@ -15,7 +16,11 @@
     "lint": "eslint .",
     "typecheck": "tsc -b --pretty",
     "fmt": "prettier --write .",
-    "fmt:check": "prettier --check ."
+    "fmt:check": "prettier --check .",
+    "release": "pnpm run release:prepare && pnpm run release:publish",
+    "release:prepare": "node scripts/release.cjs",
+    "release:publish": "pnpm -r --filter=./packages/* publish --access public",
+    "precommit": "pnpm fmt && pnpm typecheck && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

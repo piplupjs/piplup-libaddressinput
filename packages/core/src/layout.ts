@@ -92,7 +92,9 @@ export function buildLayout(
 
   const bestLanguage = chooseBestAddressLanguage(rule, parseLanguage(uiLanguageTag));
   const format: FormatElement[] =
-    rule.latinFormat.length > 0 && bestLanguage.hasLatinScript ? rule.latinFormat : rule.format;
+    rule.latinFormat.length > 0 && bestLanguage.hasLatinScript
+      ? rule.latinFormat
+      : rule.format;
 
   const rows: LayoutRowItem[][] = [[]];
   const seenFields = new Set<AddressField>();
@@ -121,7 +123,8 @@ export function buildLayout(
 
     const next = format[i + 1];
     const followedByNewline = next === undefined || next.kind === "newline";
-    const length: "short" | "long" = precededByNewline && followedByNewline ? "long" : "short";
+    const length: "short" | "long" =
+      precededByNewline && followedByNewline ? "long" : "short";
     precededByNewline = false;
 
     rows[rows.length - 1]!.push({

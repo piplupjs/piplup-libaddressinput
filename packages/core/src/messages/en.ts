@@ -51,10 +51,12 @@ export const en: Record<MessageId, string> = {
   UNRECOGNIZED_FORMAT_ZIP: "This ZIP code format is not recognized.",
   MISMATCHING_VALUE_POSTAL_CODE_URL:
     "This postal code does not appear to match the rest of this address. Don't know your postal code? Find it out $1here$2.",
-  MISMATCHING_VALUE_POSTAL_CODE: "This postal code does not appear to match the rest of this address.",
+  MISMATCHING_VALUE_POSTAL_CODE:
+    "This postal code does not appear to match the rest of this address.",
   MISMATCHING_VALUE_ZIP_URL:
     "This ZIP code does not appear to match the rest of this address. Don't know your ZIP code? Find it out $1here$2.",
-  MISMATCHING_VALUE_ZIP: "This ZIP code does not appear to match the rest of this address.",
+  MISMATCHING_VALUE_ZIP:
+    "This ZIP code does not appear to match the rest of this address.",
   PO_BOX_FORBIDDEN_VALUE:
     "This address line appears to contain a post office box. Please use a street or building address.",
 };

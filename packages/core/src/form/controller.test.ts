@@ -61,7 +61,10 @@ describe("createAddressForm", () => {
   });
 
   it("setRegion carries over values for fields the new region still uses", async () => {
-    const form = createAddressForm({ supplier, initial: { regionCode: "US", postalCode: "94043" } });
+    const form = createAddressForm({
+      supplier,
+      initial: { regionCode: "US", postalCode: "94043" },
+    });
     await form.setRegion("US");
     expect(form.getState().values.postalCode).toBe("94043");
   });
@@ -183,5 +186,48 @@ describe("createAddressForm", () => {
     expect(usSubRegions.length).toBeGreaterThan(0);
     expect(usSubRegions.some((r) => r.key === "CA")).toBe(true);
   });
-});
 
+  it("dispose clears pending debounce and listeners", async () => {
+    vi.useFakeTimers();
+    try {
+      const form = createAddressForm({ supplier, debounceMs: 100 });
+      await form.setRegion("US");
+
+      const seen: AddressFormState[] = [];
+      form.subscribe((s) => seen.push(s));
+      expect(seen).toHaveLength(1); // Initial notification on subscribe
+
+      form.setField("postalCode", "123"); // Schedules debounce
+      expect(seen).toHaveLength(2); // setField triggers state update
+      const countBeforeDispose = seen.length;
+
+      form.dispose(); // Clear debounce and listeners
+
+      await vi.advanceTimersByTimeAsync(100);
+      expect(seen).toHaveLength(countBeforeDispose); // Debounce didn't fire, no new notifications
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("reset calls dispose before resetting state", async () => {
+    vi.useFakeTimers();
+    try {
+      const form = createAddressForm({ supplier, debounceMs: 100 });
+      await form.setRegion("US");
+      form.setField("locality", "Mountain View");
+
+      expect(form.getState().dirty).toBe(true);
+      form.reset();
+
+      expect(form.getState().dirty).toBe(false);
+      expect(form.getState().touched).toEqual({});
+
+      await vi.advanceTimersByTimeAsync(100);
+      // No validation runs because debounce was cleared by reset
+      expect(form.getState().problems).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

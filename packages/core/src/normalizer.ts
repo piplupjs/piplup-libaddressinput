@@ -9,7 +9,12 @@
 
 import type { AddressData } from "./address-data.js";
 import { isFieldEmpty, getFieldValue } from "./address-data.js";
-import { LOOKUP_KEY_HIERARCHY, lookupKeyFromAddress, lookupKeyFromParent, type LookupKey } from "./internal/lookup-key.js";
+import {
+  LOOKUP_KEY_HIERARCHY,
+  lookupKeyFromAddress,
+  lookupKeyFromParent,
+  type LookupKey,
+} from "./internal/lookup-key.js";
 import { naturalEquals } from "./internal/string-compare.js";
 import type { PreloadSupplier } from "./supplier/preload.js";
 
@@ -40,9 +45,7 @@ export function normalize(supplier: PreloadSupplier, address: AddressData): Addr
   }
 
   const languages =
-    parentRule.languages.length === 0
-      ? [""]
-      : ["", ...parentRule.languages.slice(1)]; // Default language needs no tag.
+    parentRule.languages.length === 0 ? [""] : ["", ...parentRule.languages.slice(1)]; // Default language needs no tag.
 
   for (let depth = 1; depth < LOOKUP_KEY_HIERARCHY.length; depth++) {
     const field = LOOKUP_KEY_HIERARCHY[depth]!;

@@ -6,7 +6,10 @@
 
 import type { Source } from "../source.js";
 import type { Storage } from "../storage.js";
-import { ValidatingStorage, type ValidatingStorageOptions } from "./validating-storage.js";
+import {
+  ValidatingStorage,
+  type ValidatingStorageOptions,
+} from "./validating-storage.js";
 
 export interface RetrieverResult {
   success: boolean;
