@@ -26,3 +26,13 @@ export type {
 } from "./supplier/supplier.js";
 export { PreloadSupplier, type LoadRulesResult } from "./supplier/preload.js";
 export { OndemandSupplier } from "./supplier/ondemand.js";
+export type {
+  AddressLayout,
+  LayoutField,
+  LayoutLiteral,
+  LayoutRowItem,
+  BuildLayoutOptions,
+} from "./layout.js";
+export { buildLayout, getRegionCodes } from "./layout.js";
+export type { MessageId, ProblemMessage, GetProblemMessageOptions } from "./messages.js";
+export { getFieldLabelId, getProblemMessage } from "./messages.js";
