@@ -61,7 +61,8 @@
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
-    "typecheck": "tsc -b --pretty"
+    "typecheck": "tsc -b --pretty",
+    "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

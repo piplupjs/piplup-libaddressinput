@@ -13,7 +13,8 @@
       "Bash(git commit -m 'fix: use rule hierarchy for required field validation instead of bundled data lookup *)",
       "Bash(node -e \"const s = require\\('fs'\\).readFileSync\\(0, 'utf8'\\); const j = JSON.parse\\(s\\); console.log\\(JSON.stringify\\(j, null, 2\\).substring\\(0, 500\\)\\)\")",
       "Bash(git commit -m 'feat: complete live data snapshot bundling implementation *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(pnpm build *)"
     ]
   }
 }
