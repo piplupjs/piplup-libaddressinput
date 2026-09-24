@@ -59,6 +59,30 @@ For a form that manages its own state (loading, layout, region tree,
 validation) without any rendering, see `createAddressForm()` and
 [`examples/react-form-controller`](examples/react-form-controller).
 
+## Offline data
+
+The library bundles a snapshot of Google's address metadata service, covering
+all 251 regions with 12,610+ data entries. This snapshot is committed to the
+repository and serves as fallback data when a `Supplier` can't reach the live
+service. The snapshot was fetched on **2026-09-24**.
+
+**To use live data instead**, pass a `FetchSource` to `PreloadSupplier` or
+`OndemandSupplier` — the library will fetch per-region as needed.
+
+**To refresh the bundled snapshot** (e.g., monthly or before a release):
+
+```bash
+node --experimental-strip-types scripts/fetch-live-data.ts
+node --experimental-strip-types scripts/gen-fallback.ts
+git add data/live-snapshot.json packages/core/src/data/fallback.ts
+git commit -m "chore(data): refresh address metadata snapshot"
+```
+
+The fetch script fetches all 251 regions in parallel (4 concurrent requests),
+retries on failure with exponential backoff, and commits the snapshot with
+metadata (source URL, fetch timestamp). See [DIVERGENCES.md](DIVERGENCES.md)
+for more on data sources and snapshot freshness.
+
 ## Packages
 
 - [`packages/core`](packages/core) — `@piplup/libaddressinput`, the library.

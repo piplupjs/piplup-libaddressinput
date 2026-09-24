@@ -37,10 +37,19 @@ function parseLiveSnapshot(text: string): Map<string, Entry> {
   const snapshot = JSON.parse(text) as LiveSnapshot;
   const entries = new Map<string, Entry>();
 
-  // Extract all data entries, including nested sub-region entries
-  for (const [key, value] of Object.entries(snapshot.data)) {
-    if (key.startsWith("data/")) {
-      entries.set(key, { key, json: JSON.stringify(value) });
+  // Each key in snapshot.data maps to an aggregate response (e.g., "data/CA" -> {data/CA: {...}, data/CA/ON: {...}, ...})
+  // Extract all individual entries from the aggregate responses
+  for (const [aggregateKey, aggregateResponse] of Object.entries(snapshot.data)) {
+    if (!aggregateKey.startsWith("data/")) continue;
+
+    // The aggregate response is an object where each key is an individual entry
+    // (e.g., {"data/CA": {...}, "data/CA/ON": {...}, ...})
+    if (typeof aggregateResponse === "object" && aggregateResponse !== null) {
+      for (const [entryKey, entryValue] of Object.entries(aggregateResponse as Record<string, unknown>)) {
+        if (entryKey.startsWith("data/")) {
+          entries.set(entryKey, { key: entryKey, json: JSON.stringify(entryValue) });
+        }
+      }
     }
   }
 
