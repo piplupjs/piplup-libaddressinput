@@ -48,6 +48,9 @@ importers:
       '@piplup/libaddressinput':
         specifier: workspace:*
         version: link:../../packages/core
+      '@piplup/libaddressinput-react':
+        specifier: workspace:*
+        version: link:../../packages/react
       react:
         specifier: ^18.3.0
         version: 18.3.1
@@ -73,6 +76,9 @@ importers:
       '@piplup/libaddressinput':
         specifier: workspace:*
         version: link:../../packages/core
+      '@piplup/libaddressinput-react':
+        specifier: workspace:*
+        version: link:../../packages/react
       react:
         specifier: ^18.3.0
         version: 18.3.1

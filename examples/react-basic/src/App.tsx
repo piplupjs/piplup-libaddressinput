@@ -1,61 +1,31 @@
-// A stateless-integration example: plain React `useState`, calling
-// buildLayout() and validate() directly — no custom hook, no
-// createAddressForm(). Shows the smallest possible integration.
-
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   HybridSource,
   MemoryStorage,
   PreloadSupplier,
-  buildLayout,
-  getRegionOptions,
-  getFieldLabel,
-  getFieldKey,
-  getFieldAutocomplete,
-  getUserProblems,
-  getProblemErrorMessage,
-  validate,
   type AddressData,
-  type LayoutField,
-  type ValidationProblem,
 } from "@piplup/libaddressinput";
+import { useAddress, useCountries, useValidate } from "@piplup/libaddressinput-react";
 
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
-const REGION_OPTIONS = getRegionOptions("en");
 
 export function App() {
+  const [regionCode, setRegionCode] = useState("US");
   const [values, setValues] = useState<AddressData>({ regionCode: "US" });
-  const [loaded, setLoaded] = useState(false);
-  const [problems, setProblems] = useState<ValidationProblem[]>([]);
+  const countries = useCountries();
+  const address = useAddress({ supplier, region: regionCode });
+  const { validate, validating, problems } = useValidate(supplier);
 
-  useEffect(() => {
-    setLoaded(false);
-    let cancelled = false;
-    void supplier.loadRules(values.regionCode).then((result) => {
-      if (!cancelled) setLoaded(result.success);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [values.regionCode]);
-
-  const layout = useMemo(
-    () => buildLayout(values.regionCode, "en"),
-    [values.regionCode],
-  );
-
-  function setField(field: LayoutField["field"], value: string): void {
-    const key = getFieldKey(field);
-    if (key === "regionCode") return;
+  function setField(key: keyof AddressData, value: string): void {
     setValues((prev) => ({
       ...prev,
-      [key]: field === "STREET_ADDRESS" ? [value] : value,
+      [key]: key === "addressLine" ? [value] : value,
     }));
   }
 
-  async function onValidate(): Promise<void> {
-    const raw = await validate(supplier, values);
-    setProblems(getUserProblems(raw));
+  function handleRegionChange(newRegion: string): void {
+    setRegionCode(newRegion);
+    setValues({ regionCode: newRegion });
   }
 
   return (
@@ -64,11 +34,11 @@ export function App() {
       <label>
         Region
         <select
-          value={values.regionCode}
-          onChange={(e) => setValues({ regionCode: e.target.value })}
+          value={regionCode}
+          onChange={(e) => handleRegionChange(e.target.value)}
           style={{ display: "block", width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
         >
-          {REGION_OPTIONS.map(({ code, name }) => (
+          {countries.map(({ code, name }) => (
             <option key={code} value={code}>
               {name} ({code})
             </option>
@@ -76,31 +46,61 @@ export function App() {
         </select>
       </label>
 
-      {layout?.rows.flat().map((item) =>
-        item.kind === "field" && item.field !== "COUNTRY" ? (
-          <label key={item.field} style={{ display: "block", marginTop: "0.75rem" }}>
-            {getFieldLabel(item)}
-            {item.required ? " *" : ""}
-            <input
-              type="text"
-              autoComplete={getFieldAutocomplete(item.field)}
-              style={{
-                display: "block",
-                width: "100%",
-                boxSizing: "border-box",
-                padding: "0.5rem",
-                marginTop: "0.25rem",
-              }}
-              onChange={(e) => setField(item.field, e.target.value)}
-            />
-          </label>
-        ) : null,
-      )}
+      {address.loading && <p>Loading address format…</p>}
+
+      {address.rows.map((row, rowIndex) => (
+        <div key={rowIndex} style={{ display: "flex", gap: "0.5rem" }}>
+          {row.map((item) => (
+            <div
+              key={item.field}
+              style={{ flex: item.length === "long" ? 1 : 0.5, marginTop: "0.75rem" }}
+            >
+              <label style={{ display: "block" }}>
+                {item.label}
+                {item.required ? " *" : ""}
+                {item.isSelect && item.options ? (
+                  <select
+                    value={(values[item.key] as string) ?? ""}
+                    onChange={(e) => setField(item.key, e.target.value)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      boxSizing: "border-box",
+                      padding: "0.5rem",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <option value="">Select {item.label}…</option>
+                    {item.options.map((opt) => (
+                      <option key={opt.key} value={opt.key}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    autoComplete={item.autoComplete}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      boxSizing: "border-box",
+                      padding: "0.5rem",
+                      marginTop: "0.25rem",
+                    }}
+                    onChange={(e) => setField(item.key, e.target.value)}
+                  />
+                )}
+              </label>
+            </div>
+          ))}
+        </div>
+      ))}
 
       <button
         type="button"
-        onClick={() => void onValidate()}
-        disabled={!loaded}
+        onClick={() => void validate(values)}
+        disabled={address.loading || validating}
         style={{
           marginTop: "1.25rem",
           padding: "0.6rem 1.25rem",
@@ -109,17 +109,17 @@ export function App() {
           border: "none",
           borderRadius: "4px",
           fontWeight: 600,
-          cursor: loaded ? "pointer" : "not-allowed",
+          cursor: address.loading || validating ? "not-allowed" : "pointer",
         }}
       >
-        {loaded ? "Validate" : "Loading rules…"}
+        {validating ? "Validating…" : "Validate"}
       </button>
 
       {problems.length > 0 && (
         <ul style={{ color: "#b00020", marginTop: "1rem" }}>
           {problems.map((p, i) => (
             <li key={i}>
-              {getFieldLabel(p.field)}: {getProblemErrorMessage(p)}
+              {address.getField(p.field)?.label ?? p.field}: {p.problem}
             </li>
           ))}
         </ul>
