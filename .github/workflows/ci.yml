@@ -73,3 +73,22 @@ jobs:
       - run: pnpm --filter react-ssr-example typecheck
       # Smoke test: node-cli's --help exits 0 with no network access needed.
       - run: pnpm --filter node-cli-example start -- --help
+
+  golden-crosscheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: Install C++ toolchain
+        run: sudo apt-get update && sudo apt-get install -y g++ cmake ninja-build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @piplup/libaddressinput build
+      - name: Run C++ golden cross-check
+        run: bash test/golden/cpp-harness/build.sh
+

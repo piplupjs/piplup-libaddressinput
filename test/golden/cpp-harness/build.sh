@@ -21,6 +21,11 @@ HARNESS="$ROOT/test/golden/cpp-harness"
 mkdir -p "$DEPS"
 cd "$DEPS"
 
+BIN="$DEPS/golden"
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) BIN="$DEPS/golden.exe" ;;
+esac
+
 # --- Fetch build-only dependencies (not vendored — see README) ---
 if [ ! -d re2 ]; then
   # A pre-Abseil-dependency release: newer RE2 requires Abseil, which is a
@@ -48,7 +53,7 @@ fi
 # comparison tool, and the miscompiled build never produced any output to
 # second-guess. If you hit the same thing with a different toolchain, try
 # -O0 first before assuming it's a bug in the ported code.
-g++ -std=c++17 -O0 -static-libgcc -static-libstdc++ \
+g++ -std=c++17 -O0 -pthread -static-libgcc -static-libstdc++ \
   -DTEST_DATA_DIR="\"$LAI/testdata\"" \
   -I"$LAI/cpp/include" -I"$LAI/cpp/src" -I"$LAI/cpp/test" -I"$HARNESS" \
   -I"$DEPS/re2" -I"$DEPS/rapidjson/include" \
@@ -79,7 +84,7 @@ g++ -std=c++17 -O0 -static-libgcc -static-libstdc++ \
   "$LAI/cpp/src/util/cctype_tolower_equal.cc" \
   "$LAI/cpp/test/testdata_source.cc" \
   "$DEPS/re2/cmakebuild/libre2.a" \
-  -o "$DEPS/golden.exe"
+  -o "$BIN"
 
 # --- Run it ---
 CORPUS_PATH="$ROOT/test/golden/corpus.json"
@@ -94,7 +99,7 @@ if command -v cygpath >/dev/null 2>&1; then
   JS_OUT="$(cygpath -m "$JS_OUT")"
 fi
 
-"$DEPS/golden.exe" "$CORPUS_PATH" "$CPP_OUT"
+"$BIN" "$CORPUS_PATH" "$CPP_OUT"
 
 echo
 echo "Wrote test/golden/cpp-output.json. Comparing against js-output.json..."
