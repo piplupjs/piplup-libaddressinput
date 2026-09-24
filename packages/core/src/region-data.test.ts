@@ -1,7 +1,7 @@
 // Ported from cpp/test/region_data_builder_test.cc (Apache-2.0, Google Inc.).
 
 import { beforeEach, describe, expect, it } from "vitest";
-import { FallbackAggregateSource } from "../test/fake-sources.js";
+import { FixtureDataSource } from "../test/fake-sources.js";
 import { buildRegionTree } from "./region-data.js";
 import { NullStorage } from "./storage.js";
 import { PreloadSupplier } from "./supplier/preload.js";
@@ -10,7 +10,7 @@ describe("buildRegionTree (RegionDataBuilderTest)", () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
-    supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
+    supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
   async function load(regionCode: string): Promise<void> {

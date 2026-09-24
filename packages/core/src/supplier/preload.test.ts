@@ -1,9 +1,9 @@
 // Ported from cpp/test/preload_supplier_test.cc (Apache-2.0, Google Inc.),
-// using FallbackAggregateSource (built from the bundled dataset) in place
+// using FixtureDataSource (upstream's testdata/countryinfo.txt) in place
 // of upstream's TestdataSource(/* aggregate= */ true).
 
 import { beforeEach, describe, expect, it } from "vitest";
-import { FallbackAggregateSource } from "../../test/fake-sources.js";
+import { FixtureDataSource } from "../../test/fake-sources.js";
 import { lookupKeyFromAddress } from "../internal/lookup-key.js";
 import { NullStorage } from "../storage.js";
 import { PreloadSupplier } from "./preload.js";
@@ -12,7 +12,7 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
-    supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
+    supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
   it("loadRules reports success and marks the region loaded", async () => {
@@ -147,7 +147,7 @@ describe("PreloadSupplier (PreloadSupplierTest)", () => {
       await supplier.loadRules("US");
       const exported = supplier.export();
       const rehydrated = PreloadSupplier.from(
-        new FallbackAggregateSource(),
+        new FixtureDataSource(),
         new NullStorage(),
         exported,
       );

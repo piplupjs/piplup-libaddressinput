@@ -1,11 +1,11 @@
 // Ported from cpp/test/retriever_test.cc (Apache-2.0, Google Inc.).
 //
-// Uses FallbackDataSource (built from the real bundled dataset) in place of
+// Uses FixtureDataSource (upstream's testdata/countryinfo.txt) in place of
 // upstream's TestdataSource, and MapSource in place of MockSource — see
 // test/fake-sources.ts.
 
 import { describe, expect, it } from "vitest";
-import { FallbackDataSource, MapSource } from "../../test/fake-sources.js";
+import { FixtureDataSource, MapSource } from "../../test/fake-sources.js";
 import {
   MemoryStorage,
   NullStorage,
@@ -19,7 +19,7 @@ const EMPTY_DATA = "{}";
 
 describe("Retriever (RetrieverTest)", () => {
   it("retrieves data (RetrieveData)", async () => {
-    const retriever = new Retriever(new FallbackDataSource(), new NullStorage());
+    const retriever = new Retriever(new FixtureDataSource(false), new NullStorage());
     const result = await retriever.retrieve(KEY);
     expect(result.success).toBe(true);
     expect(result.key).toBe(KEY);
@@ -28,7 +28,7 @@ describe("Retriever (RetrieverTest)", () => {
   });
 
   it("reads data from storage on a repeat request (ReadDataFromStorage)", async () => {
-    const retriever = new Retriever(new FallbackDataSource(), new MemoryStorage());
+    const retriever = new Retriever(new FixtureDataSource(false), new MemoryStorage());
     const first = await retriever.retrieve(KEY);
     const second = await retriever.retrieve(KEY);
     expect(second.success).toBe(true);
@@ -36,7 +36,7 @@ describe("Retriever (RetrieverTest)", () => {
   });
 
   it("returns empty data for a missing key (MissingKeyReturnsEmptyData)", async () => {
-    const retriever = new Retriever(new FallbackDataSource(), new NullStorage());
+    const retriever = new Retriever(new FixtureDataSource(false), new NullStorage());
     const result = await retriever.retrieve("junk");
     expect(result.success).toBe(true);
     expect(result.key).toBe("junk");
@@ -82,7 +82,7 @@ describe("Retriever (RetrieverTest)", () => {
         putCalled = true;
       },
     };
-    const retriever = new Retriever(new FallbackDataSource(), staleStorage);
+    const retriever = new Retriever(new FixtureDataSource(false), staleStorage);
     const result = await retriever.retrieve(KEY);
     expect(result.success).toBe(true);
     expect(result.data).not.toBe("");

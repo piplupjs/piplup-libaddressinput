@@ -1,7 +1,7 @@
 // Ported from cpp/test/address_normalizer_test.cc (Apache-2.0, Google Inc.).
 
 import { beforeEach, describe, expect, it } from "vitest";
-import { FallbackAggregateSource } from "../test/fake-sources.js";
+import { FixtureDataSource } from "../test/fake-sources.js";
 import type { AddressData } from "./address-data.js";
 import { normalize } from "./normalizer.js";
 import { NullStorage } from "./storage.js";
@@ -11,7 +11,7 @@ describe("normalize (AddressNormalizerTest)", () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
-    supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
+    supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
   async function load(regionCode: string): Promise<void> {

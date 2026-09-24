@@ -4,7 +4,7 @@
 // reset.
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { FallbackAggregateSource } from "../../test/fake-sources.js";
+import { FixtureDataSource } from "../../test/fake-sources.js";
 import { NullStorage } from "../storage.js";
 import { PreloadSupplier } from "../supplier/preload.js";
 import { createAddressForm, type AddressFormState } from "./controller.js";
@@ -13,7 +13,7 @@ describe("createAddressForm", () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
-    supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
+    supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
   it("starts empty with no region", () => {

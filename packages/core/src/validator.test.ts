@@ -9,7 +9,7 @@
 // same OSS fixture (via TestdataSource) for this particular test file.
 
 import { describe, expect, it } from "vitest";
-import { FallbackAggregateSource, FallbackDataSource } from "../test/fake-sources.js";
+import { FixtureDataSource } from "../test/fake-sources.js";
 import type { AddressData } from "./address-data.js";
 import { NullStorage } from "./storage.js";
 import { OndemandSupplier } from "./supplier/ondemand.js";
@@ -20,18 +20,16 @@ import { validate, type ValidationProblem } from "./validator.js";
 type SupplierKind = "preload" | "ondemand";
 
 async function makeSupplier(kind: SupplierKind, regionCode?: string): Promise<Supplier> {
+  const fixtureSource = new FixtureDataSource();
   if (kind === "preload") {
-    const supplier = new PreloadSupplier(
-      new FallbackAggregateSource(),
-      new NullStorage(),
-    );
+    const supplier = new PreloadSupplier(fixtureSource, new NullStorage());
     if (regionCode !== undefined && regionCode.length > 0) {
       const result = await supplier.loadRules(regionCode);
       if (!result.success) throw new Error(`failed to load ${regionCode}`);
     }
     return supplier;
   }
-  return new OndemandSupplier(new FallbackDataSource(), new NullStorage());
+  return new OndemandSupplier(fixtureSource, new NullStorage());
 }
 
 const SUPPLIER_KINDS: SupplierKind[] = ["preload", "ondemand"];
