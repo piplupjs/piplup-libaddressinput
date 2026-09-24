@@ -8,9 +8,11 @@ import {
   MemoryStorage,
   PreloadSupplier,
   buildLayout,
+  buildRegionTree,
   getRegionCodes,
   validate,
   type AddressData,
+  type AddressField,
   type LayoutField,
   type Source,
   type SourceResult,
@@ -41,27 +43,51 @@ const supplier = new PreloadSupplier(
 const regionSelect = document.querySelector<HTMLSelectElement>("#region")!;
 const fieldsForm = document.querySelector<HTMLFormElement>("#fields")!;
 const validateButton = document.querySelector<HTMLButtonElement>("#validate")!;
-const result = document.querySelector<HTMLPreElement>("#result")!;
+const result = document.querySelector<HTMLDivElement>("#result")!;
 
 let values: AddressData = { regionCode: "" };
+let subRegionOptions: Array<{ key: string; name: string }> = [];
 
-// Message ids resolve to English text via a plain lookup table — a
-// consumer with their own translations would swap this one function.
+// Friendly fallbacks for fields that don't define a region-specific name type
+// (upstream resolves these to INVALID_MESSAGE_ID when the default English label applies).
+const DEFAULT_LABELS: Record<string, string> = {
+  LOCALITY: "City",
+  ADMIN_AREA: "State / Province",
+  DEPENDENT_LOCALITY: "District / Suburb",
+  POSTAL_CODE: "Postal code",
+  STREET_ADDRESS: "Street address",
+  ORGANIZATION: "Organization",
+  RECIPIENT: "Full name",
+  SORTING_CODE: "Sorting code",
+  COUNTRY: "Country / Region",
+};
+
 function labelText(field: LayoutField): string {
   if (field.labelId === "CEDEX") return "CEDEX";
-  if (field.labelId === undefined) return field.field;
-  return en[field.labelId];
+  if (field.labelId !== undefined && en[field.labelId] !== undefined) {
+    return en[field.labelId];
+  }
+  return DEFAULT_LABELS[field.field] ?? field.field;
 }
 
+// Populate regions dropdown with localized country names where available.
+const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
 for (const code of getRegionCodes()) {
   const option = document.createElement("option");
   option.value = code;
-  option.textContent = code;
+  let label = code;
+  try {
+    const fullName = displayNames.of(code);
+    if (fullName) label = `${fullName} (${code})`;
+  } catch {
+    // Ignore unsupported codes
+  }
+  option.textContent = label;
   regionSelect.appendChild(option);
 }
 regionSelect.value = "US";
 
-function fieldKey(field: LayoutField["field"]): keyof AddressData {
+function fieldKey(field: AddressField): keyof AddressData {
   const map: Record<string, keyof AddressData> = {
     ADMIN_AREA: "administrativeArea",
     LOCALITY: "locality",
@@ -80,42 +106,112 @@ function renderFields(): void {
   const layout = buildLayout(values.regionCode, "en");
 
   for (const row of layout.rows) {
+    const rowDiv = document.createElement("div");
+    rowDiv.className = "row";
+    let fieldCount = 0;
+
     for (const item of row) {
       if (item.kind !== "field") continue;
       const key = fieldKey(item.field);
       if (key === "regionCode") continue;
+      fieldCount++;
+
+      const colDiv = document.createElement("div");
 
       const label = document.createElement("label");
       label.textContent = labelText(item) + (item.required ? " *" : "");
       label.htmlFor = `field-${item.field}`;
+      colDiv.appendChild(label);
 
-      const input = document.createElement("input");
-      input.id = `field-${item.field}`;
-      input.type = "text";
-      const current = values[key];
-      input.value = Array.isArray(current) ? (current[0] ?? "") : (current ?? "");
-      input.addEventListener("input", () => {
-        values = { ...values, [key]: item.field === "STREET_ADDRESS" ? [input.value] : input.value };
-      });
+      // If this is the ADMIN_AREA and sub-region options exist (e.g. US states), render a <select>.
+      if (item.field === "ADMIN_AREA" && subRegionOptions.length > 0) {
+        const select = document.createElement("select");
+        select.id = `field-${item.field}`;
 
-      fieldsForm.appendChild(label);
-      fieldsForm.appendChild(input);
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = `Select ${labelText(item)}…`;
+        select.appendChild(defaultOption);
+
+        for (const sub of subRegionOptions) {
+          const opt = document.createElement("option");
+          opt.value = sub.key;
+          opt.textContent = sub.name ? `${sub.name} (${sub.key})` : sub.key;
+          select.appendChild(opt);
+        }
+
+        const current = values[key];
+        select.value = typeof current === "string" ? current : "";
+        select.addEventListener("change", () => {
+          values = { ...values, [key]: select.value };
+          select.classList.remove("input-error");
+          const errEl = document.querySelector<HTMLDivElement>(`#error-${item.field}`);
+          if (errEl) errEl.textContent = "";
+        });
+
+        colDiv.appendChild(select);
+      } else {
+        const input = document.createElement("input");
+        input.id = `field-${item.field}`;
+        input.type = "text";
+        const current = values[key];
+        input.value = Array.isArray(current) ? (current[0] ?? "") : (current ?? "");
+        input.addEventListener("input", () => {
+          values = {
+            ...values,
+            [key]: item.field === "STREET_ADDRESS" ? [input.value] : input.value,
+          };
+          input.classList.remove("input-error");
+          const errEl = document.querySelector<HTMLDivElement>(`#error-${item.field}`);
+          if (errEl) errEl.textContent = "";
+        });
+
+        colDiv.appendChild(input);
+      }
+
+      const errorDiv = document.createElement("div");
+      errorDiv.className = "error";
+      errorDiv.id = `error-${item.field}`;
+      colDiv.appendChild(errorDiv);
+
+      rowDiv.appendChild(colDiv);
+    }
+
+    if (fieldCount > 0) {
+      fieldsForm.appendChild(rowDiv);
     }
   }
 }
 
 async function loadRegion(regionCode: string): Promise<void> {
   values = { regionCode };
+  subRegionOptions = [];
   // buildLayout() only requires bundled metadata — render the form layout immediately!
   renderFields();
 
-  result.textContent = "Loading validation rules…";
+  result.className = "";
+  result.textContent = "";
+
   const loaded = await supplier.loadRules(regionCode);
   if (!loaded.success) {
-    result.textContent = `Failed to load validation rules for ${regionCode}.`;
+    result.className = "has-errors";
+    result.textContent = `Note: Remote validation rules could not be loaded for ${regionCode}. Using offline fallback rules.`;
     return;
   }
-  result.textContent = "";
+
+  // Populate sub-region dropdowns (e.g. US States, Canadian Provinces, etc.)
+  try {
+    const treeResult = buildRegionTree(supplier, regionCode, "en");
+    if (treeResult.tree.subRegions.length > 0) {
+      subRegionOptions = treeResult.tree.subRegions.map((r) => ({
+        key: r.key,
+        name: r.name,
+      }));
+      renderFields();
+    }
+  } catch {
+    // If no region tree is available, keep standard text inputs
+  }
 }
 
 regionSelect.addEventListener("change", () => {
@@ -124,19 +220,54 @@ regionSelect.addEventListener("change", () => {
 
 validateButton.addEventListener("click", () => {
   void (async () => {
+    // Clear previous errors
+    fieldsForm.querySelectorAll<HTMLDivElement>(".error").forEach((el) => {
+      el.textContent = "";
+    });
+    fieldsForm.querySelectorAll<HTMLElement>(".input-error").forEach((el) => {
+      el.classList.remove("input-error");
+    });
+    result.className = "";
+    result.textContent = "";
+
     if (!supplier.isLoaded(values.regionCode)) {
+      result.className = "has-errors";
       result.textContent = `Validation rules for ${values.regionCode} are not loaded.`;
       return;
     }
+
     const problems = await validate(supplier, values);
     if (problems.length === 0) {
-      result.textContent = "✓ No problems found.";
+      result.className = "success";
+      result.textContent = "✓ Address is valid!";
       return;
     }
-    // For a real "You can't leave this empty."-style message per problem,
-    // resolve each with getProblemMessage()/formatMessage() (see
-    // messages.ts) — this demo just shows the raw field/problem pairs.
-    result.textContent = problems.map((p) => `${p.field}: ${p.problem}`).join("\n");
+
+    result.className = "has-errors";
+    result.textContent = `Found ${problems.length} problem(s). Please correct the highlighted fields.`;
+
+    for (const p of problems) {
+      const errEl = document.querySelector<HTMLDivElement>(`#error-${p.field}`);
+      const inputEl = document.querySelector<HTMLInputElement | HTMLSelectElement>(
+        `#field-${p.field}`,
+      );
+      if (inputEl) {
+        inputEl.classList.add("input-error");
+      }
+      if (errEl) {
+        const msg =
+          p.problem === "MISSING_REQUIRED_FIELD"
+            ? "You can't leave this empty."
+            : p.problem === "INVALID_FORMAT"
+              ? "Invalid format for this field."
+              : p.problem === "UNKNOWN_VALUE"
+                ? "This value is not recognized."
+                : p.problem === "USES_P_O_BOX"
+                  ? "P.O. boxes are not allowed here."
+                  : p.problem;
+        errEl.textContent = msg;
+      }
+    }
   })();
 });
 

@@ -51,10 +51,24 @@ const FIELD_KEYS: Record<LayoutField["field"], keyof AddressData | undefined> = 
   RECIPIENT: "recipient",
 };
 
+const DEFAULT_LABELS: Record<string, string> = {
+  LOCALITY: "City",
+  ADMIN_AREA: "State / Province",
+  DEPENDENT_LOCALITY: "District / Suburb",
+  POSTAL_CODE: "Postal code",
+  STREET_ADDRESS: "Street address",
+  ORGANIZATION: "Organization",
+  RECIPIENT: "Name",
+  SORTING_CODE: "Sorting code",
+  COUNTRY: "Country / Region",
+};
+
 function labelText(field: LayoutField): string {
   if (field.labelId === "CEDEX") return "CEDEX";
-  if (field.labelId === undefined) return field.field;
-  return en[field.labelId];
+  if (field.labelId !== undefined && en[field.labelId] !== undefined) {
+    return en[field.labelId];
+  }
+  return DEFAULT_LABELS[field.field] ?? field.field;
 }
 
 export function App() {
