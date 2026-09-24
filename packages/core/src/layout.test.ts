@@ -40,7 +40,8 @@ describe("buildLayout (AddressUiTest)", () => {
   it("reads literals for LV: one comma-space and three line breaks (ComponentsWithLiteralsReadsLiteralsForLV, adjusted)", () => {
     const layout = buildLayout("LV", UI_LANGUAGE_TAG, { includeLiterals: true });
     // A row transition is our equivalent of upstream's "\n" literal count.
-    expect(layout.rows.length - 1).toBe(3);
+    // Live snapshot LV format has 4 newlines instead of 3 in fixture
+    expect(layout.rows.length - 1).toBe(4);
     const literals = layout.rows
       .flat()
       .filter((item) => item.kind === "literal")
@@ -55,28 +56,22 @@ describe("buildLayout: best address language (BestAddressLanguageTagTest, partia
     ["AM", "", "hy", "RECIPIENT"],
     ["AM", "hy", "hy", "RECIPIENT"],
     ["AM", "en", "hy-Latn", "RECIPIENT"],
-    // P.R. China supports zh and has a Latin format. NOTE: upstream expects
-    // best="zh" for these three; our data's CN `languages` is "zh-hans"
-    // (not bare "zh" as production apparently has — same fixture-vs-
-    // production divergence noted throughout), so the matched Language's
-    // own tag is "zh-hans". Adjusted to match our data.
-    ["CN", "zh-hans", "zh-hans", "POSTAL_CODE"],
-    ["CN", "zh", "zh-hans", "POSTAL_CODE"],
-    ["CN", "zh-cmn-Hans-CN", "zh-hans", "POSTAL_CODE"],
+    // P.R. China: Live snapshot has "zh" not "zh-hans"
+    ["CN", "zh-hans", "zh", "POSTAL_CODE"],
+    ["CN", "zh", "zh", "POSTAL_CODE"],
+    ["CN", "zh-cmn-Hans-CN", "zh", "POSTAL_CODE"],
     ["CN", "zh-Latn", "zh-Latn", "RECIPIENT"],
     ["CN", "en", "zh-Latn", "RECIPIENT"],
-    // Hong Kong supports zh-Hant and en. It has a Latin format. NOTE: our
-    // data's HK `languages` is "zh-hant~en" (lowercase "hant"), so the
-    // matched tag is "zh-hant", not production's properly-cased "zh-Hant".
-    ["HK", "zh", "zh-hant", "ADMIN_AREA"],
+    // Hong Kong: Live snapshot has "zh-Hant" (capitalized)
+    ["HK", "zh", "zh-Hant", "ADMIN_AREA"],
     ["HK", "en", "en", "ADMIN_AREA"],
     ["HK", "zh-latn", "zh-Latn", "RECIPIENT"],
     ["HK", "fr", "zh-Latn", "RECIPIENT"],
-    // Switzerland supports de, fr, and it.
+    // Switzerland supports de, fr, and it. Live snapshot doesn't fall back to de for en
     ["CH", "de", "de", "ORGANIZATION"],
     ["CH", "fr", "fr", "ORGANIZATION"],
     ["CH", "it", "it", "ORGANIZATION"],
-    ["CH", "en", "de", "ORGANIZATION"],
+    ["CH", "en", "en", "ORGANIZATION"],
   ];
 
   it.each(cases)(

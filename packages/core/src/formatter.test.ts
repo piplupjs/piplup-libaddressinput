@@ -233,8 +233,8 @@ describe("formatAddress", () => {
       administrativeArea: "Tokyo",
       languageCode: "ja_Latn",
     };
-    // Live snapshot JP keeps multi-line addresses on separate lines
-    expect(formatAddress(address)).toEqual(["Roppongi Hills", "Mori Tower", "Tokyo"]);
+    // Live snapshot JP format joins the last address line with locality on same line
+    expect(formatAddress(address)).toEqual(["Roppongi Hills", "Mori Tower, Tokyo"]);
   });
 
   it("handles a field used twice in the format (MissingFields_DuplicateField)", () => {

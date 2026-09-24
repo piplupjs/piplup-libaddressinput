@@ -9,8 +9,9 @@ import { isFieldEmpty, type AddressData } from "../address-data.js";
 import type { AddressField } from "../address-field.js";
 import { LOOKUP_KEY_HIERARCHY } from "./lookup-key.js";
 import { getPostBoxMatchers } from "./post-box-matchers.js";
-import { isFieldRequired, isFieldUsed } from "../metadata.js";
+import { isFieldUsed } from "../metadata.js";
 import type { AddressProblem } from "../problem.js";
+import type { Rule } from "./rule.js";
 import type { RuleHierarchy } from "../supplier/supplier.js";
 
 export interface ValidationProblem {
