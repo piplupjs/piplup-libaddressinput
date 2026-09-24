@@ -27,12 +27,15 @@ the same way with `g++`/`cmake`/`ninja` from `apt-get` on Linux CI.
 
 `region_data_constants_impl.cc` (in `cpp-harness/`, not upstream) is the one
 piece that isn't upstream code: it implements `RegionDataConstants` by
-parsing `testdata/countryinfo.txt` at startup — the same file
-`scripts/gen-fallback.ts` parses for the JS port's fallback data (see
-`DIVERGENCES.md`: upstream's real `region_data_constants.cc` is generated at
-Google's internal build time and isn't in the OSS repo). Both sides of the
-comparison read the exact same input file (`countryinfo.txt`), so matches confirm the _porting
-algorithms_ are correct, independent of any data-source difference.
+parsing `testdata/countryinfo.txt` at startup (see `DIVERGENCES.md`: upstream's
+real `region_data_constants.cc` is generated at Google's internal build time).
+
+The JS side now also uses `testdata/countryinfo.txt` explicitly — via `FixtureDataSource`
+in `gen-golden-js.ts` — rather than the bundled live snapshot. This ensures:
+1. Algorithm correctness is tested against stable fixture data
+2. Data freshness (the live snapshot) doesn't affect algorithm tests
+3. Both C++ and JS sides read the same input, confirming _porting algorithms_
+   are correct, independent of any data-source difference
 
 ## Scope: what's covered, what isn't
 
@@ -62,9 +65,11 @@ algorithms_ are correct, independent of any data-source difference.
    `compare.cjs` sorts both sides by `(field, problem)` before asserting equality,
    exactly matching the order-insensitivity of `multimap` and `packages/core/src/validator.test.ts`.
    The JS snapshot includes:
-   - **`problemsOffline`** — validated using a `PreloadSupplier` backed by the same
-     bundled `testdata/countryinfo.txt` aggregate dataset the C++ harness uses.
-     This is what `compare.cjs` compares against `cpp-output.json`'s `problems` field.
+   - **`problemsOffline`** — validated using a `PreloadSupplier` backed by
+     `FixtureDataSource(aggregate: true)`, which serves the test fixture
+     (`testdata/countryinfo.txt`). This is the same data the C++ harness uses,
+     so this field is what `compare.cjs` compares against `cpp-output.json`'s
+     `problems` field.
    - **`problems`** — validated using a `PreloadSupplier` with a live `FetchSource`
      against `chromium-i18n.appspot.com`.
 
@@ -77,12 +82,13 @@ bash test/golden/cpp-harness/build.sh
 git diff test/golden/                    # review what changed and why
 ```
 
-`js-output.json`'s `problems` field can change between runs even with no
-code changes: `validate()` there uses a real `FetchSource` against the live
-`chromium-i18n.appspot.com` endpoint, so it reflects whatever that endpoint
-currently returns. `formattedRaw`, `problemsOffline`, and `cpp-output.json`
-are all derived from the checked-in `testdata/countryinfo.txt` fixture and
-are stable across runs.
+Across runs with no code changes:
+- `formattedRaw`, `problemsOffline`, and `cpp-output.json` are all stable
+  — they're derived from the checked-in `testdata/countryinfo.txt` fixture
+  via `FixtureDataSource`.
+- `problems` field can change even with no code changes: it uses a live `FetchSource`
+  against `chromium-i18n.appspot.com`, so it reflects whatever that endpoint
+  currently returns.
 
 ## Extending this
 

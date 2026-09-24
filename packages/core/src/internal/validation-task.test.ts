@@ -117,7 +117,7 @@ describe("runValidationChecks (ValidationTaskTest)", () => {
     // (fixture data may differ from upstream expectations, so we use a synthetic case)
     const syntheticRule = JSON.stringify({
       fmt: "%R%S%C%Z%A%O%N",
-      require: "ACSZO", // Require: ADMIN_AREA, LOCALITY, POSTAL_CODE, STREET_ADDRESS
+      require: "ACSZ", // Require: ADMIN_AREA, LOCALITY, POSTAL_CODE, STREET_ADDRESS
     });
     const filter: ValidationProblem[] = [
       { field: "ADMIN_AREA", problem: "MISSING_REQUIRED_FIELD" },
