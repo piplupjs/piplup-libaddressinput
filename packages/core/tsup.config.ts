@@ -14,7 +14,7 @@ export default defineConfig({
   tsconfig: "tsconfig.build.json",
   sourcemap: true,
   clean: true,
-  splitting: false,
+  splitting: true,
   target: "es2020",
   platform: "neutral",
 });

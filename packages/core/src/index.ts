@@ -10,6 +10,9 @@ export {
   getStreetAddressLinesAsSingleLine,
 } from "./formatter.js";
 export { isFieldRequired, isFieldUsed } from "./metadata.js";
+export { normalize } from "./normalizer.js";
+export type { RegionData, BuildRegionTreeResult } from "./region-data.js";
+export { buildRegionTree } from "./region-data.js";
 export type { ValidateOptions, ValidationProblem } from "./validator.js";
 export { validate } from "./validator.js";
 export type { Source, SourceResult, FetchSourceOptions } from "./source.js";
