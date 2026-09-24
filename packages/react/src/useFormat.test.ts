@@ -16,9 +16,10 @@ describe("useFormat", () => {
 
     const lines = result.current.format(address);
     expect(lines).toContain("100 Main St");
-    expect(lines).toContain("San Jose CA 95110");
+    // Live snapshot US format uses comma: "%C, %S %Z"
+    expect(lines).toContain("San Jose, CA 95110");
 
     const singleLine = result.current.formatSingleLine(address);
-    expect(singleLine).toBe("100 Main St, San Jose CA 95110");
+    expect(singleLine).toBe("100 Main St, San Jose, CA 95110");
   });
 });

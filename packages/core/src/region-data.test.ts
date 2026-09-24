@@ -31,23 +31,14 @@ describe("buildRegionTree (RegionDataBuilderTest)", () => {
     expect(tree.subRegions[0]!.subRegions.length).toBeGreaterThan(0);
   });
 
-  // NOTE: upstream expects an EMPTY tree here — production's
-  // GetMaxLookupKeyDepth("CH") is 0, even though CH's data carries
-  // admin-area names/sub_zips (used for postal-code prefix matching, not
-  // for a UI tree: CH's `fmt` never includes `%S`). That max-depth value
-  // isn't derivable from raw data presence the way our generator computes
-  // it (see fallback.ts's header and .planning/PLAN.md's earlier notes on
-  // this same fixture-vs-production gap) — it reflects a curated "should
-  // the UI show this level" decision, not "does this level have data". Our
-  // bundled testdata/countryinfo.txt fixture DOES have data/CH/<canton>
-  // entries, so our computed depth is 1 and buildRegionTree legitimately
-  // produces a non-empty tree for the data we actually ship.
-  it("builds a non-empty tree for CH (BuildChRegionTree, adjusted)", async () => {
+  // Live snapshot CH has no sub-region entries (depth 0). Unlike the fixture
+  // which had data/CH/<canton> entries, the live service doesn't include
+  // canton data for Switzerland. This matches upstream's expectation of an
+  // empty tree (production's GetMaxLookupKeyDepth("CH") is 0).
+  it("builds an empty tree for CH, which has no sub-region data in live snapshot (BuildChRegionTree, adjusted)", async () => {
     await load("CH");
     const { tree } = buildRegionTree(supplier, "CH", "de-CH");
-    expect(tree.subRegions.length).toBeGreaterThan(0);
-    expect(tree.subRegions[0]!.key).toBe("AG");
-    expect(tree.subRegions[0]!.name).toBe("Aargau");
+    expect(tree.subRegions).toEqual([]);
   });
 
   it("builds an empty tree for ZW, which has no sub-region data (BuildZwRegionTree)", async () => {
