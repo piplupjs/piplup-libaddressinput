@@ -25,7 +25,7 @@ export interface GetFieldLabelOptions {
   /** Localized message pack for rule-specific labels (e.g. "PIN_CODE_LABEL" -> "PIN code"). */
   messages?: Record<string, string>;
   /** Localized label pack for default field names (e.g. "LOCALITY" -> "City"). */
-  labels?: Record<AddressField, string>;
+  labels?: Partial<Record<AddressField, string>>;
 }
 
 function isOptionsObject(
@@ -49,7 +49,7 @@ export function getFieldLabel(
   const addressField = typeof field === "string" ? field : field.field;
 
   let messages: Record<string, string>;
-  let labels: Record<AddressField, string> | undefined;
+  let labels: Partial<Record<AddressField, string>> | undefined;
 
   if (options === undefined) {
     messages = defaultMessages;
@@ -63,7 +63,12 @@ export function getFieldLabel(
     labels = undefined;
   }
 
-  // 1. If LayoutField has an explicit rule-specific label ID (e.g. "STATE", "PIN_CODE_LABEL", "CEDEX")
+  // 1. If an explicit custom labels pack was passed, check it first
+  if (isOptionsObject(options) && options.labels?.[addressField] !== undefined) {
+    return options.labels[addressField];
+  }
+
+  // 2. If LayoutField has an explicit rule-specific label ID (e.g. "STATE", "PIN_CODE_LABEL", "CEDEX")
   if (typeof field !== "string") {
     if (field.labelId === "CEDEX") {
       return "CEDEX";
