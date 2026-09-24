@@ -72,7 +72,7 @@ describe("Bundled live-snapshot data (FALLBACK_DATA)", () => {
   });
 
   it("all region rules are parseable", () => {
-    let parseErrors: string[] = [];
+    const parseErrors: string[] = [];
 
     for (const [key, data] of Object.entries(FALLBACK_DATA)) {
       const json = typeof data === "string" ? data : JSON.stringify(data);
@@ -86,7 +86,7 @@ describe("Bundled live-snapshot data (FALLBACK_DATA)", () => {
   });
 
   it("sub_keys, sub_isoids, and sub_names arrays have consistent lengths when present", () => {
-    let lengthMismatches: string[] = [];
+    const lengthMismatches: string[] = [];
 
     for (const [key, data] of Object.entries(FALLBACK_DATA)) {
       const json = typeof data === "string" ? JSON.parse(data) : data;

@@ -13,7 +13,6 @@
 // tests never call.
 
 import { describe, expect, it } from "vitest";
-import { FixtureDataSource } from "../../test/fake-sources.js";
 import { LOOKUP_KEY_HIERARCHY } from "./lookup-key.js";
 import { parseRule, type Rule } from "./rule.js";
 import {
@@ -31,15 +30,6 @@ function buildHierarchy(jsons: (string | undefined)[]): RuleHierarchy {
     const json = jsons[i];
     return json === undefined ? undefined : (parseRule(json) as Rule);
   });
-}
-
-// Helper to load fixture rules for a region (non-aggregate mode: single entry per key)
-async function getFixtureRuleJson(regionCode: string): Promise<string | undefined> {
-  const source = new FixtureDataSource(false);  // non-aggregate mode
-  const key = `data/${regionCode}`;
-  const result = await source.get(key);
-  // result.data is either the single entry or "{}" if not found
-  return result.data === "{}" ? undefined : result.data;
 }
 
 const MAX_DEPTH = LOOKUP_KEY_HIERARCHY.length;
