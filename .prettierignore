@@ -1,0 +1,23 @@
+# Package files
+node_modules
+dist
+.build-deps
+
+# Git
+.git
+.gitmodules
+
+# Third-party submodules (external code, not part of this project)
+third_party/
+
+# Build outputs
+*.tsbuildinfo
+pnpm-lock.yaml
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
