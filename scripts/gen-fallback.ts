@@ -45,7 +45,9 @@ function parseLiveSnapshot(text: string): Map<string, Entry> {
     // The aggregate response is an object where each key is an individual entry
     // (e.g., {"data/CA": {...}, "data/CA/ON": {...}, ...})
     if (typeof aggregateResponse === "object" && aggregateResponse !== null) {
-      for (const [entryKey, entryValue] of Object.entries(aggregateResponse as Record<string, unknown>)) {
+      for (const [entryKey, entryValue] of Object.entries(
+        aggregateResponse as Record<string, unknown>,
+      )) {
         if (entryKey.startsWith("data/")) {
           entries.set(entryKey, { key: entryKey, json: JSON.stringify(entryValue) });
         }

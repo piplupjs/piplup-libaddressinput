@@ -78,10 +78,7 @@ class FixtureDataSource implements Source {
           aggregate[entryKey] = entry.json;
         }
       }
-      const data =
-        Object.keys(aggregate).length > 0
-          ? JSON.stringify(aggregate)
-          : "{}";
+      const data = Object.keys(aggregate).length > 0 ? JSON.stringify(aggregate) : "{}";
       return { success: true, data };
     } else {
       // Non-aggregate mode: return just the single entry

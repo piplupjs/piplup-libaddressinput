@@ -3,9 +3,7 @@
     "input": {
       "address": {
         "regionCode": "US",
-        "addressLine": [
-          "1600 Amphitheatre Pkwy"
-        ],
+        "addressLine": ["1600 Amphitheatre Pkwy"],
         "administrativeArea": "CA",
         "locality": "Mountain View",
         "postalCode": "94043",
@@ -14,9 +12,7 @@
     },
     "normalized": {
       "regionCode": "US",
-      "addressLine": [
-        "1600 Amphitheatre Pkwy"
-      ],
+      "addressLine": ["1600 Amphitheatre Pkwy"],
       "administrativeArea": "CA",
       "locality": "Mountain View",
       "postalCode": "94043",
@@ -58,9 +54,7 @@
     "layout": {
       "regionCode": "US",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -94,9 +88,7 @@
     "layout": {
       "regionCode": "US",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -124,18 +116,14 @@
     "layout": {
       "regionCode": "US",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "CH",
-        "addressLine": [
-          "Brandschenkestrasse 110"
-        ],
+        "addressLine": ["Brandschenkestrasse 110"],
         "locality": "Zürich",
         "postalCode": "8002",
         "languageCode": "de"
@@ -143,9 +131,7 @@
     },
     "normalized": {
       "regionCode": "CH",
-      "addressLine": [
-        "Brandschenkestrasse 110"
-      ],
+      "addressLine": ["Brandschenkestrasse 110"],
       "locality": "Zürich",
       "postalCode": "8002",
       "languageCode": "de"
@@ -182,9 +168,7 @@
     "layout": {
       "regionCode": "CH",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -222,27 +206,21 @@
     "layout": {
       "regionCode": "CH",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "JP",
-        "addressLine": [
-          "Roppongi Hills"
-        ],
+        "addressLine": ["Roppongi Hills"],
         "administrativeArea": "Tokyo",
         "languageCode": "ja_Latn"
       }
     },
     "normalized": {
       "regionCode": "JP",
-      "addressLine": [
-        "Roppongi Hills"
-      ],
+      "addressLine": ["Roppongi Hills"],
       "administrativeArea": "Tokyo",
       "languageCode": "ja_Latn"
     },
@@ -270,18 +248,14 @@
     "layout": {
       "regionCode": "JP",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "JP",
-        "addressLine": [
-          "徳島市..."
-        ],
+        "addressLine": ["徳島市..."],
         "administrativeArea": "徳島県",
         "postalCode": "770-0847",
         "languageCode": "ja"
@@ -289,9 +263,7 @@
     },
     "normalized": {
       "regionCode": "JP",
-      "addressLine": [
-        "徳島市..."
-      ],
+      "addressLine": ["徳島市..."],
       "administrativeArea": "徳島県",
       "postalCode": "770-0847",
       "languageCode": "ja"
@@ -324,18 +296,14 @@
     "layout": {
       "regionCode": "JP",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "TW",
-        "addressLine": [
-          "台灣信義路三段33號"
-        ],
+        "addressLine": ["台灣信義路三段33號"],
         "administrativeArea": "台北市",
         "locality": "大安區",
         "postalCode": "106",
@@ -344,9 +312,7 @@
     },
     "normalized": {
       "regionCode": "TW",
-      "addressLine": [
-        "台灣信義路三段33號"
-      ],
+      "addressLine": ["台灣信義路三段33號"],
       "administrativeArea": "台北市",
       "locality": "大安區",
       "postalCode": "106",
@@ -380,19 +346,14 @@
     "layout": {
       "regionCode": "TW",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "CA",
-        "addressLine": [
-          "5 Rue du Tresor",
-          "Apt. 4"
-        ],
+        "addressLine": ["5 Rue du Tresor", "Apt. 4"],
         "administrativeArea": "QC",
         "locality": "Montmagny",
         "postalCode": "G1R 123",
@@ -401,10 +362,7 @@
     },
     "normalized": {
       "regionCode": "CA",
-      "addressLine": [
-        "5 Rue du Tresor",
-        "Apt. 4"
-      ],
+      "addressLine": ["5 Rue du Tresor", "Apt. 4"],
       "administrativeArea": "QC",
       "locality": "Montmagny",
       "postalCode": "G1R 123",
@@ -442,18 +400,14 @@
     "layout": {
       "regionCode": "CA",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "CI",
-        "addressLine": [
-          "32 Boulevard Carde"
-        ],
+        "addressLine": ["32 Boulevard Carde"],
         "locality": "Abidjan",
         "sortingCode": "64",
         "languageCode": "zh-Hant"
@@ -461,9 +415,7 @@
     },
     "normalized": {
       "regionCode": "CI",
-      "addressLine": [
-        "32 Boulevard Carde"
-      ],
+      "addressLine": ["32 Boulevard Carde"],
       "locality": "Abidjan",
       "sortingCode": "64",
       "languageCode": "zh-Hant"
@@ -500,9 +452,7 @@
     "layout": {
       "regionCode": "CI",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -534,9 +484,7 @@
     "layout": {
       "regionCode": "AX",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -580,18 +528,14 @@
     "layout": {
       "regionCode": "AX",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "MX",
-        "addressLine": [
-          "Av Gregorio Méndez Magaña 1400"
-        ],
+        "addressLine": ["Av Gregorio Méndez Magaña 1400"],
         "administrativeArea": "TAB",
         "locality": "Villahermosa",
         "postalCode": "86070",
@@ -600,9 +544,7 @@
     },
     "normalized": {
       "regionCode": "MX",
-      "addressLine": [
-        "Av Gregorio Méndez Magaña 1400"
-      ],
+      "addressLine": ["Av Gregorio Méndez Magaña 1400"],
       "administrativeArea": "TAB",
       "locality": "Villahermosa",
       "postalCode": "86070",
@@ -644,18 +586,14 @@
     "layout": {
       "regionCode": "MX",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "MX",
-        "addressLine": [
-          "Av Gregorio Méndez Magaña 1400"
-        ],
+        "addressLine": ["Av Gregorio Méndez Magaña 1400"],
         "administrativeArea": "TAB",
         "locality": "Villahermosa",
         "postalCode": "80000",
@@ -664,9 +602,7 @@
     },
     "normalized": {
       "regionCode": "MX",
-      "addressLine": [
-        "Av Gregorio Méndez Magaña 1400"
-      ],
+      "addressLine": ["Av Gregorio Méndez Magaña 1400"],
       "administrativeArea": "TAB",
       "locality": "Villahermosa",
       "postalCode": "80000",
@@ -708,27 +644,21 @@
     "layout": {
       "regionCode": "MX",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "GB",
-        "addressLine": [
-          "10 Downing Street"
-        ],
+        "addressLine": ["10 Downing Street"],
         "locality": "London",
         "postalCode": "SW1A 2AA"
       }
     },
     "normalized": {
       "regionCode": "GB",
-      "addressLine": [
-        "10 Downing Street"
-      ],
+      "addressLine": ["10 Downing Street"],
       "locality": "London",
       "postalCode": "SW1A 2AA"
     },
@@ -764,27 +694,21 @@
     "layout": {
       "regionCode": "GB",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "DE",
-        "addressLine": [
-          "Unter den Linden 1"
-        ],
+        "addressLine": ["Unter den Linden 1"],
         "locality": "Berlin",
         "postalCode": "10117"
       }
     },
     "normalized": {
       "regionCode": "DE",
-      "addressLine": [
-        "Unter den Linden 1"
-      ],
+      "addressLine": ["Unter den Linden 1"],
       "locality": "Berlin",
       "postalCode": "10117"
     },
@@ -820,27 +744,21 @@
     "layout": {
       "regionCode": "DE",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "FR",
-        "addressLine": [
-          "1 Rue de Rivoli"
-        ],
+        "addressLine": ["1 Rue de Rivoli"],
         "locality": "Paris",
         "postalCode": "75001"
       }
     },
     "normalized": {
       "regionCode": "FR",
-      "addressLine": [
-        "1 Rue de Rivoli"
-      ],
+      "addressLine": ["1 Rue de Rivoli"],
       "locality": "Paris",
       "postalCode": "75001"
     },
@@ -876,18 +794,14 @@
     "layout": {
       "regionCode": "FR",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "AU",
-        "addressLine": [
-          "1 Bondi Rd"
-        ],
+        "addressLine": ["1 Bondi Rd"],
         "administrativeArea": "NSW",
         "locality": "Sydney",
         "postalCode": "2026"
@@ -895,9 +809,7 @@
     },
     "normalized": {
       "regionCode": "AU",
-      "addressLine": [
-        "1 Bondi Rd"
-      ],
+      "addressLine": ["1 Bondi Rd"],
       "administrativeArea": "NSW",
       "locality": "Sydney",
       "postalCode": "2026"
@@ -934,18 +846,14 @@
     "layout": {
       "regionCode": "AU",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
     "input": {
       "address": {
         "regionCode": "BR",
-        "addressLine": [
-          "Rodovia Raposo Tavares, 6388-6682"
-        ],
+        "addressLine": ["Rodovia Raposo Tavares, 6388-6682"],
         "administrativeArea": "São Paulo",
         "locality": "Presidente Prudente",
         "postalCode": "19063-008",
@@ -954,9 +862,7 @@
     },
     "normalized": {
       "regionCode": "BR",
-      "addressLine": [
-        "Rodovia Raposo Tavares, 6388-6682"
-      ],
+      "addressLine": ["Rodovia Raposo Tavares, 6388-6682"],
       "administrativeArea": "SP",
       "locality": "Presidente Prudente",
       "postalCode": "19063-008",
@@ -990,9 +896,7 @@
     "layout": {
       "regionCode": "BR",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -1024,9 +928,7 @@
     "layout": {
       "regionCode": "KR",
       "languageTag": "en",
-      "rows": [
-        []
-      ]
+      "rows": [[]]
     }
   },
   {
@@ -1086,20 +988,12 @@
     "input": {
       "address": {
         "regionCode": "rrr",
-        "addressLine": [
-          "aaa",
-          "P.O. Box",
-          "aaa"
-        ]
+        "addressLine": ["aaa", "P.O. Box", "aaa"]
       }
     },
     "normalized": {
       "regionCode": "rrr",
-      "addressLine": [
-        "aaa",
-        "P.O. Box",
-        "aaa"
-      ]
+      "addressLine": ["aaa", "P.O. Box", "aaa"]
     },
     "formattedRaw": [],
     "formatted": [],
@@ -1125,11 +1019,7 @@
     "input": {
       "address": {
         "regionCode": "rrr",
-        "addressLine": [
-          "aaa",
-          "P.O. Box",
-          "aaa"
-        ]
+        "addressLine": ["aaa", "P.O. Box", "aaa"]
       },
       "validateOptions": {
         "allowPostal": true
@@ -1137,11 +1027,7 @@
     },
     "normalized": {
       "regionCode": "rrr",
-      "addressLine": [
-        "aaa",
-        "P.O. Box",
-        "aaa"
-      ]
+      "addressLine": ["aaa", "P.O. Box", "aaa"]
     },
     "formattedRaw": [],
     "formatted": [],

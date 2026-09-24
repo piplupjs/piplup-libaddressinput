@@ -75,6 +75,7 @@ git commit -m "chore(data): update live address snapshot"
 ```
 
 The `fetch-live-data.ts` script:
+
 - Fetches metadata for all 251 regions in parallel (max 4 concurrent requests)
 - Includes retries with exponential backoff for transient failures
 - Commits the snapshot to `data/live-snapshot.json` with metadata (source URL, fetch timestamp)

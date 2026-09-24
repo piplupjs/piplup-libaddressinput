@@ -10,7 +10,10 @@ import { OndemandSupplier } from "./ondemand.js";
 
 describe("OndemandSupplier", () => {
   it("supplies the country rule", async () => {
-    const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
+    const supplier = new OndemandSupplier(
+      new FixtureDataSource(false),
+      new NullStorage(),
+    );
     const key = lookupKeyFromAddress({ regionCode: "US" });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
@@ -18,7 +21,10 @@ describe("OndemandSupplier", () => {
   });
 
   it("supplies a sub-region rule by key", async () => {
-    const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
+    const supplier = new OndemandSupplier(
+      new FixtureDataSource(false),
+      new NullStorage(),
+    );
     const key = lookupKeyFromAddress({ regionCode: "US", administrativeArea: "CA" });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
@@ -27,7 +33,10 @@ describe("OndemandSupplier", () => {
   });
 
   it("caches a rule across requests for the same key", async () => {
-    const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
+    const supplier = new OndemandSupplier(
+      new FixtureDataSource(false),
+      new NullStorage(),
+    );
     const key = lookupKeyFromAddress({ regionCode: "US" });
     const first = await supplier.supply(key);
     const second = await supplier.supply(key);
@@ -35,7 +44,10 @@ describe("OndemandSupplier", () => {
   });
 
   it("reports success with an empty hierarchy for an unsupported region", async () => {
-    const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
+    const supplier = new OndemandSupplier(
+      new FixtureDataSource(false),
+      new NullStorage(),
+    );
     const key = lookupKeyFromAddress({ regionCode: "ZZ" });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
@@ -43,7 +55,10 @@ describe("OndemandSupplier", () => {
   });
 
   it("getLoadedRuleDepth always returns the full hierarchy length", () => {
-    const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
+    const supplier = new OndemandSupplier(
+      new FixtureDataSource(false),
+      new NullStorage(),
+    );
     expect(supplier.getLoadedRuleDepth("US")).toBe(4);
   });
 });

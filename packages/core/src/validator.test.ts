@@ -228,9 +228,7 @@ describe("validate (AddressValidatorTest)", () => {
     });
     // Live snapshot CH postal code "123" is invalid for preload (which has postal code validation)
     const expected: ValidationProblem[] =
-      kind === "preload"
-        ? [{ field: "POSTAL_CODE", problem: "INVALID_FORMAT" }]
-        : [];
+      kind === "preload" ? [{ field: "POSTAL_CODE", problem: "INVALID_FORMAT" }] : [];
     expectSameProblems(problems, expected);
   });
 

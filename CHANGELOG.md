@@ -8,21 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - (nothing yet)
 
 ## [0.2.1] - 2026-09-24
 
 ### Added
+
 - (nothing yet)
 
 ## [0.2.0] - 2024-12-19
 
 ### Added
+
 - Complete live data snapshot bundling implementation
 - Bundle snapshot of Google live address metadata
 - Support for address validation and formatting
 
 ### Fixed
+
 - Resolve linting errors before publishing
 - Add commitlint dependencies for CI pipeline
 - Use rule hierarchy for required field validation instead of bundled data lookup

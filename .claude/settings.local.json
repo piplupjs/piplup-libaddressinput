@@ -14,7 +14,10 @@
       "Bash(node -e \"const s = require\\('fs'\\).readFileSync\\(0, 'utf8'\\); const j = JSON.parse\\(s\\); console.log\\(JSON.stringify\\(j, null, 2\\).substring\\(0, 500\\)\\)\")",
       "Bash(git commit -m 'feat: complete live data snapshot bundling implementation *)",
       "Bash(node -e ' *)",
-      "Bash(pnpm build *)"
+      "Bash(pnpm build *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "PowerShell(cd \"C:\\\\Users\\\\devel\\\\Code\\\\piplup-libaddressinput\"; Get-Item \"third_party\\\\libaddressinput\\\\testdata\\\\countryinfo.txt\" | Select-Object FullName; \"File exists: $\\(Test-Path 'third_party\\\\libaddressinput\\\\testdata\\\\countryinfo.txt'\\)\")"
     ]
   }
 }

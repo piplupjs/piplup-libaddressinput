@@ -17,7 +17,9 @@ const releaseType = process.argv[2] || "patch";
 // Derive GitHub repo URL from git config
 let repoUrl = "https://github.com/piplup/libaddressinput";
 try {
-  const originUrl = execSync("git config --get remote.origin.url", { encoding: "utf-8" }).trim();
+  const originUrl = execSync("git config --get remote.origin.url", {
+    encoding: "utf-8",
+  }).trim();
   if (originUrl) {
     // Convert git@github.com:owner/repo.git or https://github.com/owner/repo.git to https://github.com/owner/repo
     repoUrl = originUrl

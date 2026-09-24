@@ -32,6 +32,7 @@ real `region_data_constants.cc` is generated at Google's internal build time).
 
 The JS side now also uses `testdata/countryinfo.txt` explicitly — via `FixtureDataSource`
 in `gen-golden-js.ts` — rather than the bundled live snapshot. This ensures:
+
 1. Algorithm correctness is tested against stable fixture data
 2. Data freshness (the live snapshot) doesn't affect algorithm tests
 3. Both C++ and JS sides read the same input, confirming _porting algorithms_
@@ -83,6 +84,7 @@ git diff test/golden/                    # review what changed and why
 ```
 
 Across runs with no code changes:
+
 - `formattedRaw`, `problemsOffline`, and `cpp-output.json` are all stable
   — they're derived from the checked-in `testdata/countryinfo.txt` fixture
   via `FixtureDataSource`.

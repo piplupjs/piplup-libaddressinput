@@ -29,7 +29,9 @@ describe("Bundled live-snapshot data (FALLBACK_DATA)", () => {
 
   it("India (IN) has multiple subdivisions from live data", () => {
     // Get all India sub-region entries
-    const inSubEntries = Object.keys(FALLBACK_DATA).filter(k => k.startsWith("data/IN/"));
+    const inSubEntries = Object.keys(FALLBACK_DATA).filter((k) =>
+      k.startsWith("data/IN/"),
+    );
 
     // Should have substantial number of states (live data has 36)
     expect(inSubEntries.length).toBeGreaterThanOrEqual(30);
@@ -48,10 +50,14 @@ describe("Bundled live-snapshot data (FALLBACK_DATA)", () => {
     expect(krDepth).toBeGreaterThanOrEqual(2);
 
     // Both should have sub-region entries in the data (at least one level deep)
-    const cnSubEntries = Object.keys(FALLBACK_DATA).filter(k => k.startsWith("data/CN/"));
+    const cnSubEntries = Object.keys(FALLBACK_DATA).filter((k) =>
+      k.startsWith("data/CN/"),
+    );
     expect(cnSubEntries.length).toBeGreaterThan(0);
 
-    const krSubEntries = Object.keys(FALLBACK_DATA).filter(k => k.startsWith("data/KR/"));
+    const krSubEntries = Object.keys(FALLBACK_DATA).filter((k) =>
+      k.startsWith("data/KR/"),
+    );
     expect(krSubEntries.length).toBeGreaterThan(0);
   });
 
@@ -61,14 +67,18 @@ describe("Bundled live-snapshot data (FALLBACK_DATA)", () => {
     expect(usDepth).toBeGreaterThanOrEqual(1);
 
     // US should have many sub-region entries (states, territories, etc.)
-    const usSubEntries = Object.keys(FALLBACK_DATA).filter(k => k.startsWith("data/US/"));
+    const usSubEntries = Object.keys(FALLBACK_DATA).filter((k) =>
+      k.startsWith("data/US/"),
+    );
     expect(usSubEntries.length).toBeGreaterThanOrEqual(50);
 
     // Check for some known state codes in the sub-entries
-    const stateCodesInData = usSubEntries.map(k => k.slice("data/US/".length)).filter(k => !k.includes("/"));
-    expect(stateCodesInData).toContain("AL");  // Alabama
-    expect(stateCodesInData).toContain("CA");  // California
-    expect(stateCodesInData).toContain("NY");  // New York
+    const stateCodesInData = usSubEntries
+      .map((k) => k.slice("data/US/".length))
+      .filter((k) => !k.includes("/"));
+    expect(stateCodesInData).toContain("AL"); // Alabama
+    expect(stateCodesInData).toContain("CA"); // California
+    expect(stateCodesInData).toContain("NY"); // New York
   });
 
   it("all region rules are parseable", () => {
