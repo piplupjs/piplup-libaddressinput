@@ -28,3 +28,4 @@ export class MapSource implements Source {
 }
 
 export { FallbackAggregateSource } from "../src/source.js";
+export { FixtureDataSource } from "./fixture-source.js";
