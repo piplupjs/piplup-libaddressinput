@@ -44,7 +44,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @piplup/libaddressinput build
+      - name: Build packages
+        run: pnpm --filter ./packages/* build
       # Each example's own tsconfig.json is standalone (doesn't extend the
       # monorepo's tsconfig.base.json — see .planning/PLAN.md Phase 7), so
       # typechecking them here also guards against that staying true.
