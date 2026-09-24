@@ -32,6 +32,16 @@
       "1600 Amphitheatre Pkwy",
       "Mountain View CA 94043"
     ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "LOCALITY",
@@ -120,6 +130,32 @@
     ],
     "formatted": [
       "123"
+    ],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -220,6 +256,32 @@
     },
     "formattedRaw": [],
     "formatted": [],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -337,6 +399,16 @@
       "Brandschenkestrasse 110",
       "CH-8002 Zürich"
     ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -421,6 +493,28 @@
     ],
     "formatted": [
       "CH-123"
+    ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -528,6 +622,24 @@
     "formatted": [
       "Roppongi Hills",
       "Tokyo"
+    ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -642,6 +754,20 @@
       "徳島県",
       "徳島市..."
     ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "LOCALITY",
@@ -753,6 +879,12 @@
       "台北市大安區",
       "台灣信義路三段33號"
     ],
+    "problemsOffline": [
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "DEPENDENT_LOCALITY",
@@ -855,6 +987,20 @@
       "5 Rue du Tresor",
       "Apt. 4",
       "Montmagny QC G1R 123"
+    ],
+    "problemsOffline": [
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -959,6 +1105,20 @@
     "formatted": [
       "64 32 Boulevard Carde Abidjan 64"
     ],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -1039,6 +1199,32 @@
     ],
     "formatted": [
       "ÅLAND"
+    ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -1141,6 +1327,28 @@
     "formatted": [
       "AX-123 City",
       "ÅLAND"
+    ],
+    "problemsOffline": [
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "INVALID_FORMAT"
+      },
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -1249,6 +1457,16 @@
     "formatted": [
       "Av Gregorio Méndez Magaña 1400",
       "86070 Villahermosa, TAB"
+    ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -1366,6 +1584,20 @@
       "Av Gregorio Méndez Magaña 1400",
       "80000 Villahermosa, TAB"
     ],
+    "problemsOffline": [
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISMATCHING_VALUE"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -1480,6 +1712,20 @@
       "London",
       "SW1A 2AA"
     ],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -1587,6 +1833,20 @@
       "Unter den Linden 1",
       "10117 Berlin"
     ],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "ADMIN_AREA",
@@ -1681,6 +1941,20 @@
     "formatted": [
       "1 Rue de Rivoli",
       "75001 Paris"
+    ],
+    "problemsOffline": [
+      {
+        "field": "ADMIN_AREA",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -1787,6 +2061,16 @@
       "1 Bondi Rd",
       "Sydney NSW 2026"
     ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "LOCALITY",
@@ -1892,6 +2176,12 @@
       "Presidente Prudente-SP",
       "19063-008"
     ],
+    "problemsOffline": [
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "DEPENDENT_LOCALITY",
@@ -1980,6 +2270,24 @@
     ],
     "formatted": [
       "강원도"
+    ],
+    "problemsOffline": [
+      {
+        "field": "LOCALITY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "POSTAL_CODE",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "STREET_ADDRESS",
+        "problem": "MISSING_REQUIRED_FIELD"
+      },
+      {
+        "field": "DEPENDENT_LOCALITY",
+        "problem": "UNSUPPORTED_FIELD"
+      }
     ],
     "problems": [
       {
@@ -2085,6 +2393,12 @@
     },
     "formattedRaw": [],
     "formatted": [],
+    "problemsOffline": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
+    ],
     "problems": [
       {
         "field": "COUNTRY",
@@ -2108,6 +2422,12 @@
     },
     "formattedRaw": [],
     "formatted": [],
+    "problemsOffline": [
+      {
+        "field": "COUNTRY",
+        "problem": "MISSING_REQUIRED_FIELD"
+      }
+    ],
     "problems": [
       {
         "field": "COUNTRY",
@@ -2143,6 +2463,12 @@
       "aaa",
       "P.O. Box",
       "aaa"
+    ],
+    "problemsOffline": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
     ],
     "problems": [
       {
@@ -2187,6 +2513,12 @@
       "aaa",
       "P.O. Box",
       "aaa"
+    ],
+    "problemsOffline": [
+      {
+        "field": "COUNTRY",
+        "problem": "UNKNOWN_VALUE"
+      }
     ],
     "problems": [
       {

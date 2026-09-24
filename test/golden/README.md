@@ -3,10 +3,10 @@
 This directory holds a corpus of test addresses (`corpus.json`), this
 library's output for each (`js-output.json`), and — as of this writing —
 **a real, independently-compiled C++ build of upstream's own
-`GetFormattedNationalAddress`'s output for the same corpus**
-(`cpp-output.json`), which matches the JS port **24/24 entries, byte for
-byte**. This is the golden cross-check described in `.planning/PLAN.md` §6
-Phase 8.
+`GetFormattedNationalAddress` and `AddressValidator::Validate` output for the same corpus**
+(`cpp-output.json`), which matches the JS port **24/24 entries for both formatting
+(byte for byte) and validation problems (order-insensitively)**. This is the golden cross-check
+described in `.planning/PLAN.md` §6 Phase 8.
 
 ## Reproducing it
 
@@ -19,8 +19,8 @@ bash test/golden/cpp-harness/build.sh                      # builds+runs the C++
 `cpp-harness/build.sh` fetches RE2 and rapidjson (build-only dependencies,
 not vendored — see the script), builds them, compiles a small C++ driver
 (`cpp-harness/main.cc`) that links directly against
-`third_party/libaddressinput/cpp/src/*.cc` — upstream's real, unmodified
-source, not a reimplementation — and runs it over `corpus.json`. It needs a
+`third_party/libaddressinput/cpp/src/*.cc` and `cpp/test/testdata_source.cc` — upstream's
+real, unmodified source, not a reimplementation — and runs it over `corpus.json`. It needs a
 C++17 compiler, CMake, and Ninja (or equivalents); verified working with
 MinGW-W64 GCC 16.1.0 + CMake 4.4.1 + Ninja 1.13.2 on Windows, and should work
 the same way with `g++`/`cmake`/`ninja` from `apt-get` on Linux CI.
@@ -31,35 +31,42 @@ parsing `testdata/countryinfo.txt` at startup — the same file
 `scripts/gen-fallback.ts` parses for the JS port's fallback data (see
 `DIVERGENCES.md`: upstream's real `region_data_constants.cc` is generated at
 Google's internal build time and isn't in the OSS repo). Both sides of the
-comparison read the exact same input file, so a match confirms the *porting
-algorithm* is correct, independent of any data-source difference.
+comparison read the exact same input file (`countryinfo.txt`), so matches confirm the *porting
+algorithms* are correct, independent of any data-source difference.
 
 ## Scope: what's covered, what isn't
 
-Only `GetFormattedNationalAddress` (→ `formatAddress()`) is cross-checked
-this way. `AddressValidator`, `BuildComponents`, and `AddressNormalizer`
-aren't wired into the C++ harness — each needs a `Supplier`/`PreloadSupplier`
-(network or file I/O, threading), which is significantly more harness code
-for a one-off comparison tool. Extending `cpp-harness/main.cc` to cover them
-is open — see "Extending this" below.
+`GetFormattedNationalAddress` (→ `formatAddress()`) and `AddressValidator::Validate`
+(→ `validate()`) are both cross-checked this way. `BuildComponents` and
+`AddressNormalizer` aren't yet wired into the C++ harness. Extending
+`cpp-harness/main.cc` to cover them is described in "Extending this" below.
 
-## An important comparison detail: normalization
+## Comparison details: normalization and validation problems
 
-`formatAddress()` never itself normalizes (matches upstream:
-`GetFormattedNationalAddress` doesn't call `AddressNormalizer`) — so does the
-C++ harness, which has no normalizer wired up at all. `js-output.json`
-therefore has two formatted fields:
+1. **Normalization**: `formatAddress()` never itself normalizes (matches upstream:
+   `GetFormattedNationalAddress` doesn't call `AddressNormalizer`) — so does the
+   C++ harness, which has no normalizer wired up. `js-output.json` therefore has
+   two formatted fields:
+   - **`formattedRaw`** — `formatAddress(address)` on the address exactly as
+     given in `corpus.json`. This is what `cpp-harness/compare.cjs` diffs
+     against `cpp-output.json`'s `formatted` field — a true apples-to-apples
+     comparison, and where the 24/24 match comes from.
+   - **`formatted`** — `formatAddress(normalize(supplier, address))`, i.e. what
+     a consumer following the README's quick start actually gets. This
+     legitimately differs from the C++ side for entries like BR (where
+     `administrativeArea: "São Paulo"` normalizes to `"SP"` before formatting).
 
-- **`formattedRaw`** — `formatAddress(address)` on the address exactly as
-  given in `corpus.json`. This is what `cpp-harness/compare.cjs` diffs
-  against `cpp-output.json`'s `formatted` field — a true apples-to-apples
-  comparison, and where the 24/24 match comes from.
-- **`formatted`** — `formatAddress(normalize(supplier, address))`, i.e. what
-  a consumer following the README's quick start actually gets. This
-  legitimately differs from the C++ side for a couple of `corpus.json`
-  entries (e.g. the BR one, where `administrativeArea: "São Paulo"`
-  normalizes to `"SP"` before formatting) — that's `normalize()` doing its
-  job, not a formatting bug. Don't compare this field to `cpp-output.json`.
+2. **Validation problems**: upstream's `AddressValidator` reports problems using
+   `std::multimap<AddressField, AddressProblem>`, which is ordered by field enum key.
+   The JS port returns an array of problem objects in check execution order.
+   `compare.cjs` sorts both sides by `(field, problem)` before asserting equality,
+   exactly matching the order-insensitivity of `multimap` and `packages/core/src/validator.test.ts`.
+   The JS snapshot includes:
+   - **`problemsOffline`** — validated using a `PreloadSupplier` backed by the same
+     bundled `testdata/countryinfo.txt` aggregate dataset the C++ harness uses.
+     This is what `compare.cjs` compares against `cpp-output.json`'s `problems` field.
+   - **`problems`** — validated using a `PreloadSupplier` with a live `FetchSource`
+     against `chromium-i18n.appspot.com`.
 
 ## Regenerating
 
@@ -73,28 +80,18 @@ git diff test/golden/                    # review what changed and why
 `js-output.json`'s `problems` field can change between runs even with no
 code changes: `validate()` there uses a real `FetchSource` against the live
 `chromium-i18n.appspot.com` endpoint, so it reflects whatever that endpoint
-currently returns. `formattedRaw`/`formatted`/`layout` and `cpp-output.json`
-are both derived from the checked-in `testdata/countryinfo.txt` fixture and
-so are stable across runs — an unreviewed diff in those *is* a signal worth
-investigating.
+currently returns. `formattedRaw`, `problemsOffline`, and `cpp-output.json`
+are all derived from the checked-in `testdata/countryinfo.txt` fixture and
+are stable across runs.
 
 ## Extending this
 
-To cross-check `validate()`/`AddressValidator` or `buildLayout()`/
-`BuildComponents` the same way, `cpp-harness/main.cc` would need:
+To cross-check `buildLayout()`/`BuildComponents` or `normalize()`/`AddressNormalizer`
+the same way:
 
-- A `Source` implementation (e.g. adapt upstream's
-  `cpp/test/testdata_source.h`/`.cc`, which already reads this same
-  `testdata/countryinfo.txt` file in aggregate mode) and a `NullStorage`.
-- A `PreloadSupplier`, `LoadRules()`'d per region before formatting/
-  validating/building components for that region's corpus entries.
-- For `BuildComponents`, a `Localization` instance (English messages are
-  generated by GRIT from `cpp/res/messages.grdp` at Google's build time;
-  `cpp-harness/messages.h` only stubs the integer ids, not real strings —
-  a full comparison would need a hand-written `Localization::SetGetter`
-  callback returning the same English text `packages/core/src/messages/en.ts`
-  has, so the two sides use comparable — even if not identical — text).
-
-None of that is fundamentally harder than what `main.cc` already does; it's
-more lines of harness code for less additional confidence than the
-formatter check already provides, which is why it wasn't done here.
+- For `BuildComponents`, `cpp-harness/main.cc` can compare structural layout:
+  field order, row grouping, length hints (`short`/`long`), and required flags.
+  Real GRIT-generated label text isn't available without Google's internal build
+  tooling (`messages.grdp` string IDs only).
+- For `AddressNormalizer`, call `AddressNormalizer::Normalize` on a mutable copy
+  of the address and compare against `js-output.json`'s `normalized` field.

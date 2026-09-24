@@ -2,12 +2,18 @@
 // Runs this library against test/golden/corpus.json and writes
 // test/golden/js-output.json: one formatter/validator/layout result per
 // corpus entry. This is the JS half of the golden cross-check described in
-// .planning/PLAN.md Phase 8 — the C++ half (running the same corpus through
-// upstream's own build and diffing) is scaffolded in test/golden/README.md
-// but wasn't runnable in the environment this was written in (no C++
-// toolchain — see that README). This script stands on its own regardless:
-// it's a real snapshot of this library's behavior across many regions,
-// useful for catching accidental regressions even without a C++ comparison.
+// .planning/PLAN.md Phase 8 — see test/golden/README.md for the C++ half
+// (test/golden/cpp-harness/), which now actually runs too.
+//
+// Two suppliers are used: `supplier` (live FetchSource, against the real
+// chromium-i18n.appspot.com endpoint) for `formatted`/`problems` — a
+// realistic "what a consumer actually gets" snapshot — and
+// `offlineSupplier` (the same bundled testdata/countryinfo.txt data the C++
+// harness reads, via FallbackAggregateSource) for `formattedRaw`/
+// `problemsOffline`, which is what cpp-harness/compare.cjs diffs against
+// cpp-output.json — deterministic and reproducible without network access,
+// and a true apples-to-apples comparison since both sides read identical
+// input data.
 //
 // Usage: node --experimental-strip-types scripts/gen-golden-js.ts
 
@@ -16,14 +22,46 @@ import { fileURLToPath } from "node:url";
 import {
   FetchSource,
   MemoryStorage,
+  NullStorage,
   PreloadSupplier,
   formatAddress,
   normalize,
   validate,
   buildLayout,
   type AddressData,
+  type Source,
+  type SourceResult,
   type ValidateOptions,
 } from "../packages/core/dist/index.js";
+import { FALLBACK_DATA } from "../packages/core/src/data/fallback.ts";
+
+// Inlined rather than imported from packages/core/test/fake-sources.ts:
+// that file uses a TS constructor parameter property, which
+// `node --experimental-strip-types`'s strip-only mode (no real
+// transformation, just type erasure) can't handle. See that file for the
+// canonical version (used by the package's own test suite) — mirrors
+// upstream's TestdataSource(/* aggregate= */ true): a request for
+// "data/CC" returns every "data/CC[/<sub>]" entry as one JSON object, built
+// from the same bundled testdata/countryinfo.txt-derived dataset the C++
+// golden harness reads (see test/golden/README.md).
+class FallbackAggregateSource implements Source {
+  private readonly data: Record<string, string>;
+
+  constructor(data: Record<string, string>) {
+    this.data = data;
+  }
+
+  async get(key: string): Promise<SourceResult> {
+    const aggregate: Record<string, unknown> = {};
+    for (const [dataKey, json] of Object.entries(this.data)) {
+      if (dataKey.startsWith(key)) {
+        aggregate[dataKey] = JSON.parse(json);
+      }
+    }
+    const hasAny = Object.keys(aggregate).length > 0;
+    return { success: true, data: hasAny ? JSON.stringify(aggregate) : "{}" };
+  }
+}
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
 const CORPUS_PATH = `${ROOT}/test/golden/corpus.json`;
@@ -37,6 +75,10 @@ interface CorpusEntry {
 async function main(): Promise<void> {
   const corpus = JSON.parse(readFileSync(CORPUS_PATH, "utf8")) as CorpusEntry[];
   const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
+  const offlineSupplier = new PreloadSupplier(
+    new FallbackAggregateSource(FALLBACK_DATA as Record<string, string>),
+    new NullStorage(),
+  );
 
   const results = [];
   for (const entry of corpus) {
@@ -50,13 +92,15 @@ async function main(): Promise<void> {
 
     // formatAddress() never itself normalizes (matches upstream:
     // GetFormattedNationalAddress doesn't call AddressNormalizer) — this is
-    // the address exactly as given, useful for comparing against a minimal
-    // C++ harness that has no AddressNormalizer wired up (it needs a
-    // PreloadSupplier, out of scope for that harness — see
-    // test/golden/README.md). `formatted` (below) is the more realistic
-    // "what a consumer following the README's quick start actually gets"
-    // value, post-normalization.
+    // the address exactly as given. `formatted` (below) is post-
+    // normalization, the more realistic "what a consumer following the
+    // README's quick start actually gets" value.
     const formattedRaw = formatAddress(address);
+
+    if (regionCode.length > 0) {
+      await offlineSupplier.loadRules(regionCode);
+    }
+    const problemsOffline = await validate(offlineSupplier, address, validateOptions);
 
     if (regionCode.length > 0) {
       const loaded = await supplier.loadRules(regionCode);
@@ -69,7 +113,7 @@ async function main(): Promise<void> {
       }
     } else {
       formatted = formattedRaw;
-      problems = await validate(supplier, address, validateOptions);
+      problems = problemsOffline;
     }
 
     const layout = regionCode.length > 0 ? buildLayout(regionCode, "en") : undefined;
@@ -79,6 +123,7 @@ async function main(): Promise<void> {
       normalized,
       formattedRaw,
       formatted,
+      problemsOffline,
       problems,
       layout,
       loadError,

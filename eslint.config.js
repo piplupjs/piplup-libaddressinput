@@ -28,6 +28,7 @@ export default tseslint.config(
       "**/dist/**",
       "**/node_modules/**",
       "third_party/**",
+      ".build-deps/**",
       "test/golden/cpp-harness/**/*.cjs",
     ],
   },

@@ -1,14 +1,23 @@
 // Golden-check driver, not part of upstream libaddressinput. Reads
 // test/golden/corpus.json, runs each entry's address through upstream's
-// real GetFormattedNationalAddress, and writes JSON with the same shape as
-// scripts/gen-golden-js.ts's output so the two can be diffed directly. See
-// test/golden/README.md.
+// real GetFormattedNationalAddress AND AddressValidator::Validate, and
+// writes JSON with the same shape as scripts/gen-golden-js.ts's output so
+// the two can be diffed directly. See test/golden/README.md.
 
 #include <libaddressinput/address_data.h>
+#include <libaddressinput/address_field.h>
 #include <libaddressinput/address_formatter.h>
+#include <libaddressinput/address_problem.h>
+#include <libaddressinput/address_validator.h>
+#include <libaddressinput/callback.h>
+#include <libaddressinput/null_storage.h>
+#include <libaddressinput/preload_supplier.h>
+#include <libaddressinput/supplier.h>
 
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -17,8 +26,18 @@
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 
+#include "testdata_source.h"
+
 using i18n::addressinput::AddressData;
+using i18n::addressinput::AddressField;
+using i18n::addressinput::AddressProblem;
+using i18n::addressinput::AddressValidator;
+using i18n::addressinput::BuildCallback;
+using i18n::addressinput::FieldProblemMap;
 using i18n::addressinput::GetFormattedNationalAddress;
+using i18n::addressinput::NullStorage;
+using i18n::addressinput::PreloadSupplier;
+using i18n::addressinput::TestdataSource;
 
 namespace {
 
@@ -48,6 +67,71 @@ AddressData BuildAddress(const rapidjson::Value& obj) {
   return address;
 }
 
+const char* FieldName(AddressField field) {
+  switch (field) {
+    case i18n::addressinput::COUNTRY: return "COUNTRY";
+    case i18n::addressinput::ADMIN_AREA: return "ADMIN_AREA";
+    case i18n::addressinput::LOCALITY: return "LOCALITY";
+    case i18n::addressinput::DEPENDENT_LOCALITY: return "DEPENDENT_LOCALITY";
+    case i18n::addressinput::SORTING_CODE: return "SORTING_CODE";
+    case i18n::addressinput::POSTAL_CODE: return "POSTAL_CODE";
+    case i18n::addressinput::STREET_ADDRESS: return "STREET_ADDRESS";
+    case i18n::addressinput::ORGANIZATION: return "ORGANIZATION";
+    case i18n::addressinput::RECIPIENT: return "RECIPIENT";
+  }
+  return "UNKNOWN";
+}
+
+const char* ProblemName(AddressProblem problem) {
+  switch (problem) {
+    case i18n::addressinput::UNEXPECTED_FIELD: return "UNEXPECTED_FIELD";
+    case i18n::addressinput::MISSING_REQUIRED_FIELD: return "MISSING_REQUIRED_FIELD";
+    case i18n::addressinput::UNKNOWN_VALUE: return "UNKNOWN_VALUE";
+    case i18n::addressinput::INVALID_FORMAT: return "INVALID_FORMAT";
+    case i18n::addressinput::MISMATCHING_VALUE: return "MISMATCHING_VALUE";
+    case i18n::addressinput::USES_P_O_BOX: return "USES_P_O_BOX";
+    case i18n::addressinput::UNSUPPORTED_FIELD: return "UNSUPPORTED_FIELD";
+  }
+  return "UNKNOWN";
+}
+
+// Everything here resolves synchronously in practice: TestdataSource reads
+// a local file and invokes its callback immediately, with no real async I/O
+// or threading, so by the time LoadRules()/Validate() returns, the
+// corresponding *Sync helper below has already captured its result.
+
+class LoadSync {
+ public:
+  LoadSync() : callback_(BuildCallback(this, &LoadSync::OnLoaded)), success_(false) {}
+  void Run(PreloadSupplier* supplier, const std::string& region_code) {
+    supplier->LoadRules(region_code, *callback_);
+  }
+  bool success() const { return success_; }
+
+ private:
+  void OnLoaded(bool success, const std::string&, int) { success_ = success; }
+  const std::unique_ptr<const PreloadSupplier::Callback> callback_;
+  bool success_;
+};
+
+class ValidateSync {
+ public:
+  ValidateSync()
+      : callback_(BuildCallback(this, &ValidateSync::OnValidated)), success_(false) {}
+  void Run(AddressValidator* validator, const AddressData& address, bool allow_postal,
+          bool require_name, const FieldProblemMap* filter, FieldProblemMap* problems) {
+    validator->Validate(address, allow_postal, require_name, filter, problems, *callback_);
+  }
+  bool success() const { return success_; }
+
+ private:
+  void OnValidated(bool success, const AddressData&, const FieldProblemMap&) {
+    success_ = success;
+  }
+  const std::unique_ptr<const AddressValidator::Callback> callback_;
+  bool success_;
+};
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -72,6 +156,18 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  const char* countryinfo_path = std::getenv("LAI_COUNTRYINFO_PATH");
+  if (countryinfo_path == nullptr) {
+    std::cerr << "LAI_COUNTRYINFO_PATH not set" << std::endl;
+    return 1;
+  }
+
+  PreloadSupplier supplier(
+      new TestdataSource(/*aggregate=*/true, countryinfo_path),
+      new NullStorage);
+  AddressValidator validator(&supplier);
+  std::map<std::string, bool> loaded_regions;
+
   rapidjson::Document out;
   out.SetArray();
   auto& allocator = out.GetAllocator();
@@ -94,6 +190,43 @@ int main(int argc, char** argv) {
       formatted.PushBack(rapidjson::Value(line.c_str(), allocator).Move(), allocator);
     }
     result.AddMember("formatted", formatted, allocator);
+
+    // --- Validation ---
+    bool allow_postal = false;
+    if (entry.HasMember("validateOptions") && entry["validateOptions"].IsObject()) {
+      const auto& opts = entry["validateOptions"];
+      if (opts.HasMember("allowPostal") && opts["allowPostal"].IsBool()) {
+        allow_postal = opts["allowPostal"].GetBool();
+      }
+    }
+
+    if (!address.region_code.empty()) {
+      auto it = loaded_regions.find(address.region_code);
+      if (it == loaded_regions.end()) {
+        LoadSync load;
+        load.Run(&supplier, address.region_code);
+        loaded_regions[address.region_code] = load.success();
+      }
+    }
+
+    FieldProblemMap problems;
+    ValidateSync validate;
+    validate.Run(&validator, address, allow_postal, /*require_name=*/false,
+                /*filter=*/nullptr, &problems);
+
+    rapidjson::Value problemsJson(rapidjson::kArrayType);
+    if (validate.success()) {
+      for (const auto& pair : problems) {
+        rapidjson::Value p(rapidjson::kObjectType);
+        p.AddMember("field", rapidjson::Value(FieldName(pair.first), allocator).Move(),
+                   allocator);
+        p.AddMember("problem", rapidjson::Value(ProblemName(pair.second), allocator).Move(),
+                   allocator);
+        problemsJson.PushBack(p, allocator);
+      }
+    }
+    result.AddMember("problems", problemsJson, allocator);
+    result.AddMember("validateSuccess", validate.success(), allocator);
 
     out.PushBack(result, allocator);
   }

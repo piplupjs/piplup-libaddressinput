@@ -48,28 +48,54 @@ fi
 # comparison tool, and the miscompiled build never produced any output to
 # second-guess. If you hit the same thing with a different toolchain, try
 # -O0 first before assuming it's a bug in the ported code.
-g++ -std=c++17 -O0 \
-  -I"$LAI/cpp/include" -I"$LAI/cpp/src" -I"$HARNESS" \
+g++ -std=c++17 -O0 -static-libgcc -static-libstdc++ \
+  -DTEST_DATA_DIR="\"$LAI/testdata\"" \
+  -I"$LAI/cpp/include" -I"$LAI/cpp/src" -I"$LAI/cpp/test" -I"$HARNESS" \
   -I"$DEPS/re2" -I"$DEPS/rapidjson/include" \
   "$HARNESS/main.cc" \
   "$HARNESS/region_data_constants_impl.cc" \
   "$LAI/cpp/src/address_data.cc" \
   "$LAI/cpp/src/address_field.cc" \
   "$LAI/cpp/src/address_field_util.cc" \
+  "$LAI/cpp/src/address_metadata.cc" \
+  "$LAI/cpp/src/address_problem.cc" \
+  "$LAI/cpp/src/address_validator.cc" \
   "$LAI/cpp/src/format_element.cc" \
   "$LAI/cpp/src/address_formatter.cc" \
   "$LAI/cpp/src/language.cc" \
+  "$LAI/cpp/src/lookup_key.cc" \
+  "$LAI/cpp/src/null_storage.cc" \
+  "$LAI/cpp/src/post_box_matchers.cc" \
+  "$LAI/cpp/src/preload_supplier.cc" \
+  "$LAI/cpp/src/retriever.cc" \
   "$LAI/cpp/src/rule.cc" \
+  "$LAI/cpp/src/validating_storage.cc" \
+  "$LAI/cpp/src/validating_util.cc" \
+  "$LAI/cpp/src/validation_task.cc" \
   "$LAI/cpp/src/util/json.cc" \
+  "$LAI/cpp/src/util/md5.cc" \
+  "$LAI/cpp/src/util/string_compare.cc" \
   "$LAI/cpp/src/util/string_split.cc" \
   "$LAI/cpp/src/util/cctype_tolower_equal.cc" \
+  "$LAI/cpp/test/testdata_source.cc" \
   "$DEPS/re2/cmakebuild/libre2.a" \
   -o "$DEPS/golden.exe"
 
 # --- Run it ---
+CORPUS_PATH="$ROOT/test/golden/corpus.json"
+CPP_OUT="$ROOT/test/golden/cpp-output.json"
+JS_OUT="$ROOT/test/golden/js-output.json"
+
 export LAI_COUNTRYINFO_PATH="$LAI/testdata/countryinfo.txt"
-"$DEPS/golden.exe" "$ROOT/test/golden/corpus.json" "$ROOT/test/golden/cpp-output.json"
+if command -v cygpath >/dev/null 2>&1; then
+  export LAI_COUNTRYINFO_PATH="$(cygpath -m "$LAI/testdata/countryinfo.txt")"
+  CORPUS_PATH="$(cygpath -m "$CORPUS_PATH")"
+  CPP_OUT="$(cygpath -m "$CPP_OUT")"
+  JS_OUT="$(cygpath -m "$JS_OUT")"
+fi
+
+"$DEPS/golden.exe" "$CORPUS_PATH" "$CPP_OUT"
 
 echo
 echo "Wrote test/golden/cpp-output.json. Comparing against js-output.json..."
-node "$HARNESS/compare.cjs" "$ROOT/test/golden/cpp-output.json" "$ROOT/test/golden/js-output.json"
+node "$HARNESS/compare.cjs" "$CPP_OUT" "$JS_OUT"
