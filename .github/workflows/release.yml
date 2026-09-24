@@ -52,8 +52,8 @@ jobs:
 
       - name: Publish to npm
         run: pnpm -r publish --access public
-        # Uses GitHub's OIDC token for Trusted Publisher authentication
-        # pnpm automatically converts workspace:* to actual versions during publish
+        # npm automatically uses GitHub OIDC token for Trusted Publisher authentication
+        # No explicit token needed - npm detects id-token: write permission and uses OIDC
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
