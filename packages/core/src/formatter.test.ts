@@ -170,11 +170,12 @@ describe("formatAddress", () => {
     address = { ...address, administrativeArea: "CA" };
     expect(formatAddress(address)).toEqual(["CA"]);
 
+    // Live snapshot US format uses comma: "%C, %S %Z"
     address = { ...address, locality: "Los Angeles" };
-    expect(formatAddress(address)).toEqual(["Los Angeles CA"]);
+    expect(formatAddress(address)).toEqual(["Los Angeles, CA"]);
 
     address = { ...address, postalCode: "90291" };
-    expect(formatAddress(address)).toEqual(["Los Angeles CA 90291"]);
+    expect(formatAddress(address)).toEqual(["Los Angeles, CA 90291"]);
 
     address = { ...address, administrativeArea: undefined };
     expect(formatAddress(address)).toEqual(["Los Angeles 90291"]);
@@ -221,7 +222,8 @@ describe("formatAddress", () => {
       administrativeArea: "Tokyo",
       languageCode: "ja_Latn",
     };
-    expect(formatAddress(address)).toEqual(["Roppongi Hills", "Tokyo"]);
+    // Live snapshot JP format has literal before address line in single format string
+    expect(formatAddress(address)).toEqual(["Roppongi Hills, Tokyo"]);
   });
 
   it("handles a literal before two address lines (LiteralBeforeTwoAddressLines)", () => {
@@ -231,6 +233,7 @@ describe("formatAddress", () => {
       administrativeArea: "Tokyo",
       languageCode: "ja_Latn",
     };
+    // Live snapshot JP keeps multi-line addresses on separate lines
     expect(formatAddress(address)).toEqual(["Roppongi Hills", "Mori Tower", "Tokyo"]);
   });
 
