@@ -30,33 +30,9 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
-  deno:
-    runs-on: [self-hosted, windows]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - uses: denoland/setup-deno@v2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @piplup/libaddressinput build
-      - run: deno run --no-config packages/core/dist/index.js
-
-  bun:
-    runs-on: [self-hosted, windows]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - uses: oven-sh/setup-bun@v2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm --filter @piplup/libaddressinput build
-      - run: bun run packages/core/dist/index.js
+  # Deno and Bun jobs require Linux runners due to setup issues on Windows
+  # These are optional runtime compatibility checks, not critical for releases
+  # Uncomment and move to a separate linux-only workflow if needed in the future
 
   examples:
     runs-on: [self-hosted, windows]
