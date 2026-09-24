@@ -136,7 +136,10 @@ function renderFields(): void {
         for (const sub of subRegionOptions) {
           const opt = document.createElement("option");
           opt.value = sub.key;
-          opt.textContent = sub.name ? `${sub.name} (${sub.key})` : sub.key;
+          opt.textContent =
+            sub.name && sub.name !== sub.key
+              ? `${sub.name} (${sub.key})`
+              : (sub.name || sub.key);
           select.appendChild(opt);
         }
 
@@ -236,7 +239,11 @@ validateButton.addEventListener("click", () => {
       return;
     }
 
-    const problems = await validate(supplier, values);
+    const rawProblems = await validate(supplier, values);
+    // UNSUPPORTED_FIELD is an internal metadata flag from upstream libaddressinput
+    // indicating no sub-key validation rules exist at that depth (e.g. city in IN or US),
+    // NOT a user validation error.
+    const problems = rawProblems.filter((p) => p.problem !== "UNSUPPORTED_FIELD");
     if (problems.length === 0) {
       result.className = "success";
       result.textContent = "✓ Address is valid!";
@@ -262,9 +269,13 @@ validateButton.addEventListener("click", () => {
               ? "Invalid format for this field."
               : p.problem === "UNKNOWN_VALUE"
                 ? "This value is not recognized."
-                : p.problem === "USES_P_O_BOX"
-                  ? "P.O. boxes are not allowed here."
-                  : p.problem;
+                : p.problem === "MISMATCHING_VALUE"
+                  ? "This value does not match the surrounding region."
+                  : p.problem === "UNEXPECTED_FIELD"
+                    ? "This field is not expected for this region."
+                    : p.problem === "USES_P_O_BOX"
+                      ? "P.O. boxes are not allowed here."
+                      : p.problem;
         errEl.textContent = msg;
       }
     }

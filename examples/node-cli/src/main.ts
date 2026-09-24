@@ -137,7 +137,8 @@ async function main(): Promise<void> {
     console.log(`  ${line}`);
   }
 
-  const problems = await validate(supplier, normalized);
+  const allProblems = await validate(supplier, normalized);
+  const problems = allProblems.filter((p) => p.problem !== "UNSUPPORTED_FIELD");
   if (problems.length === 0) {
     console.log("\nNo validation problems found.");
   } else {

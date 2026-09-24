@@ -78,7 +78,9 @@ export function App() {
   const [state, form] = useAddressForm({ supplier, initial: { regionCode } });
 
   const errorsFor = (field: string) =>
-    state.problems.filter((p) => p.field === field).map((p) => p.problem);
+    state.problems
+      .filter((p) => p.field === field && p.problem !== "UNSUPPORTED_FIELD")
+      .map((p) => p.problem);
 
   return (
     <main style={{ maxWidth: "32rem", margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>

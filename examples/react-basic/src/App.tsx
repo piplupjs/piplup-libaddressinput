@@ -102,7 +102,8 @@ export function App() {
   }
 
   async function onValidate(): Promise<void> {
-    setProblems(await validate(supplier, values));
+    const raw = await validate(supplier, values);
+    setProblems(raw.filter((p) => p.problem !== "UNSUPPORTED_FIELD"));
   }
 
   return (
