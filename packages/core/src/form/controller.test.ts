@@ -89,33 +89,14 @@ describe("createAddressForm", () => {
     expect(state.dirty).toBe(true);
   });
 
-  it("setField does not auto-validate by default", async () => {
-    vi.useFakeTimers();
-    try {
-      const form = createAddressForm({ supplier });
-      await form.setRegion("US");
-      form.setField("postalCode", "123"); // invalid format for US
+  it("validation is manual only, not triggered by setField", async () => {
+    const form = createAddressForm({ supplier });
+    await form.setRegion("US");
+    form.setField("postalCode", "123"); // invalid format for US
 
-      await vi.advanceTimersByTimeAsync(300); // wait longer than default debounce
-      expect(form.getState().problems).toEqual([]); // validation did not run
-    } finally {
-      vi.useRealTimers();
-    }
-  });
-
-  it("setField debounces auto-validation when enabled", async () => {
-    vi.useFakeTimers();
-    try {
-      const form = createAddressForm({ supplier, enableAutoValidation: true, debounceMs: 100 });
-      await form.setRegion("US");
-      form.setField("postalCode", "123"); // invalid format for US
-
-      expect(form.getState().problems).toEqual([]); // not yet validated
-      await vi.advanceTimersByTimeAsync(100);
-      expect(form.getState().problems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
-    } finally {
-      vi.useRealTimers();
-    }
+    expect(form.getState().problems).toEqual([]); // validation did not run
+    await form.validate(); // manual validation required
+    expect(form.getState().problems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
   });
 
   it("validate() bypasses the debounce and returns problems immediately", async () => {
@@ -201,27 +182,22 @@ describe("createAddressForm", () => {
     expect(usSubRegions.some((r) => r.key === "CA")).toBe(true);
   });
 
-  it("dispose clears pending debounce and listeners", async () => {
-    vi.useFakeTimers();
-    try {
-      const form = createAddressForm({ supplier, debounceMs: 100 });
-      await form.setRegion("US");
+  it("dispose clears listeners and prevents further notifications", async () => {
+    const form = createAddressForm({ supplier });
+    await form.setRegion("US");
 
-      const seen: AddressFormState[] = [];
-      form.subscribe((s) => seen.push(s));
-      expect(seen).toHaveLength(1); // Initial notification on subscribe
+    const seen: AddressFormState[] = [];
+    form.subscribe((s) => seen.push(s));
+    expect(seen).toHaveLength(1); // Initial notification on subscribe
 
-      form.setField("postalCode", "123"); // Schedules debounce
-      expect(seen).toHaveLength(2); // setField triggers state update
-      const countBeforeDispose = seen.length;
+    form.setField("postalCode", "123");
+    expect(seen).toHaveLength(2); // setField triggers state update
+    const countBeforeDispose = seen.length;
 
-      form.dispose(); // Clear debounce and listeners
+    form.dispose(); // Clear listeners
 
-      await vi.advanceTimersByTimeAsync(100);
-      expect(seen).toHaveLength(countBeforeDispose); // Debounce didn't fire, no new notifications
-    } finally {
-      vi.useRealTimers();
-    }
+    form.setField("postalCode", "456");
+    expect(seen).toHaveLength(countBeforeDispose); // No new notifications after dispose
   });
 
   it("reset calls dispose before resetting state", async () => {

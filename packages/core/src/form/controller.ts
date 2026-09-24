@@ -57,21 +57,8 @@ export interface AddressFormOptions {
   /** BCP-47 UI language tag for labels/region names. Default `"en"`. */
   uiLanguageTag?: string;
   initial?: AddressData;
-  /** Passed through to `validate()` on every auto- or manual validation. */
+  /** Passed through to `validate()` on every manual validation call. */
   validateOptions?: ValidateOptions;
-  /**
-   * Enable automatic validation on `setField` and `setRegion` calls.
-   * When disabled (default), call `validate()` manually for integration with
-   * external form libraries like react-hook-form or TanStack Form.
-   * Default `false`.
-   */
-  enableAutoValidation?: boolean;
-  /**
-   * Milliseconds to debounce auto-validation after `setField`. Only used when
-   * `enableAutoValidation` is true. `0` disables debouncing (validates on
-   * every call, still asynchronously). Default 300.
-   */
-  debounceMs?: number;
 }
 
 export interface AddressFormController {
@@ -137,7 +124,7 @@ function fieldToValueKey(field: AddressField): keyof AddressData | undefined {
 }
 
 export function createAddressForm(options: AddressFormOptions): AddressFormController {
-  const { supplier, uiLanguageTag = "en", validateOptions, enableAutoValidation = false, debounceMs = 300 } = options;
+  const { supplier, uiLanguageTag = "en", validateOptions } = options;
   const initialAddress = options.initial ?? EMPTY_ADDRESS;
 
   let state: AddressFormState = {
@@ -154,7 +141,6 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
   };
 
   const listeners = new Set<(state: AddressFormState) => void>();
-  let debounceHandle: ReturnType<typeof setTimeout> | undefined;
   // Guards against a stale setRegion() call overwriting a newer one's result.
   let regionRequestId = 0;
 
@@ -172,14 +158,6 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     const userProblems = getUserProblems(problems);
     setState({ problems, userProblems, isValid: userProblems.length === 0 });
     return problems;
-  }
-
-  function scheduleValidate(): void {
-    if (debounceHandle !== undefined) clearTimeout(debounceHandle);
-    debounceHandle = setTimeout(() => {
-      debounceHandle = undefined;
-      void runValidate();
-    }, debounceMs);
   }
 
   async function setRegion(regionCode: string): Promise<void> {
@@ -243,9 +221,6 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         userProblems: [],
         isValid: true,
       });
-      if (enableAutoValidation) {
-        scheduleValidate();
-      }
     } catch (error) {
       if (requestId !== regionRequestId) return;
       setState({ loading: false, error });
@@ -279,18 +254,11 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
         touched: { ...state.touched, [resolvedKey]: true },
         dirty: true,
       });
-      if (enableAutoValidation) {
-        scheduleValidate();
-      }
     },
 
     setRegion,
 
     async validate() {
-      if (debounceHandle !== undefined) {
-        clearTimeout(debounceHandle);
-        debounceHandle = undefined;
-      }
       return runValidate();
     },
 
@@ -325,10 +293,6 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     },
 
     dispose() {
-      if (debounceHandle !== undefined) {
-        clearTimeout(debounceHandle);
-        debounceHandle = undefined;
-      }
       listeners.clear();
       regionRequestId++;
     },
