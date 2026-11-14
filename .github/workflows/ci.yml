@@ -25,8 +25,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Validate commit messages
         run: pnpm dlx commitlint --from ${{ github.event.pull_request.base.sha || 'origin/main~1' }} --to HEAD
-        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
-      # @piplup/code-infra needs Node 22.22.2+.
+        # Current commitlint and @piplup/code-infra need Node 22.
+        if: matrix.node == 22 && (github.event_name == 'pull_request' || github.ref != 'refs/heads/main')
       - run: pnpm lint
         if: matrix.node == 22
       - run: pnpm build
@@ -46,7 +46,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Build packages
-        run: pnpm --filter ./packages/* build
+        run: pnpm --filter './packages/*' build
       # Each example's own tsconfig.json is standalone (doesn't extend the
       # monorepo's tsconfig.base.json — see .planning/PLAN.md Phase 7), so
       # typechecking them here also guards against that staying true.
