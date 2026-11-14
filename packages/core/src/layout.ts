@@ -4,15 +4,15 @@
 // pairing — see .planning/PLAN.md §5/§6 Phase 6. Fully synchronous: like
 // the formatter, it only needs the bundled fallback data, no supplier.
 
-import type { AddressField } from "./address-field.js";
-import type { FormatElement } from "./internal/format-element.js";
-import { chooseBestAddressLanguage, parseLanguage } from "./internal/language.js";
-import * as RegionDataConstants from "./internal/region-data-constants.js";
-import { parseRule } from "./internal/rule.js";
-import { getFieldLabelId, type MessageId } from "./messages.js";
+import type { AddressField } from './address-field.js';
+import type { FormatElement } from './internal/format-element.js';
+import { chooseBestAddressLanguage, parseLanguage } from './internal/language.js';
+import * as RegionDataConstants from './internal/region-data-constants.js';
+import { parseRule } from './internal/rule.js';
+import { getFieldLabelId, type MessageId } from './messages.js';
 
 export interface LayoutField {
-  kind: "field";
+  kind: 'field';
   field: AddressField;
   /**
    * The field's label, as a message id (see messages.ts) — `undefined` when
@@ -21,7 +21,7 @@ export interface LayoutField {
    * `"CEDEX"` for SORTING_CODE, which upstream says "needs no translation
    * as it's used only in one locale".
    */
-  labelId: MessageId | "CEDEX" | undefined;
+  labelId: MessageId | 'CEDEX' | undefined;
   /** From the rule's `require` list — not part of upstream's AddressUiComponent (see below). */
   required: boolean;
   /**
@@ -29,13 +29,13 @@ export interface LayoutField {
    * followed by a newline, or a format edge); `'short'` otherwise. Ported
    * directly from `BuildComponents`'s preceded/followed-by-newline logic.
    */
-  length: "short" | "long";
+  length: 'short' | 'long';
   /** True only for STREET_ADDRESS — the field that spans multiple address lines. */
   multiline: boolean;
 }
 
 export interface LayoutLiteral {
-  kind: "literal";
+  kind: 'literal';
   text: string;
 }
 
@@ -65,8 +65,8 @@ export interface BuildLayoutOptions {
 // async (see region-data.ts's buildRegionTree, Phase 5); buildLayout stays
 // synchronous like the formatter. Combine both calls' results yourself.
 
-const LABEL_OVERRIDE: Partial<Record<AddressField, MessageId | "CEDEX">> = {
-  SORTING_CODE: "CEDEX",
+const LABEL_OVERRIDE: Partial<Record<AddressField, MessageId | 'CEDEX'>> = {
+  SORTING_CODE: 'CEDEX',
 };
 
 /**
@@ -87,14 +87,12 @@ export function buildLayout(
     RegionDataConstants.getDefaultRule(),
   );
   if (rule === undefined) {
-    return { regionCode, languageTag: "", rows: [] };
+    return { regionCode, languageTag: '', rows: [] };
   }
 
   const bestLanguage = chooseBestAddressLanguage(rule, parseLanguage(uiLanguageTag));
   const format: FormatElement[] =
-    rule.latinFormat.length > 0 && bestLanguage.hasLatinScript
-      ? rule.latinFormat
-      : rule.format;
+    rule.latinFormat.length > 0 && bestLanguage.hasLatinScript ? rule.latinFormat : rule.format;
 
   const rows: LayoutRowItem[][] = [[]];
   const seenFields = new Set<AddressField>();
@@ -103,11 +101,11 @@ export function buildLayout(
   for (let i = 0; i < format.length; i++) {
     const element = format[i]!;
 
-    if (element.kind !== "field") {
-      if (includeLiterals && element.kind === "literal") {
-        rows[rows.length - 1]!.push({ kind: "literal", text: element.literal });
+    if (element.kind !== 'field') {
+      if (includeLiterals && element.kind === 'literal') {
+        rows[rows.length - 1]!.push({ kind: 'literal', text: element.literal });
       }
-      if (element.kind === "newline") {
+      if (element.kind === 'newline') {
         precededByNewline = true;
         rows.push([]);
       }
@@ -122,18 +120,17 @@ export function buildLayout(
     seenFields.add(element.field);
 
     const next = format[i + 1];
-    const followedByNewline = next === undefined || next.kind === "newline";
-    const length: "short" | "long" =
-      precededByNewline && followedByNewline ? "long" : "short";
+    const followedByNewline = next === undefined || next.kind === 'newline';
+    const length: 'short' | 'long' = precededByNewline && followedByNewline ? 'long' : 'short';
     precededByNewline = false;
 
     rows[rows.length - 1]!.push({
-      kind: "field",
+      kind: 'field',
       field: element.field,
       labelId: LABEL_OVERRIDE[element.field] ?? getFieldLabelId(element.field, rule),
       required: rule.required.includes(element.field),
       length,
-      multiline: element.field === "STREET_ADDRESS",
+      multiline: element.field === 'STREET_ADDRESS',
     });
   }
 

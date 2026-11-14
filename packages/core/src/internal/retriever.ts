@@ -4,12 +4,9 @@
 // and (on success) writes back to storage. If the source fails, falls back
 // to stale data from storage one time rather than surfacing an error.
 
-import type { Source } from "../source.js";
-import type { Storage } from "../storage.js";
-import {
-  ValidatingStorage,
-  type ValidatingStorageOptions,
-} from "./validating-storage.js";
+import type { Source } from '../source.js';
+import type { Storage } from '../storage.js';
+import { ValidatingStorage, type ValidatingStorageOptions } from './validating-storage.js';
 
 export interface RetrieverResult {
   success: boolean;
@@ -37,9 +34,7 @@ export class Retriever {
     // ValidatingStorage reports (false, stale-data) for valid-but-stale
     // entries, and (false, undefined) for a miss or a corrupt entry.
     const staleData =
-      validated.data !== undefined && validated.data.length > 0
-        ? validated.data
-        : undefined;
+      validated.data !== undefined && validated.data.length > 0 ? validated.data : undefined;
 
     const fresh = await this.source.get(key);
     if (fresh.success && fresh.data !== undefined) {
@@ -52,6 +47,6 @@ export class Retriever {
       // ability (matches upstream's comment verbatim).
       return { success: true, key, data: staleData };
     }
-    return { success: false, key, data: "" };
+    return { success: false, key, data: '' };
   }
 }

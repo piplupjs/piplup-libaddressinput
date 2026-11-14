@@ -5,14 +5,14 @@
 // ValidationTaskTest calls `task->supplied_` directly instead of going
 // through a real Supplier.
 
-import { isFieldEmpty, type AddressData } from "../address-data.js";
-import type { AddressField } from "../address-field.js";
-import { LOOKUP_KEY_HIERARCHY } from "./lookup-key.js";
-import { getPostBoxMatchers } from "./post-box-matchers.js";
-import { isFieldUsed } from "../metadata.js";
-import type { AddressProblem } from "../problem.js";
-import type { Rule } from "./rule.js";
-import type { RuleHierarchy } from "../supplier/supplier.js";
+import { isFieldEmpty, type AddressData } from '../address-data.js';
+import type { AddressField } from '../address-field.js';
+import { LOOKUP_KEY_HIERARCHY } from './lookup-key.js';
+import { getPostBoxMatchers } from './post-box-matchers.js';
+import { isFieldUsed } from '../metadata.js';
+import type { AddressProblem } from '../problem.js';
+import type { Rule } from './rule.js';
+import type { RuleHierarchy } from '../supplier/supplier.js';
 
 export interface ValidationProblem {
   field: AddressField;
@@ -55,24 +55,24 @@ function partiallyMatches(regex: RegExp, value: string): boolean {
 
 const UNEXPECTED_FIELD_CHECK_FIELDS: AddressField[] = [
   // COUNTRY is never unexpected.
-  "ADMIN_AREA",
-  "LOCALITY",
-  "DEPENDENT_LOCALITY",
-  "SORTING_CODE",
-  "POSTAL_CODE",
-  "STREET_ADDRESS",
-  "ORGANIZATION",
-  "RECIPIENT",
+  'ADMIN_AREA',
+  'LOCALITY',
+  'DEPENDENT_LOCALITY',
+  'SORTING_CODE',
+  'POSTAL_CODE',
+  'STREET_ADDRESS',
+  'ORGANIZATION',
+  'RECIPIENT',
 ];
 
 const MISSING_REQUIRED_FIELD_CHECK_FIELDS: AddressField[] = [
   // COUNTRY is assumed to have already been checked.
-  "ADMIN_AREA",
-  "LOCALITY",
-  "DEPENDENT_LOCALITY",
-  "SORTING_CODE",
-  "POSTAL_CODE",
-  "STREET_ADDRESS",
+  'ADMIN_AREA',
+  'LOCALITY',
+  'DEPENDENT_LOCALITY',
+  'SORTING_CODE',
+  'POSTAL_CODE',
+  'STREET_ADDRESS',
   // ORGANIZATION is never required. RECIPIENT is handled separately.
 ];
 
@@ -98,12 +98,12 @@ export function runValidationChecks(
     }
   };
 
-  if (isFieldEmpty(address, "COUNTRY")) {
-    reportMaybe("COUNTRY", "MISSING_REQUIRED_FIELD");
+  if (isFieldEmpty(address, 'COUNTRY')) {
+    reportMaybe('COUNTRY', 'MISSING_REQUIRED_FIELD');
     return problems;
   }
   if (hierarchy[0] === undefined) {
-    reportMaybe("COUNTRY", "UNKNOWN_VALUE");
+    reportMaybe('COUNTRY', 'UNKNOWN_VALUE');
     return problems;
   }
 
@@ -133,7 +133,7 @@ function checkUnexpectedField(
 ): void {
   for (const field of UNEXPECTED_FIELD_CHECK_FIELDS) {
     if (!isFieldEmpty(address, field) && !isFieldUsed(field, regionCode)) {
-      reportMaybe(field, "UNEXPECTED_FIELD");
+      reportMaybe(field, 'UNEXPECTED_FIELD');
     }
   }
 }
@@ -150,11 +150,11 @@ function checkMissingRequiredField(
   }
   for (const field of MISSING_REQUIRED_FIELD_CHECK_FIELDS) {
     if (isFieldEmpty(address, field) && rule.required.includes(field)) {
-      reportMaybe(field, "MISSING_REQUIRED_FIELD");
+      reportMaybe(field, 'MISSING_REQUIRED_FIELD');
     }
   }
-  if (requireName && isFieldEmpty(address, "RECIPIENT")) {
-    reportMaybe("RECIPIENT", "MISSING_REQUIRED_FIELD");
+  if (requireName && isFieldEmpty(address, 'RECIPIENT')) {
+    reportMaybe('RECIPIENT', 'MISSING_REQUIRED_FIELD');
   }
 }
 
@@ -176,14 +176,14 @@ function checkUnknownValue(
       hierarchy[depth] !== undefined
     );
     if (isUnknown) {
-      reportMaybe(field, "UNKNOWN_VALUE");
+      reportMaybe(field, 'UNKNOWN_VALUE');
     }
   }
 }
 
 function checkUnsupportedField(maxDepth: number, reportMaybe: ReportFn): void {
   for (let depth = maxDepth; depth < LOOKUP_KEY_HIERARCHY.length; depth++) {
-    reportMaybe(LOOKUP_KEY_HIERARCHY[depth]!, "UNSUPPORTED_FIELD");
+    reportMaybe(LOOKUP_KEY_HIERARCHY[depth]!, 'UNSUPPORTED_FIELD');
   }
 }
 
@@ -199,21 +199,19 @@ function checkPostalCodeFormatAndValue(
   const countryRule = hierarchy[0]!;
 
   if (!(
-    shouldReport(filter, "POSTAL_CODE", "INVALID_FORMAT") ||
-    shouldReport(filter, "POSTAL_CODE", "MISMATCHING_VALUE")
+    shouldReport(filter, 'POSTAL_CODE', 'INVALID_FORMAT') ||
+    shouldReport(filter, 'POSTAL_CODE', 'MISMATCHING_VALUE')
   )) {
     return;
   }
-  if (isFieldEmpty(address, "POSTAL_CODE")) {
+  if (isFieldEmpty(address, 'POSTAL_CODE')) {
     return;
   }
-  if (
-    problems.some((p) => p.field === "POSTAL_CODE" && p.problem === "UNEXPECTED_FIELD")
-  ) {
+  if (problems.some((p) => p.field === 'POSTAL_CODE' && p.problem === 'UNEXPECTED_FIELD')) {
     return; // Problem already reported.
   }
 
-  const postalCode = address.postalCode ?? "";
+  const postalCode = address.postalCode ?? '';
 
   // Validate general postal code format: a country-level rule specifies the
   // regular expression for the whole postal code.
@@ -221,13 +219,13 @@ function checkPostalCodeFormatAndValue(
   if (
     formatMatcher !== undefined &&
     !fullyMatches(formatMatcher, postalCode) &&
-    shouldReport(filter, "POSTAL_CODE", "INVALID_FORMAT")
+    shouldReport(filter, 'POSTAL_CODE', 'INVALID_FORMAT')
   ) {
-    report("POSTAL_CODE", "INVALID_FORMAT");
+    report('POSTAL_CODE', 'INVALID_FORMAT');
     return;
   }
 
-  if (!shouldReport(filter, "POSTAL_CODE", "MISMATCHING_VALUE")) {
+  if (!shouldReport(filter, 'POSTAL_CODE', 'MISMATCHING_VALUE')) {
     return;
   }
 
@@ -239,7 +237,7 @@ function checkPostalCodeFormatAndValue(
       const prefixMatcher = rule.postalCodeMatcher;
       if (prefixMatcher !== undefined) {
         if (!partiallyMatches(prefixMatcher, postalCode)) {
-          report("POSTAL_CODE", "MISMATCHING_VALUE");
+          report('POSTAL_CODE', 'MISMATCHING_VALUE');
         }
         return;
       }
@@ -258,8 +256,8 @@ function checkUsesPoBox(
 
   if (
     allowPostal ||
-    !shouldReport(filter, "STREET_ADDRESS", "USES_P_O_BOX") ||
-    isFieldEmpty(address, "STREET_ADDRESS")
+    !shouldReport(filter, 'STREET_ADDRESS', 'USES_P_O_BOX') ||
+    isFieldEmpty(address, 'STREET_ADDRESS')
   ) {
     return;
   }
@@ -268,7 +266,7 @@ function checkUsesPoBox(
   for (const line of address.addressLine ?? []) {
     for (const matcher of matchers) {
       if (partiallyMatches(matcher, line)) {
-        report("STREET_ADDRESS", "USES_P_O_BOX");
+        report('STREET_ADDRESS', 'USES_P_O_BOX');
         return;
       }
     }

@@ -39,22 +39,17 @@ yarn add @piplup/libaddressinput
 ### Validate an address
 
 ```typescript
-import {
-  validate,
-  PreloadSupplier,
-  FetchSource,
-  MemoryStorage,
-} from "@piplup/libaddressinput";
+import { validate, PreloadSupplier, FetchSource, MemoryStorage } from '@piplup/libaddressinput';
 
 const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
 
 const address = {
-  regionCode: "US",
-  addressLine: ["1600 Amphitheatre Pkwy"],
-  locality: "Mountain View",
-  administrativeArea: "CA",
-  postalCode: "94043",
-  recipient: "Jane Doe",
+  regionCode: 'US',
+  addressLine: ['1600 Amphitheatre Pkwy'],
+  locality: 'Mountain View',
+  administrativeArea: 'CA',
+  postalCode: '94043',
+  recipient: 'Jane Doe',
 };
 
 const problems = await validate(supplier, address);
@@ -64,7 +59,7 @@ const problems = await validate(supplier, address);
 ### Format an address
 
 ```typescript
-import { formatAddress, normalize } from "@piplup/libaddressinput";
+import { formatAddress, normalize } from '@piplup/libaddressinput';
 
 const formatted = formatAddress(normalize(supplier, address));
 // ['Jane Doe', '1600 Amphitheatre Pkwy', 'Mountain View, CA 94043']
@@ -73,14 +68,14 @@ const formatted = formatAddress(normalize(supplier, address));
 ### Build a form layout
 
 ```typescript
-import { buildLayout, getRegionOptions } from "@piplup/libaddressinput";
+import { buildLayout, getRegionOptions } from '@piplup/libaddressinput';
 
 // Get all regions for a country selector
-const regions = getRegionOptions("en");
+const regions = getRegionOptions('en');
 // [{ code: 'US', name: 'United States' }, ...]
 
 // Get form fields for a region
-const layout = buildLayout("US", "en");
+const layout = buildLayout('US', 'en');
 // {
 //   rows: [
 //     [{ field: 'RECIPIENT', required: true, ... }],
@@ -92,7 +87,7 @@ const layout = buildLayout("US", "en");
 // Render layout however you like
 for (const row of layout.rows) {
   for (const field of row) {
-    if (field.kind === "field") {
+    if (field.kind === 'field') {
       console.log(`${field.field}: required=${field.required}`);
     }
   }
@@ -104,22 +99,22 @@ for (const row of layout.rows) {
 For a complete form that manages state, validation, and region changes:
 
 ```typescript
-import { createAddressForm } from "@piplup/libaddressinput";
+import { createAddressForm } from '@piplup/libaddressinput';
 
 const form = createAddressForm({ supplier });
 
 // Subscribe to state changes
 form.subscribe((state) => {
-  console.log("Form state:", state);
+  console.log('Form state:', state);
   // { values, layout, regionTree, problems, loading, ... }
 });
 
 // Set a region (loads data, builds layout, resets state)
-await form.setRegion("US");
+await form.setRegion('US');
 
 // Set field values
-form.setField("locality", "Mountain View");
-form.setField("ADMIN_AREA", "California"); // Also accepts AddressField enums
+form.setField('locality', 'Mountain View');
+form.setField('ADMIN_AREA', 'California'); // Also accepts AddressField enums
 
 // Validate (returns user-actionable problems)
 const problems = await form.validate();
@@ -140,14 +135,14 @@ The core package exports sub-entry points for tree-shaking:
 
 ```typescript
 // Main export - everything
-import { validate, formatAddress, buildLayout } from "@piplup/libaddressinput";
+import { validate, formatAddress, buildLayout } from '@piplup/libaddressinput';
 
 // Individual exports for smaller bundles
-import { validate } from "@piplup/libaddressinput/validate";
-import { formatAddress } from "@piplup/libaddressinput/format";
-import { buildLayout } from "@piplup/libaddressinput/layout";
-import { createAddressForm } from "@piplup/libaddressinput/form";
-import { getRegionOptions } from "@piplup/libaddressinput/ui";
+import { validate } from '@piplup/libaddressinput/validate';
+import { formatAddress } from '@piplup/libaddressinput/format';
+import { buildLayout } from '@piplup/libaddressinput/layout';
+import { createAddressForm } from '@piplup/libaddressinput/form';
+import { getRegionOptions } from '@piplup/libaddressinput/ui';
 ```
 
 ## Data Sources
@@ -159,7 +154,7 @@ The library needs address data for a region before validation/formatting. Choose
 Fetches data from Google's public endpoint on-demand.
 
 ```typescript
-import { FetchSource } from "@piplup/libaddressinput";
+import { FetchSource } from '@piplup/libaddressinput';
 
 const source = new FetchSource();
 // Fetches from: https://chromium-i18n.appspot.com/ssl-address/data/...
@@ -170,7 +165,7 @@ const source = new FetchSource();
 Uses bundled fallback data for common regions, falls back to fetch for others.
 
 ```typescript
-import { FallbackAggregateSource } from "@piplup/libaddressinput";
+import { FallbackAggregateSource } from '@piplup/libaddressinput';
 
 const source = new FallbackAggregateSource();
 ```
@@ -180,7 +175,7 @@ const source = new FallbackAggregateSource();
 Streams data from a source without caching.
 
 ```typescript
-import { OndemandSupplier } from "@piplup/libaddressinput";
+import { OndemandSupplier } from '@piplup/libaddressinput';
 
 const supplier = new OndemandSupplier(source);
 // No caching - fetches on every request
@@ -192,10 +187,10 @@ Data is fetched/loaded lazily. Call `supplier.loadRules()` to pre-load:
 
 ```typescript
 // Load a single region
-await supplier.loadRules("US");
+await supplier.loadRules('US');
 
 // Check if loaded
-const isLoaded = supplier.isLoaded("US");
+const isLoaded = supplier.isLoaded('US');
 
 // Export loaded data (for server-side hydration)
 const data = supplier.export();
@@ -274,10 +269,10 @@ import type {
   ValidationProblem,
   AddressLayout,
   RegionData,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
 
 const problems: ValidationProblem[] = await validate(supplier, address);
-const layout: AddressLayout = buildLayout("US");
+const layout: AddressLayout = buildLayout('US');
 ```
 
 ## Contributing

@@ -1,21 +1,21 @@
 // Ported from cpp/test/address_ui_test.cc (Apache-2.0, Google Inc.).
 
-import { describe, expect, it } from "vitest";
-import { buildLayout, getRegionCodes, type LayoutField } from "./layout.js";
+import { describe, expect, it } from 'vitest';
+import { buildLayout, getRegionCodes, type LayoutField } from './layout.js';
 
-const UI_LANGUAGE_TAG = "en";
+const UI_LANGUAGE_TAG = 'en';
 
 function fields(layout: ReturnType<typeof buildLayout>): LayoutField[] {
-  return layout.rows.flat().filter((item): item is LayoutField => item.kind === "field");
+  return layout.rows.flat().filter((item): item is LayoutField => item.kind === 'field');
 }
 
-describe("buildLayout (AddressUiTest)", () => {
-  it("returns an empty layout for an invalid region code (InvalidRegionCodeReturnsEmptyVector)", () => {
-    const layout = buildLayout("INVALID-REGION-CODE", UI_LANGUAGE_TAG);
+describe('buildLayout (AddressUiTest)', () => {
+  it('returns an empty layout for an invalid region code (InvalidRegionCodeReturnsEmptyVector)', () => {
+    const layout = buildLayout('INVALID-REGION-CODE', UI_LANGUAGE_TAG);
     expect(layout.rows).toEqual([]);
   });
 
-  it("returns at most one field of each type for every region (UniqueFieldTypes)", () => {
+  it('returns at most one field of each type for every region (UniqueFieldTypes)', () => {
     for (const regionCode of getRegionCodes()) {
       const layout = buildLayout(regionCode, UI_LANGUAGE_TAG);
       const seen = fields(layout).map((f) => f.field);
@@ -23,12 +23,9 @@ describe("buildLayout (AddressUiTest)", () => {
     }
   });
 
-  it("returns a non-empty layout for every supported region (ComponentsAreValid, partial)", () => {
+  it('returns a non-empty layout for every supported region (ComponentsAreValid, partial)', () => {
     for (const regionCode of getRegionCodes()) {
-      expect(
-        buildLayout(regionCode, UI_LANGUAGE_TAG).rows.length,
-        regionCode,
-      ).toBeGreaterThan(0);
+      expect(buildLayout(regionCode, UI_LANGUAGE_TAG).rows.length, regionCode).toBeGreaterThan(0);
     }
   });
 
@@ -37,45 +34,45 @@ describe("buildLayout (AddressUiTest)", () => {
   // format production's test was written against (same fixture-vs-
   // production divergence noted throughout this project; verified via
   // `grep '^data/LV=' testdata/countryinfo.txt`).
-  it("reads literals for LV: one comma-space and three line breaks (ComponentsWithLiteralsReadsLiteralsForLV, adjusted)", () => {
-    const layout = buildLayout("LV", UI_LANGUAGE_TAG, { includeLiterals: true });
+  it('reads literals for LV: one comma-space and three line breaks (ComponentsWithLiteralsReadsLiteralsForLV, adjusted)', () => {
+    const layout = buildLayout('LV', UI_LANGUAGE_TAG, { includeLiterals: true });
     // A row transition is our equivalent of upstream's "\n" literal count.
     // Live snapshot LV format has 4 newlines instead of 3 in fixture
     expect(layout.rows.length - 1).toBe(4);
     const literals = layout.rows
       .flat()
-      .filter((item) => item.kind === "literal")
+      .filter((item) => item.kind === 'literal')
       .map((item) => item.text);
-    expect(literals).toEqual([", "]);
+    expect(literals).toEqual([', ']);
   });
 });
 
-describe("buildLayout: best address language (BestAddressLanguageTagTest, partial)", () => {
+describe('buildLayout: best address language (BestAddressLanguageTagTest, partial)', () => {
   const cases: [string, string, string, string][] = [
     // Armenia supports hy and has a Latin format.
-    ["AM", "", "hy", "RECIPIENT"],
-    ["AM", "hy", "hy", "RECIPIENT"],
-    ["AM", "en", "hy-Latn", "RECIPIENT"],
+    ['AM', '', 'hy', 'RECIPIENT'],
+    ['AM', 'hy', 'hy', 'RECIPIENT'],
+    ['AM', 'en', 'hy-Latn', 'RECIPIENT'],
     // P.R. China: Live snapshot has "zh" not "zh-hans"
-    ["CN", "zh-hans", "zh", "POSTAL_CODE"],
-    ["CN", "zh", "zh", "POSTAL_CODE"],
-    ["CN", "zh-cmn-Hans-CN", "zh", "POSTAL_CODE"],
-    ["CN", "zh-Latn", "zh-Latn", "RECIPIENT"],
-    ["CN", "en", "zh-Latn", "RECIPIENT"],
+    ['CN', 'zh-hans', 'zh', 'POSTAL_CODE'],
+    ['CN', 'zh', 'zh', 'POSTAL_CODE'],
+    ['CN', 'zh-cmn-Hans-CN', 'zh', 'POSTAL_CODE'],
+    ['CN', 'zh-Latn', 'zh-Latn', 'RECIPIENT'],
+    ['CN', 'en', 'zh-Latn', 'RECIPIENT'],
     // Hong Kong: Live snapshot has "zh-Hant" (capitalized)
-    ["HK", "zh", "zh-Hant", "ADMIN_AREA"],
-    ["HK", "en", "en", "ADMIN_AREA"],
-    ["HK", "zh-latn", "zh-Latn", "RECIPIENT"],
-    ["HK", "fr", "zh-Latn", "RECIPIENT"],
+    ['HK', 'zh', 'zh-Hant', 'ADMIN_AREA'],
+    ['HK', 'en', 'en', 'ADMIN_AREA'],
+    ['HK', 'zh-latn', 'zh-Latn', 'RECIPIENT'],
+    ['HK', 'fr', 'zh-Latn', 'RECIPIENT'],
     // Switzerland supports de, fr, and it. Live snapshot doesn't fall back to de for en
-    ["CH", "de", "de", "ORGANIZATION"],
-    ["CH", "fr", "fr", "ORGANIZATION"],
-    ["CH", "it", "it", "ORGANIZATION"],
-    ["CH", "en", "en", "ORGANIZATION"],
+    ['CH', 'de', 'de', 'ORGANIZATION'],
+    ['CH', 'fr', 'fr', 'ORGANIZATION'],
+    ['CH', 'it', 'it', 'ORGANIZATION'],
+    ['CH', 'en', 'en', 'ORGANIZATION'],
   ];
 
   it.each(cases)(
-    "%s ui=%j -> best=%j first=%s",
+    '%s ui=%j -> best=%j first=%s',
     (regionCode, uiLanguageTag, expectedBest, expectedFirstField) => {
       const layout = buildLayout(regionCode, uiLanguageTag);
       expect(layout.languageTag).toBe(expectedBest);

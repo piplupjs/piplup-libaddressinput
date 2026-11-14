@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   HybridSource,
   MemoryStorage,
@@ -6,7 +6,7 @@ import {
   getProblemErrorMessage,
   type AddressData,
   type AddressField,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
 import {
   AddressProvider,
   useAddress,
@@ -14,13 +14,13 @@ import {
   useCountries,
   useSubRegions,
   useValidate,
-} from "@piplup/libaddressinput-react";
+} from '@piplup/libaddressinput-react';
 
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
 
 export function App() {
-  const [regionCode, setRegionCode] = useState("US");
-  const [values, setValues] = useState<AddressData>({ regionCode: "US" });
+  const [regionCode, setRegionCode] = useState('US');
+  const [values, setValues] = useState<AddressData>({ regionCode: 'US' });
   const address = useAddress({ supplier, region: regionCode });
   const { validate, validating, problems, isValid } = useValidate(supplier);
   const [hasValidated, setHasValidated] = useState(false);
@@ -28,7 +28,7 @@ export function App() {
   function setField(key: keyof AddressData, value: string): void {
     setValues((prev) => ({
       ...prev,
-      [key]: key === "addressLine" ? [value] : value,
+      [key]: key === 'addressLine' ? [value] : value,
     }));
   }
 
@@ -46,9 +46,9 @@ export function App() {
   return (
     <main
       style={{
-        maxWidth: "32rem",
-        margin: "2rem auto",
-        fontFamily: "system-ui, sans-serif",
+        maxWidth: '32rem',
+        margin: '2rem auto',
+        fontFamily: 'system-ui, sans-serif',
       }}
     >
       <h1>Address form (react-form-controller)</h1>
@@ -69,21 +69,21 @@ export function App() {
           onClick={() => void handleValidate()}
           disabled={address.loading || validating}
           style={{
-            marginTop: "1.25rem",
-            padding: "0.6rem 1.25rem",
-            background: "#0052cc",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
+            marginTop: '1.25rem',
+            padding: '0.6rem 1.25rem',
+            background: '#0052cc',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
             fontWeight: 600,
-            cursor: address.loading || validating ? "not-allowed" : "pointer",
+            cursor: address.loading || validating ? 'not-allowed' : 'pointer',
           }}
         >
-          {validating ? "Validating…" : "Validate now"}
+          {validating ? 'Validating…' : 'Validate now'}
         </button>
 
         {hasValidated && isValid && !address.loading && (
-          <div style={{ marginTop: "1rem", color: "#006644", fontWeight: 600 }}>
+          <div style={{ marginTop: '1rem', color: '#006644', fontWeight: 600 }}>
             ✓ Form is valid
           </div>
         )}
@@ -99,7 +99,7 @@ function RegionSelector({
   value: string;
   onChange: (region: string) => void;
 }) {
-  const countries = useCountries({ priority: ["US", "CA", "GB", "IN"] });
+  const countries = useCountries({ priority: ['US', 'CA', 'GB', 'IN'] });
 
   return (
     <label>
@@ -108,10 +108,10 @@ function RegionSelector({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         style={{
-          display: "block",
-          width: "100%",
-          padding: "0.5rem",
-          marginTop: "0.25rem",
+          display: 'block',
+          width: '100%',
+          padding: '0.5rem',
+          marginTop: '0.25rem',
         }}
       >
         {countries.map(({ code, name }) => (
@@ -131,12 +131,12 @@ function AddressFields({
 }: {
   values: AddressData;
   onChange: (key: keyof AddressData, value: string) => void;
-  problems: import("@piplup/libaddressinput").ValidationProblem[];
+  problems: import('@piplup/libaddressinput').ValidationProblem[];
 }) {
   const { rows } = useAddressContext();
 
   // Cascading subregions for LOCALITY based on current administrativeArea selection
-  const localitySubRegions = useSubRegions("LOCALITY", {
+  const localitySubRegions = useSubRegions('LOCALITY', {
     parentKey: values.administrativeArea,
   });
 
@@ -146,10 +146,9 @@ function AddressFields({
   return (
     <>
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} style={{ display: "flex", gap: "0.5rem" }}>
+        <div key={rowIndex} style={{ display: 'flex', gap: '0.5rem' }}>
           {row.map((item) => {
-            const isLocalitySelect =
-              item.field === "LOCALITY" && localitySubRegions.length > 0;
+            const isLocalitySelect = item.field === 'LOCALITY' && localitySubRegions.length > 0;
             const options = isLocalitySelect ? localitySubRegions : item.options;
             const isSelect = (item.isSelect && item.options) || isLocalitySelect;
             const errors = errorsFor(item.field);
@@ -157,20 +156,20 @@ function AddressFields({
             return (
               <div
                 key={item.field}
-                style={{ flex: item.length === "long" ? 1 : 0.5, marginTop: "0.75rem" }}
+                style={{ flex: item.length === 'long' ? 1 : 0.5, marginTop: '0.75rem' }}
               >
-                <label style={{ display: "block" }}>
+                <label style={{ display: 'block' }}>
                   {item.label}
-                  {item.required ? " *" : ""}
+                  {item.required ? ' *' : ''}
                   {isSelect && options ? (
                     <select
-                      value={(values[item.key] as string) ?? ""}
+                      value={(values[item.key] as string) ?? ''}
                       onChange={(e) => onChange(item.key, e.target.value)}
                       style={{
-                        display: "block",
-                        width: "100%",
-                        padding: "0.5rem",
-                        marginTop: "0.25rem",
+                        display: 'block',
+                        width: '100%',
+                        padding: '0.5rem',
+                        marginTop: '0.25rem',
                       }}
                     >
                       <option value="">Select {item.label}…</option>
@@ -186,15 +185,15 @@ function AddressFields({
                       autoComplete={item.autoComplete}
                       value={
                         Array.isArray(values[item.key])
-                          ? ((values[item.key] as string[])[0] ?? "")
-                          : ((values[item.key] as string) ?? "")
+                          ? ((values[item.key] as string[])[0] ?? '')
+                          : ((values[item.key] as string) ?? '')
                       }
                       style={{
-                        display: "block",
-                        width: "100%",
-                        boxSizing: "border-box",
-                        padding: "0.5rem",
-                        marginTop: "0.25rem",
+                        display: 'block',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        padding: '0.5rem',
+                        marginTop: '0.25rem',
                       }}
                       onChange={(e) => onChange(item.key, e.target.value)}
                     />
@@ -203,9 +202,9 @@ function AddressFields({
                     <div
                       key={i}
                       style={{
-                        color: "#b00020",
-                        fontSize: "0.85em",
-                        marginTop: "0.25rem",
+                        color: '#b00020',
+                        fontSize: '0.85em',
+                        marginTop: '0.25rem',
                       }}
                     >
                       {msg}

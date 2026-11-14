@@ -4,34 +4,34 @@
 // to look up address metadata, either in the bundled fallback dataset or
 // from a remote/data supplier (Phase 2).
 
-import type { AddressData } from "../address-data.js";
-import type { AddressField } from "../address-field.js";
-import { parseLanguage } from "./language.js";
-import * as RegionDataConstants from "./region-data-constants.js";
-import { parseRule } from "./rule.js";
+import type { AddressData } from '../address-data.js';
+import type { AddressField } from '../address-field.js';
+import { parseLanguage } from './language.js';
+import * as RegionDataConstants from './region-data-constants.js';
+import { parseRule } from './rule.js';
 
 /** Mirrors LookupKey::kHierarchy: the levels a lookup key can descend through. */
 export const LOOKUP_KEY_HIERARCHY: readonly AddressField[] = [
-  "COUNTRY",
-  "ADMIN_AREA",
-  "LOCALITY",
-  "DEPENDENT_LOCALITY",
+  'COUNTRY',
+  'ADMIN_AREA',
+  'LOCALITY',
+  'DEPENDENT_LOCALITY',
 ];
 
-const UNKNOWN_REGION = "ZZ";
+const UNKNOWN_REGION = 'ZZ';
 
 function fieldValue(address: AddressData, field: AddressField): string {
   switch (field) {
-    case "COUNTRY":
+    case 'COUNTRY':
       return address.regionCode;
-    case "ADMIN_AREA":
-      return address.administrativeArea ?? "";
-    case "LOCALITY":
-      return address.locality ?? "";
-    case "DEPENDENT_LOCALITY":
-      return address.dependentLocality ?? "";
+    case 'ADMIN_AREA':
+      return address.administrativeArea ?? '';
+    case 'LOCALITY':
+      return address.locality ?? '';
+    case 'DEPENDENT_LOCALITY':
+      return address.dependentLocality ?? '';
     default:
-      return "";
+      return '';
   }
 }
 
@@ -67,7 +67,7 @@ export function lookupKeyFromAddress(address: AddressData): LookupKey {
   const nodes = new Map<AddressField, string>();
 
   if (address.regionCode.length === 0) {
-    nodes.set("COUNTRY", UNKNOWN_REGION);
+    nodes.set('COUNTRY', UNKNOWN_REGION);
   } else {
     for (const field of LOOKUP_KEY_HIERARCHY) {
       const value = fieldValue(address, field);
@@ -75,7 +75,7 @@ export function lookupKeyFromAddress(address: AddressData): LookupKey {
         // It would be impossible to find any data for an empty field value.
         break;
       }
-      if (value.includes("/")) {
+      if (value.includes('/')) {
         // The address metadata server does not have data for any fields
         // with a slash in their value: "/" is the lookup-key syntax
         // character.
@@ -85,14 +85,14 @@ export function lookupKeyFromAddress(address: AddressData): LookupKey {
     }
   }
 
-  const addressLanguage = parseLanguage(address.languageCode ?? "");
+  const addressLanguage = parseLanguage(address.languageCode ?? '');
   const languageTagNoLatn = addressLanguage.hasLatinScript
     ? addressLanguage.base
     : addressLanguage.tag;
 
   const language = shouldSetLanguageForKey(languageTagNoLatn, address.regionCode)
     ? languageTagNoLatn
-    : "";
+    : '';
 
   return { nodes, language };
 }
@@ -103,10 +103,10 @@ export function lookupKeyFromAddress(address: AddressData): LookupKey {
  */
 export function lookupKeyFromParent(parent: LookupKey, childNode: string): LookupKey {
   if (parent.nodes.size >= LOOKUP_KEY_HIERARCHY.length) {
-    throw new Error("lookupKeyFromParent: parent is already at max depth");
+    throw new Error('lookupKeyFromParent: parent is already at max depth');
   }
   if (childNode.length === 0) {
-    throw new Error("lookupKeyFromParent: childNode must not be empty");
+    throw new Error('lookupKeyFromParent: childNode must not be empty');
   }
   const nodes = new Map(parent.nodes);
   const childField = LOOKUP_KEY_HIERARCHY[nodes.size]!;
@@ -125,7 +125,7 @@ export function lookupKeyToString(key: LookupKey, maxDepth: number): string {
       `lookupKeyToString: maxDepth must be in [0, ${LOOKUP_KEY_HIERARCHY.length - 1}]`,
     );
   }
-  let result = "data";
+  let result = 'data';
   for (let i = 0; i <= maxDepth; i++) {
     const field = LOOKUP_KEY_HIERARCHY[i]!;
     const value = key.nodes.get(field);
@@ -140,9 +140,9 @@ export function lookupKeyToString(key: LookupKey, maxDepth: number): string {
 
 /** Mirrors `LookupKey::GetRegionCode`. Throws if the key has no COUNTRY node. */
 export function lookupKeyRegionCode(key: LookupKey): string {
-  const regionCode = key.nodes.get("COUNTRY");
+  const regionCode = key.nodes.get('COUNTRY');
   if (regionCode === undefined) {
-    throw new Error("lookupKeyRegionCode: key has no COUNTRY node");
+    throw new Error('lookupKeyRegionCode: key has no COUNTRY node');
   }
   return regionCode;
 }

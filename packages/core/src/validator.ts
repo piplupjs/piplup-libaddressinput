@@ -3,13 +3,13 @@
 // checks live in internal/validation-task.ts; this is the supplier-
 // resolution half — mirrors upstream's `ValidationTask::Run`.
 
-import type { AddressData } from "./address-data.js";
-import { lookupKeyFromAddress } from "./internal/lookup-key.js";
-import { runValidationChecks } from "./internal/validation-task.js";
-import type { Supplier } from "./supplier/supplier.js";
+import type { AddressData } from './address-data.js';
+import { lookupKeyFromAddress } from './internal/lookup-key.js';
+import { runValidationChecks } from './internal/validation-task.js';
+import type { Supplier } from './supplier/supplier.js';
 
-export type { ValidationProblem } from "./internal/validation-task.js";
-import type { ValidationProblem } from "./internal/validation-task.js";
+export type { ValidationProblem } from './internal/validation-task.js';
+import type { ValidationProblem } from './internal/validation-task.js';
 
 export interface ValidateOptions {
   /** Allow postal (non-physical) addresses, e.g. P.O. boxes. Default false. */

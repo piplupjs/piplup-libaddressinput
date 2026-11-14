@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
   buildLayout,
   buildRegionTree,
@@ -12,8 +12,8 @@ import {
   type AddressLayout,
   type PreloadSupplier,
   type RegionData,
-} from "@piplup/libaddressinput";
-import type { AddressOptions, AddressState, FieldMeta, SubRegion } from "./types.js";
+} from '@piplup/libaddressinput';
+import type { AddressOptions, AddressState, FieldMeta, SubRegion } from './types.js';
 
 function buildFieldMetaRows(
   layout: AddressLayout | null,
@@ -34,12 +34,12 @@ function buildFieldMetaRows(
   for (const row of layout.rows) {
     const rowFields: FieldMeta[] = [];
     for (const item of row) {
-      if (item.kind !== "field") continue;
+      if (item.kind !== 'field') continue;
       const key = getFieldKey(item.field);
       const label = getFieldLabel(item, labelOpts);
 
       let options: SubRegion[] | undefined = undefined;
-      if (item.field === "ADMIN_AREA" && tree && tree.subRegions.length > 0) {
+      if (item.field === 'ADMIN_AREA' && tree && tree.subRegions.length > 0) {
         options = tree.subRegions.map((sub) => ({
           key: sub.key,
           name: sub.name,
@@ -68,7 +68,7 @@ function buildFieldMetaRows(
 }
 
 export function useAddress(opts: AddressOptions): AddressState {
-  const { supplier, region, locale = "en", includeLiterals = false } = opts;
+  const { supplier, region, locale = 'en', includeLiterals = false } = opts;
 
   // Build initial layout synchronously if region is non-empty
   const initialLayout = useMemo(() => {
@@ -95,16 +95,16 @@ export function useAddress(opts: AddressOptions): AddressState {
     async function load() {
       try {
         const sup = supplier as unknown as Record<string, unknown>;
-        if (typeof sup["loadRules"] === "function") {
+        if (typeof sup['loadRules'] === 'function') {
           const isLoaded =
-            typeof sup["isLoaded"] === "function"
-              ? Boolean((sup["isLoaded"] as (code: string) => boolean)(region))
+            typeof sup['isLoaded'] === 'function'
+              ? Boolean((sup['isLoaded'] as (code: string) => boolean)(region))
               : false;
 
           if (!isLoaded) {
-            const res = await (
-              sup["loadRules"] as (code: string) => Promise<{ success: boolean }>
-            )(region);
+            const res = await (sup['loadRules'] as (code: string) => Promise<{ success: boolean }>)(
+              region,
+            );
             if (!res.success && !cancelled) {
               setError(new Error(`Failed to load address rules for region "${region}"`));
               setLoading(false);

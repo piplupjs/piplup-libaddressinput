@@ -27,6 +27,7 @@
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
     "@eslint/js": "^9.15.0",
+    "@piplup/code-infra": "^2.0.2",
     "@types/node": "^22.10.0",
     "eslint": "^9.15.0",
     "fast-check": "^4.10.2",

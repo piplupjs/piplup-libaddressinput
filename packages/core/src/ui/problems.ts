@@ -1,7 +1,7 @@
-import type { AddressField } from "../address-field.js";
-import { en } from "../messages/en.js";
-import type { AddressProblem } from "../problem.js";
-import type { ValidationProblem } from "../validator.js";
+import type { AddressField } from '../address-field.js';
+import { en } from '../messages/en.js';
+import type { AddressProblem } from '../problem.js';
+import type { ValidationProblem } from '../validator.js';
 
 /**
  * Returns true if the problem represents a user-actionable validation error.
@@ -10,8 +10,8 @@ import type { ValidationProblem } from "../validator.js";
  * not that the user entered an invalid address).
  */
 export function isUserProblem(problem: ValidationProblem | AddressProblem): boolean {
-  const type = typeof problem === "string" ? problem : problem.problem;
-  return type !== "UNSUPPORTED_FIELD";
+  const type = typeof problem === 'string' ? problem : problem.problem;
+  return type !== 'UNSUPPORTED_FIELD';
 }
 
 /**
@@ -33,25 +33,23 @@ export function getProblemErrorMessage(
   messages: Record<string, string> = en,
 ): string {
   switch (problem.problem) {
-    case "MISSING_REQUIRED_FIELD":
-      return messages["MISSING_REQUIRED_FIELD"] ?? "You can't leave this empty.";
-    case "INVALID_FORMAT":
+    case 'MISSING_REQUIRED_FIELD':
+      return messages['MISSING_REQUIRED_FIELD'] ?? "You can't leave this empty.";
+    case 'INVALID_FORMAT':
+      return messages['UNRECOGNIZED_FORMAT_POSTAL_CODE'] ?? 'Invalid format for this field.';
+    case 'UNKNOWN_VALUE':
+      return 'This value is not recognized.';
+    case 'MISMATCHING_VALUE':
       return (
-        messages["UNRECOGNIZED_FORMAT_POSTAL_CODE"] ?? "Invalid format for this field."
+        messages['MISMATCHING_VALUE_POSTAL_CODE'] ??
+        'This value does not match the surrounding region.'
       );
-    case "UNKNOWN_VALUE":
-      return "This value is not recognized.";
-    case "MISMATCHING_VALUE":
-      return (
-        messages["MISMATCHING_VALUE_POSTAL_CODE"] ??
-        "This value does not match the surrounding region."
-      );
-    case "UNEXPECTED_FIELD":
-      return "This field is not expected for this region.";
-    case "USES_P_O_BOX":
-      return messages["PO_BOX_FORBIDDEN_VALUE"] ?? "P.O. boxes are not allowed here.";
-    case "UNSUPPORTED_FIELD":
-      return "";
+    case 'UNEXPECTED_FIELD':
+      return 'This field is not expected for this region.';
+    case 'USES_P_O_BOX':
+      return messages['PO_BOX_FORBIDDEN_VALUE'] ?? 'P.O. boxes are not allowed here.';
+    case 'UNSUPPORTED_FIELD':
+      return '';
     default:
       return problem.problem;
   }

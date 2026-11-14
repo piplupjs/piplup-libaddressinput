@@ -8,13 +8,13 @@
 //   only for keys explicitly present (an empty one fails every request,
 //   used to simulate "the network is down").
 
-import { FALLBACK_DATA } from "../src/data/fallback.js";
-import type { Source, SourceResult } from "../src/source.js";
+import { FALLBACK_DATA } from '../src/data/fallback.js';
+import type { Source, SourceResult } from '../src/source.js';
 
 export class FallbackDataSource implements Source {
   async get(key: string): Promise<SourceResult> {
     const data = FALLBACK_DATA[key];
-    return { success: true, data: data ?? "{}" };
+    return { success: true, data: data ?? '{}' };
   }
 }
 
@@ -27,5 +27,5 @@ export class MapSource implements Source {
   }
 }
 
-export { FallbackAggregateSource } from "../src/source.js";
-export { FixtureDataSource } from "./fixture-source.js";
+export { FallbackAggregateSource } from '../src/source.js';
+export { FixtureDataSource } from './fixture-source.js';

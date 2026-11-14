@@ -9,10 +9,10 @@
 // implementation — not worth it for that guard alone. The staleness
 // (30-day TTL) behavior is preserved exactly.
 
-import type { Storage, StorageResult } from "../storage.js";
+import type { Storage, StorageResult } from '../storage.js';
 
-const TIMESTAMP_PREFIX = "timestamp=";
-const SEPARATOR = "\n";
+const TIMESTAMP_PREFIX = 'timestamp=';
+const SEPARATOR = '\n';
 
 // 30 days, matching upstream's "one month" (30 * 24 * 60 * 60 seconds).
 const STALENESS_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;

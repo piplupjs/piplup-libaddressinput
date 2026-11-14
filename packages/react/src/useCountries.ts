@@ -1,9 +1,9 @@
-import { useMemo } from "react";
-import { getRegionOptions } from "@piplup/libaddressinput";
-import type { CountriesOptions, Country } from "./types.js";
+import { useMemo } from 'react';
+import { getRegionOptions } from '@piplup/libaddressinput';
+import type { CountriesOptions, Country } from './types.js';
 
 export function useCountries(opts?: CountriesOptions): Country[] {
-  const locale = opts?.locale ?? "en";
+  const locale = opts?.locale ?? 'en';
   const priority = opts?.priority;
 
   return useMemo(() => {
@@ -23,5 +23,5 @@ export function useCountries(opts?: CountriesOptions): Country[] {
 
     const remaining = list.filter((c) => !prioritySet.has(c.code));
     return [...prioritized, ...remaining];
-  }, [locale, priority?.join(",")]);
+  }, [locale, priority?.join(',')]);
 }

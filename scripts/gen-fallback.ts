@@ -11,10 +11,10 @@
 //
 // Usage: node --experimental-strip-types scripts/gen-fallback.ts
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SOURCE = `${ROOT}/data/live-snapshot.json`;
 const OUT = `${ROOT}/packages/core/src/data/fallback.ts`;
 
@@ -40,15 +40,15 @@ function parseLiveSnapshot(text: string): Map<string, Entry> {
   // Each key in snapshot.data maps to an aggregate response (e.g., "data/CA" -> {data/CA: {...}, data/CA/ON: {...}, ...})
   // Extract all individual entries from the aggregate responses
   for (const [aggregateKey, aggregateResponse] of Object.entries(snapshot.data)) {
-    if (!aggregateKey.startsWith("data/")) continue;
+    if (!aggregateKey.startsWith('data/')) continue;
 
     // The aggregate response is an object where each key is an individual entry
     // (e.g., {"data/CA": {...}, "data/CA/ON": {...}, ...})
-    if (typeof aggregateResponse === "object" && aggregateResponse !== null) {
+    if (typeof aggregateResponse === 'object' && aggregateResponse !== null) {
       for (const [entryKey, entryValue] of Object.entries(
         aggregateResponse as Record<string, unknown>,
       )) {
-        if (entryKey.startsWith("data/")) {
+        if (entryKey.startsWith('data/')) {
           entries.set(entryKey, { key: entryKey, json: JSON.stringify(entryValue) });
         }
       }
@@ -64,28 +64,28 @@ function computeMaxDepth(entries: Map<string, Entry>, regionCode: string): numbe
   for (const key of entries.keys()) {
     if (key === `data/${regionCode}` || !key.startsWith(prefix)) continue;
     // "data/US/CA" -> 1 extra segment -> depth 1; "data/CN/xx/yy/zz" -> depth 3.
-    const depth = key.slice(prefix.length).split("/").length;
+    const depth = key.slice(prefix.length).split('/').length;
     if (depth > maxDepth) maxDepth = depth;
   }
   return maxDepth;
 }
 
 function main(): void {
-  const sourceText = readFileSync(SOURCE, "utf8");
+  const sourceText = readFileSync(SOURCE, 'utf8');
   const entries = parseLiveSnapshot(sourceText);
 
   const regionCodes = [...entries.keys()]
-    .filter((key) => /^data\/[A-Z]{2}$/.test(key) && key !== "data/ZZ")
-    .map((key) => key.slice("data/".length))
+    .filter((key) => /^data\/[A-Z]{2}$/.test(key) && key !== 'data/ZZ')
+    .map((key) => key.slice('data/'.length))
     .sort();
 
-  const defaultEntry = entries.get("data/ZZ");
+  const defaultEntry = entries.get('data/ZZ');
   if (!defaultEntry) {
-    throw new Error("gen-fallback: data/ZZ (default rule) not found in source data");
+    throw new Error('gen-fallback: data/ZZ (default rule) not found in source data');
   }
 
   const dataEntries = [...entries.entries()]
-    .filter(([key]) => key !== "data/ZZ")
+    .filter(([key]) => key !== 'data/ZZ')
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
 
   const maxDepths: Record<string, number> = {};
@@ -97,50 +97,48 @@ function main(): void {
   const snapshot = JSON.parse(sourceText) as LiveSnapshot;
   const lines: string[] = [];
   lines.push(
-    "// GENERATED FILE — do not edit by hand.",
-    "// Produced by scripts/gen-fallback.ts from data/live-snapshot.json,",
+    '// GENERATED FILE — do not edit by hand.',
+    '// Produced by scripts/gen-fallback.ts from data/live-snapshot.json,',
     "// a snapshot of Google's live address-metadata service",
     `// (source: ${snapshot.metadata.sourceBaseUrl})`,
     `// fetched at: ${snapshot.metadata.fetchedAt}`,
-    "// See .planning/PLAN.md Phase 8 and DIVERGENCES.md for context.",
-    "//",
-    "// Regenerate with:",
-    "//   node --experimental-strip-types scripts/fetch-live-data.ts",
-    "//   node --experimental-strip-types scripts/gen-fallback.ts",
-    "",
-    "/** Every supported region code, sorted (matches RegionCodesSorted upstream). */",
+    '// See .planning/PLAN.md Phase 8 and DIVERGENCES.md for context.',
+    '//',
+    '// Regenerate with:',
+    '//   node --experimental-strip-types scripts/fetch-live-data.ts',
+    '//   node --experimental-strip-types scripts/gen-fallback.ts',
+    '',
+    '/** Every supported region code, sorted (matches RegionCodesSorted upstream). */',
     `export const FALLBACK_REGION_CODES: readonly string[] = ${JSON.stringify(regionCodes)};`,
-    "",
-    "/**",
+    '',
+    '/**',
     ' * Raw JSON text for every "data/<CC>" and "data/<CC>/<sub...>" rule,',
     " * keyed exactly as upstream's LookupKey.ToKeyString() would produce",
-    " * (no language suffix). Values are left as JSON strings (not parsed",
+    ' * (no language suffix). Values are left as JSON strings (not parsed',
     " * objects) so callers can feed them straight to internal/rule.ts's",
     " * parseRule(), matching upstream's Rule::ParseSerializedRule(string).",
-    " */",
-    "export const FALLBACK_DATA: Readonly<Record<string, string>> = {",
+    ' */',
+    'export const FALLBACK_DATA: Readonly<Record<string, string>> = {',
     ...dataEntries.map(
       ([key, entry]) => `  ${JSON.stringify(key)}: ${JSON.stringify(entry.json)},`,
     ),
-    "};",
-    "",
+    '};',
+    '',
     '/** The "ZZ" default rule (data/ZZ), used when a region has no data of its own. */',
     `export const FALLBACK_DEFAULT_REGION_DATA: string = ${JSON.stringify(defaultEntry.json)};`,
-    "",
-    "/**",
-    " * How many levels deep (0 = country only, 3 = country/admin/locality/",
+    '',
+    '/**',
+    ' * How many levels deep (0 = country only, 3 = country/admin/locality/',
     " * dependent-locality) each region's data goes, computed from the deepest",
     ' * "data/<CC>/..." key present. Regions with no sub-region data at all',
-    " * (depth 0) are omitted; look up with `FALLBACK_MAX_LOOKUP_KEY_DEPTH[cc] ?? 0`.",
-    " */",
+    ' * (depth 0) are omitted; look up with `FALLBACK_MAX_LOOKUP_KEY_DEPTH[cc] ?? 0`.',
+    ' */',
     `export const FALLBACK_MAX_LOOKUP_KEY_DEPTH: Readonly<Record<string, number>> = ${JSON.stringify(maxDepths)};`,
-    "",
+    '',
   );
 
-  writeFileSync(OUT, lines.join("\n"), "utf8");
-  console.log(
-    `Wrote ${OUT}: ${regionCodes.length} regions, ${dataEntries.length} rule entries.`,
-  );
+  writeFileSync(OUT, lines.join('\n'), 'utf8');
+  console.log(`Wrote ${OUT}: ${regionCodes.length} regions, ${dataEntries.length} rule entries.`);
 }
 
 main();

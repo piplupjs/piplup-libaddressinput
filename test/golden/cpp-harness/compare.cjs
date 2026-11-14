@@ -9,10 +9,10 @@
 // differ for entries like the BR/KR ones in corpus.json — that's not a bug,
 // see ../README.md.)
 
-const fs = require("fs");
+const fs = require('fs');
 
-const cpp = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
-const js = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+const cpp = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
+const js = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
 
 function sortProblems(problems) {
   return [...(problems || [])].sort((a, b) => {
@@ -32,9 +32,9 @@ for (let i = 0; i < cpp.length; i++) {
   if (!sameFormat) {
     formatMismatches++;
     console.log(`--- entry ${i} (${c.regionCode}) FORMAT MISMATCH ---`);
-    console.log("  input:", JSON.stringify(j.input.address));
-    console.log("  C++ :", JSON.stringify(c.formatted));
-    console.log("  JS  :", JSON.stringify(jFormatted));
+    console.log('  input:', JSON.stringify(j.input.address));
+    console.log('  C++ :', JSON.stringify(c.formatted));
+    console.log('  JS  :', JSON.stringify(jFormatted));
   }
 
   const cProblems = sortProblems(c.problems);
@@ -43,9 +43,9 @@ for (let i = 0; i < cpp.length; i++) {
   if (!sameProblems) {
     problemMismatches++;
     console.log(`--- entry ${i} (${c.regionCode}) VALIDATION MISMATCH ---`);
-    console.log("  input:", JSON.stringify(j.input.address));
-    console.log("  C++ :", JSON.stringify(cProblems));
-    console.log("  JS  :", JSON.stringify(jProblems));
+    console.log('  input:', JSON.stringify(j.input.address));
+    console.log('  C++ :', JSON.stringify(cProblems));
+    console.log('  JS  :', JSON.stringify(jProblems));
   }
 }
 

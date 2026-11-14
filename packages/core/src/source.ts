@@ -30,11 +30,11 @@ export interface FetchSourceOptions {
   baseUrl?: string;
 }
 
-import { FALLBACK_DATA } from "./data/fallback.js";
+import { FALLBACK_DATA } from './data/fallback.js';
 
 const DEFAULT_BASE_URL =
-  "https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/";
-const LEGACY_BASE_URL = "https://chromium-i18n.appspot.com/ssl-aggregate-address/";
+  'https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/';
+const LEGACY_BASE_URL = 'https://chromium-i18n.appspot.com/ssl-aggregate-address/';
 
 /**
  * A Source backed by `fetch`. Matches the real endpoint's documented
@@ -53,9 +53,7 @@ export class FetchSource implements Source {
   constructor(options: FetchSourceOptions = {}) {
     const fetchImpl = options.fetch ?? globalThis.fetch;
     if (fetchImpl === undefined) {
-      throw new Error(
-        "FetchSource: no fetch implementation available; pass { fetch } explicitly",
-      );
+      throw new Error('FetchSource: no fetch implementation available; pass { fetch } explicitly');
     }
     this.fetchImpl = fetchImpl;
     this.baseUrl = options.baseUrl ?? DEFAULT_BASE_URL;
@@ -109,7 +107,7 @@ export class FallbackAggregateSource implements Source {
       }
     }
     if (Object.keys(aggregate).length === 0) {
-      return { success: true, data: "{}" };
+      return { success: true, data: '{}' };
     }
     return { success: true, data: JSON.stringify(aggregate) };
   }

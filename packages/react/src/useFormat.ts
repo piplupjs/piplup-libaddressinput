@@ -1,9 +1,9 @@
-import { useCallback } from "react";
+import { useCallback } from 'react';
 import {
   formatAddress,
   formatAddressAsSingleLine,
   type AddressData,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
 
 export function useFormat() {
   const format = useCallback((address: AddressData): string[] => {

@@ -6,15 +6,15 @@
 // (e.g. AddressField::ToString equivalents used by callers/tests).
 
 export const ADDRESS_FIELDS = [
-  "COUNTRY",
-  "ADMIN_AREA",
-  "LOCALITY",
-  "DEPENDENT_LOCALITY",
-  "SORTING_CODE",
-  "POSTAL_CODE",
-  "STREET_ADDRESS",
-  "ORGANIZATION",
-  "RECIPIENT",
+  'COUNTRY',
+  'ADMIN_AREA',
+  'LOCALITY',
+  'DEPENDENT_LOCALITY',
+  'SORTING_CODE',
+  'POSTAL_CODE',
+  'STREET_ADDRESS',
+  'ORGANIZATION',
+  'RECIPIENT',
 ] as const;
 
 export type AddressField = (typeof ADDRESS_FIELDS)[number];

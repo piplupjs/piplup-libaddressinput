@@ -6,21 +6,21 @@
 // dependency (see PLAN.md §7a — React/etc. bindings belong in examples/,
 // never here).
 
-import type { AddressData } from "../address-data.js";
-import type { AddressField } from "../address-field.js";
-import { buildLayout, type AddressLayout, type LayoutField } from "../layout.js";
-import { buildRegionTree, type RegionData } from "../region-data.js";
-import { normalize } from "../normalizer.js";
-import type { PreloadSupplier } from "../supplier/preload.js";
-import { validate, type ValidateOptions, type ValidationProblem } from "../validator.js";
-import { getUserProblems } from "../ui/problems.js";
-import { findSubRegions } from "../ui/regions.js";
+import type { AddressData } from '../address-data.js';
+import type { AddressField } from '../address-field.js';
+import { buildLayout, type AddressLayout, type LayoutField } from '../layout.js';
+import { buildRegionTree, type RegionData } from '../region-data.js';
+import { normalize } from '../normalizer.js';
+import type { PreloadSupplier } from '../supplier/preload.js';
+import { validate, type ValidateOptions, type ValidationProblem } from '../validator.js';
+import { getUserProblems } from '../ui/problems.js';
+import { findSubRegions } from '../ui/regions.js';
 
 // The subset of AddressData fields a form field setter can target — every
 // field except `regionCode`, which has its own `setRegion()` because
 // changing it reshapes the whole form (layout, region tree, which other
 // values survive).
-export type FormField = Exclude<keyof AddressData, "regionCode">;
+export type FormField = Exclude<keyof AddressData, 'regionCode'>;
 
 export interface AddressFormState {
   /** Current field values, including `regionCode`. Never mutated in place. */
@@ -81,7 +81,7 @@ export interface AddressFormController {
   dispose(): void;
 }
 
-const EMPTY_ADDRESS: AddressData = { regionCode: "" };
+const EMPTY_ADDRESS: AddressData = { regionCode: '' };
 
 function cloneAddress(address: AddressData): AddressData {
   return {
@@ -94,7 +94,7 @@ function usedFields(layout: AddressLayout): Set<AddressField> {
   const fields = new Set<AddressField>();
   for (const row of layout.rows) {
     for (const item of row) {
-      if (item.kind === "field") fields.add(item.field);
+      if (item.kind === 'field') fields.add(item.field);
     }
   }
   return fields;
@@ -102,29 +102,29 @@ function usedFields(layout: AddressLayout): Set<AddressField> {
 
 function fieldToValueKey(field: AddressField): keyof AddressData | undefined {
   switch (field) {
-    case "ADMIN_AREA":
-      return "administrativeArea";
-    case "LOCALITY":
-      return "locality";
-    case "DEPENDENT_LOCALITY":
-      return "dependentLocality";
-    case "SORTING_CODE":
-      return "sortingCode";
-    case "POSTAL_CODE":
-      return "postalCode";
-    case "STREET_ADDRESS":
-      return "addressLine";
-    case "ORGANIZATION":
-      return "organization";
-    case "RECIPIENT":
-      return "recipient";
+    case 'ADMIN_AREA':
+      return 'administrativeArea';
+    case 'LOCALITY':
+      return 'locality';
+    case 'DEPENDENT_LOCALITY':
+      return 'dependentLocality';
+    case 'SORTING_CODE':
+      return 'sortingCode';
+    case 'POSTAL_CODE':
+      return 'postalCode';
+    case 'STREET_ADDRESS':
+      return 'addressLine';
+    case 'ORGANIZATION':
+      return 'organization';
+    case 'RECIPIENT':
+      return 'recipient';
     default:
       return undefined; // COUNTRY has its own setRegion().
   }
 }
 
 export function createAddressForm(options: AddressFormOptions): AddressFormController {
-  const { supplier, uiLanguageTag = "en", validateOptions } = options;
+  const { supplier, uiLanguageTag = 'en', validateOptions } = options;
   const initialAddress = options.initial ?? EMPTY_ADDRESS;
 
   let state: AddressFormState = {
@@ -180,7 +180,7 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
 
       if (regionCode.length === 0) {
         setState({
-          values: { regionCode: "" },
+          values: { regionCode: '' },
           layout: null,
           regionTree: null,
           loading: false,
@@ -242,7 +242,7 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
 
     setField(field, value) {
       const resolvedKey: FormField | undefined =
-        typeof field === "string" && fieldToValueKey(field as AddressField) !== undefined
+        typeof field === 'string' && fieldToValueKey(field as AddressField) !== undefined
           ? (fieldToValueKey(field as AddressField) as FormField)
           : (field as FormField);
 
@@ -263,10 +263,7 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
     },
 
     normalizeValues() {
-      if (
-        state.values.regionCode.length === 0 ||
-        !supplier.isLoaded(state.values.regionCode)
-      ) {
+      if (state.values.regionCode.length === 0 || !supplier.isLoaded(state.values.regionCode)) {
         return;
       }
       setState({ values: normalize(supplier, state.values) });
@@ -299,7 +296,7 @@ export function createAddressForm(options: AddressFormOptions): AddressFormContr
 
     getSubRegions(parentKeyOrName?: string) {
       if (state.regionTree === null) return [];
-      if (parentKeyOrName === undefined || parentKeyOrName === "") {
+      if (parentKeyOrName === undefined || parentKeyOrName === '') {
         return state.regionTree.subRegions;
       }
       return findSubRegions(state.regionTree, parentKeyOrName);

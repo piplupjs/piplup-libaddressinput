@@ -4,7 +4,7 @@ import type {
   MessageId,
   RegionData,
   Supplier,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
 
 export interface SubRegion {
   key: string;
@@ -21,7 +21,7 @@ export interface FieldMeta {
   options?: SubRegion[] | undefined;
   isSelect: boolean;
   multiline: boolean;
-  length: "short" | "long";
+  length: 'short' | 'long';
 }
 
 export interface AddressOptions {

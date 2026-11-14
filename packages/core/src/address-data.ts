@@ -4,7 +4,7 @@
 // AddressData struct. All fields are optional strings/string arrays; callers
 // build these as plain object literals rather than via a constructor.
 
-import type { AddressField } from "./address-field.js";
+import type { AddressField } from './address-field.js';
 
 export interface AddressData {
   /** CLDR region code, e.g. "US", "JP". Required for most operations. */
@@ -38,14 +38,14 @@ function isStringEmpty(value: string): boolean {
 }
 
 const SCALAR_FIELD_KEYS: Partial<Record<AddressField, keyof AddressData>> = {
-  COUNTRY: "regionCode",
-  ADMIN_AREA: "administrativeArea",
-  LOCALITY: "locality",
-  DEPENDENT_LOCALITY: "dependentLocality",
-  SORTING_CODE: "sortingCode",
-  POSTAL_CODE: "postalCode",
-  ORGANIZATION: "organization",
-  RECIPIENT: "recipient",
+  COUNTRY: 'regionCode',
+  ADMIN_AREA: 'administrativeArea',
+  LOCALITY: 'locality',
+  DEPENDENT_LOCALITY: 'dependentLocality',
+  SORTING_CODE: 'sortingCode',
+  POSTAL_CODE: 'postalCode',
+  ORGANIZATION: 'organization',
+  RECIPIENT: 'recipient',
 };
 
 /**
@@ -58,12 +58,12 @@ export function getFieldValue(address: AddressData, field: AddressField): string
   if (key === undefined) {
     throw new Error(`getFieldValue: ${field} is a repeated field; read addressLine`);
   }
-  return (address[key] as string | undefined) ?? "";
+  return (address[key] as string | undefined) ?? '';
 }
 
 /** Mirrors `AddressData::IsFieldEmpty`. */
 export function isFieldEmpty(address: AddressData, field: AddressField): boolean {
-  if (field === "STREET_ADDRESS") {
+  if (field === 'STREET_ADDRESS') {
     const lines = address.addressLine ?? [];
     return lines.every(isStringEmpty);
   }

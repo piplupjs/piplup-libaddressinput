@@ -21,19 +21,19 @@ import {
   lookupKeyToString,
   lookupKeyDepth,
   type LookupKey,
-} from "../internal/lookup-key.js";
-import * as RegionDataConstants from "../internal/region-data-constants.js";
-import { parseJsonRule, type Rule } from "../internal/rule.js";
-import { naturalKey } from "../internal/string-compare.js";
-import { Retriever } from "../internal/retriever.js";
-import type { Source } from "../source.js";
-import type { Storage } from "../storage.js";
+} from '../internal/lookup-key.js';
+import * as RegionDataConstants from '../internal/region-data-constants.js';
+import { parseJsonRule, type Rule } from '../internal/rule.js';
+import { naturalKey } from '../internal/string-compare.js';
+import { Retriever } from '../internal/retriever.js';
+import type { Source } from '../source.js';
+import type { Storage } from '../storage.js';
 import {
   createEmptyRuleHierarchy,
   type RuleHierarchy,
   type Supplier,
   type SupplyResult,
-} from "./supplier.js";
+} from './supplier.js';
 
 function keyFromRegionCode(regionCode: string): string {
   return lookupKeyToString(lookupKeyFromAddress({ regionCode }), 0);
@@ -42,7 +42,7 @@ function keyFromRegionCode(regionCode: string): string {
 // The length of "data/ZZ" — a depth-0 lookup key is always this long, since
 // every region code is exactly 2 characters (verified by fallback.ts's
 // generator against RegionCodeHasTwoCharacters' invariant).
-const REGION_KEY_LENGTH = "data/ZZ".length;
+const REGION_KEY_LENGTH = 'data/ZZ'.length;
 
 export interface LoadRulesResult {
   success: boolean;
@@ -79,11 +79,7 @@ export class PreloadSupplier implements Supplier {
    * and `storage` are still required for loading any *further* regions
    * later via `loadRules()`.
    */
-  static from(
-    source: Source,
-    storage: Storage,
-    exported: Record<string, string>,
-  ): PreloadSupplier {
+  static from(source: Source, storage: Storage, exported: Record<string, string>): PreloadSupplier {
     const supplier = new PreloadSupplier(source, storage);
     for (const [regionCode, data] of Object.entries(exported)) {
       const key = keyFromRegionCode(regionCode);
@@ -137,18 +133,14 @@ export class PreloadSupplier implements Supplier {
   // Shared by doLoad() (data just came from the retriever) and the
   // export()/from() hydration path below (data was serialized earlier, e.g.
   // on a server, and handed to us directly with no fetch at all).
-  private processAggregateData(
-    regionCode: string,
-    key: string,
-    data: string,
-  ): LoadRulesResult {
+  private processAggregateData(regionCode: string, key: string, data: string): LoadRulesResult {
     let parsed: unknown;
     try {
       parsed = JSON.parse(data);
     } catch {
       return { success: false, regionCode, ruleCount: 0 };
     }
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
       return { success: false, regionCode, ruleCount: 0 };
     }
 
@@ -161,16 +153,16 @@ export class PreloadSupplier implements Supplier {
     }
 
     for (const entry of Object.values(parsed as Record<string, unknown>)) {
-      if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
+      if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
         return { success: false, regionCode, ruleCount: 0 };
       }
       const entryObj = entry as Record<string, unknown>;
-      const id = typeof entryObj.id === "string" ? entryObj.id : undefined;
+      const id = typeof entryObj.id === 'string' ? entryObj.id : undefined;
       if (id === undefined || id.length === 0) {
         return { success: false, regionCode, ruleCount: 0 };
       }
 
-      const depth = id.split("/").length - 2;
+      const depth = id.split('/').length - 2;
       if (depth < 0 || depth >= LOOKUP_KEY_HIERARCHY.length) {
         return { success: false, regionCode, ruleCount: 0 };
       }
@@ -203,7 +195,7 @@ export class PreloadSupplier implements Supplier {
       const hierarchy: Rule[] = [rule];
       let parentId = rule.id;
       for (;;) {
-        const pos = parentId.lastIndexOf("/");
+        const pos = parentId.lastIndexOf('/');
         if (pos === REGION_KEY_LENGTH) break; // reached COUNTRY level
         parentId = parentId.slice(0, pos);
         const parent = this.ruleIndex.get(naturalKey(parentId));
@@ -216,11 +208,11 @@ export class PreloadSupplier implements Supplier {
       // Walk from the country level back down to the leaf, appending names.
       for (let i = hierarchy.length - 1; i >= 0; i--) {
         const level = hierarchy[i]!;
-        humanId += "/";
+        humanId += '/';
         if (level.name.length > 0) {
           humanId += level.name;
         } else {
-          const pos = level.id.lastIndexOf("/");
+          const pos = level.id.lastIndexOf('/');
           humanId += level.id.slice(pos + 1);
         }
         if (level.latinName.length > 0) {
@@ -229,7 +221,7 @@ export class PreloadSupplier implements Supplier {
       }
 
       const id = rule.id;
-      const langPos = id.lastIndexOf("--");
+      const langPos = id.lastIndexOf('--');
       if (langPos !== -1) {
         this.languageRuleIndex.set(naturalKey(humanId), rule);
         humanId += id.slice(langPos);

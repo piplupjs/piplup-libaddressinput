@@ -6,42 +6,42 @@
 // newline; here it's a discriminated union instead, which is equivalent and
 // idiomatic in TS (see .planning/PLAN.md Phase 1).
 
-import type { AddressField } from "../address-field.js";
+import type { AddressField } from '../address-field.js';
 
 export interface FieldElement {
-  kind: "field";
+  kind: 'field';
   field: AddressField;
 }
 
 export interface NewlineElement {
-  kind: "newline";
+  kind: 'newline';
 }
 
 export interface LiteralElement {
-  kind: "literal";
+  kind: 'literal';
   literal: string;
 }
 
 export type FormatElement = FieldElement | NewlineElement | LiteralElement;
 
 export function fieldElement(field: AddressField): FieldElement {
-  return { kind: "field", field };
+  return { kind: 'field', field };
 }
 
 export function newlineElement(): NewlineElement {
-  return { kind: "newline" };
+  return { kind: 'newline' };
 }
 
 export function literalElement(literal: string): LiteralElement {
   if (literal.length === 0) {
-    throw new Error("literalElement: literal must not be empty");
+    throw new Error('literalElement: literal must not be empty');
   }
-  return { kind: "literal", literal };
+  return { kind: 'literal', literal };
 }
 
 export function formatElementsEqual(a: FormatElement, b: FormatElement): boolean {
   if (a.kind !== b.kind) return false;
-  if (a.kind === "field" && b.kind === "field") return a.field === b.field;
-  if (a.kind === "literal" && b.kind === "literal") return a.literal === b.literal;
+  if (a.kind === 'field' && b.kind === 'field') return a.field === b.field;
+  if (a.kind === 'literal' && b.kind === 'literal') return a.literal === b.literal;
   return true; // both newline
 }

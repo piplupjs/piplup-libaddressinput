@@ -1,8 +1,8 @@
 // Port of cpp/include/libaddressinput/supplier.h (Apache-2.0, Google Inc.).
 
-import type { LookupKey } from "../internal/lookup-key.js";
-import { LOOKUP_KEY_HIERARCHY } from "../internal/lookup-key.js";
-import type { Rule } from "../internal/rule.js";
+import type { LookupKey } from '../internal/lookup-key.js';
+import { LOOKUP_KEY_HIERARCHY } from '../internal/lookup-key.js';
+import type { Rule } from '../internal/rule.js';
 
 /**
  * The hierarchical list of Rules for a LookupKey, one slot per level of

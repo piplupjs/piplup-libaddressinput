@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState } from 'react';
 import {
   getUserProblems,
   validate,
@@ -6,17 +6,14 @@ import {
   type Supplier,
   type ValidateOptions,
   type ValidationProblem,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
 
 export function useValidate(supplier: Supplier, defaultOptions?: ValidateOptions) {
   const [validating, setValidating] = useState(false);
   const [problems, setProblems] = useState<ValidationProblem[]>([]);
 
   const run = useCallback(
-    async (
-      address: AddressData,
-      options?: ValidateOptions,
-    ): Promise<ValidationProblem[]> => {
+    async (address: AddressData, options?: ValidateOptions): Promise<ValidationProblem[]> => {
       setValidating(true);
       try {
         const result = await validate(supplier, address, options ?? defaultOptions);
@@ -39,10 +36,7 @@ export function useValidate(supplier: Supplier, defaultOptions?: ValidateOptions
 }
 
 export function createValidator(supplier: Supplier, defaultOptions?: ValidateOptions) {
-  return async (
-    address: AddressData,
-    options?: ValidateOptions,
-  ): Promise<ValidationProblem[]> => {
+  return async (address: AddressData, options?: ValidateOptions): Promise<ValidationProblem[]> => {
     const result = await validate(supplier, address, options ?? defaultOptions);
     return getUserProblems(result);
   };

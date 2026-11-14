@@ -1,4 +1,4 @@
-export { DEFAULT_FIELD_LABEL_IDS, getFieldLabel } from "./labels.js";
+export { DEFAULT_FIELD_LABEL_IDS, getFieldLabel } from './labels.js';
 
 export {
   FIELD_TO_DATA_KEY,
@@ -6,18 +6,18 @@ export {
   FIELD_TO_AUTOCOMPLETE,
   getFieldKey,
   getFieldAutocomplete,
-} from "./fields.js";
+} from './fields.js';
 
 export {
   isUserProblem,
   getUserProblems,
   getProblemErrorMessage,
   groupProblemsByField,
-} from "./problems.js";
+} from './problems.js';
 
 export {
   type RegionOption,
   getRegionOptions,
   formatRegionOption,
   findSubRegions,
-} from "./regions.js";
+} from './regions.js';

@@ -1,24 +1,24 @@
-import type { AddressField } from "../address-field.js";
-import type { LayoutField } from "../layout.js";
-import type { MessageId } from "../messages.js";
-import { en as defaultMessages } from "../messages/en.js";
-import { en as defaultLabels } from "../labels/en.js";
+import type { AddressField } from '../address-field.js';
+import type { LayoutField } from '../layout.js';
+import type { MessageId } from '../messages.js';
+import { en as defaultMessages } from '../messages/en.js';
+import { en as defaultLabels } from '../labels/en.js';
 
 /**
  * Standard fallback message IDs for fields whose region rules do not specify
  * an explicit name type (e.g. standard "City", "Postal code", etc.).
  * These IDs map to localized strings in message packs (e.g. messages/en.ts).
  */
-export const DEFAULT_FIELD_LABEL_IDS: Record<AddressField, MessageId | "CEDEX"> = {
-  ADMIN_AREA: "PROVINCE",
-  LOCALITY: "LOCALITY_LABEL",
-  DEPENDENT_LOCALITY: "DISTRICT",
-  POSTAL_CODE: "POSTAL_CODE_LABEL",
-  STREET_ADDRESS: "ADDRESS_LINE_1_LABEL",
-  ORGANIZATION: "ORGANIZATION_LABEL",
-  RECIPIENT: "RECIPIENT_LABEL",
-  COUNTRY: "COUNTRY_OR_REGION_LABEL",
-  SORTING_CODE: "CEDEX",
+export const DEFAULT_FIELD_LABEL_IDS: Record<AddressField, MessageId | 'CEDEX'> = {
+  ADMIN_AREA: 'PROVINCE',
+  LOCALITY: 'LOCALITY_LABEL',
+  DEPENDENT_LOCALITY: 'DISTRICT',
+  POSTAL_CODE: 'POSTAL_CODE_LABEL',
+  STREET_ADDRESS: 'ADDRESS_LINE_1_LABEL',
+  ORGANIZATION: 'ORGANIZATION_LABEL',
+  RECIPIENT: 'RECIPIENT_LABEL',
+  COUNTRY: 'COUNTRY_OR_REGION_LABEL',
+  SORTING_CODE: 'CEDEX',
 };
 
 export interface GetFieldLabelOptions {
@@ -32,9 +32,9 @@ function isOptionsObject(
   options?: GetFieldLabelOptions | Record<string, string>,
 ): options is GetFieldLabelOptions {
   return (
-    typeof options === "object" &&
+    typeof options === 'object' &&
     options !== null &&
-    ("messages" in options || "labels" in options)
+    ('messages' in options || 'labels' in options)
   );
 }
 
@@ -50,7 +50,7 @@ export function getFieldLabel(
   field: LayoutField | AddressField,
   options?: GetFieldLabelOptions | Record<string, string>,
 ): string {
-  const addressField = typeof field === "string" ? field : field.field;
+  const addressField = typeof field === 'string' ? field : field.field;
 
   let messages: Record<string, string>;
   let labels: Partial<Record<AddressField, string>> | undefined;
@@ -73,9 +73,9 @@ export function getFieldLabel(
   }
 
   // 2. If LayoutField has an explicit rule-specific label ID (e.g. "STATE", "PIN_CODE_LABEL", "CEDEX")
-  if (typeof field !== "string") {
-    if (field.labelId === "CEDEX") {
-      return "CEDEX";
+  if (typeof field !== 'string') {
+    if (field.labelId === 'CEDEX') {
+      return 'CEDEX';
     }
     if (field.labelId !== undefined) {
       const explicit = messages[field.labelId];
@@ -91,7 +91,7 @@ export function getFieldLabel(
 
   // 3. Fall back to the default message ID in the messages dictionary (e.g. "LOCALITY_LABEL" -> "Ville")
   const defaultId = DEFAULT_FIELD_LABEL_IDS[addressField];
-  if (defaultId === "CEDEX") return "CEDEX";
+  if (defaultId === 'CEDEX') return 'CEDEX';
   const defaultMsg = messages[defaultId];
   if (defaultMsg !== undefined) {
     return defaultMsg;

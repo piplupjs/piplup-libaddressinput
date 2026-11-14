@@ -14,18 +14,18 @@ import {
   lookupKeyRegionCode,
   lookupKeyToString,
   type LookupKey,
-} from "../internal/lookup-key.js";
-import * as RegionDataConstants from "../internal/region-data-constants.js";
-import { parseRule, type Rule } from "../internal/rule.js";
-import { Retriever } from "../internal/retriever.js";
-import type { Source } from "../source.js";
-import type { Storage } from "../storage.js";
+} from '../internal/lookup-key.js';
+import * as RegionDataConstants from '../internal/region-data-constants.js';
+import { parseRule, type Rule } from '../internal/rule.js';
+import { Retriever } from '../internal/retriever.js';
+import type { Source } from '../source.js';
+import type { Storage } from '../storage.js';
 import {
   createEmptyRuleHierarchy,
   type RuleHierarchy,
   type Supplier,
   type SupplyResult,
-} from "./supplier.js";
+} from './supplier.js';
 
 export class OndemandSupplier implements Supplier {
   private readonly retriever: Retriever;
@@ -72,25 +72,19 @@ export class OndemandSupplier implements Supplier {
     return { success, lookupKey, hierarchy };
   }
 
-  private async load(
-    depth: number,
-    key: string,
-    hierarchy: RuleHierarchy,
-  ): Promise<boolean> {
+  private async load(depth: number, key: string, hierarchy: RuleHierarchy): Promise<boolean> {
     const result = await this.retriever.retrieve(key);
     if (!result.success) {
       return false;
     }
     // The address metadata server returns "{}" for a successful lookup that
     // found no data for that key; that's not an error, just nothing to add.
-    if (result.data === "{}") {
+    if (result.data === '{}') {
       return true;
     }
 
     const base =
-      LOOKUP_KEY_HIERARCHY[depth] === "COUNTRY"
-        ? RegionDataConstants.getDefaultRule()
-        : undefined;
+      LOOKUP_KEY_HIERARCHY[depth] === 'COUNTRY' ? RegionDataConstants.getDefaultRule() : undefined;
     const rule = parseRule(result.data, base);
     if (rule === undefined) {
       return false;

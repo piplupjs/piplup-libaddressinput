@@ -29,19 +29,19 @@ import {
   normalize,
   validate,
   buildLayout,
-} from "@piplup/libaddressinput";
-import { en } from "@piplup/libaddressinput/messages/en";
+} from '@piplup/libaddressinput';
+import { en } from '@piplup/libaddressinput/messages/en';
 
 const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
-await supplier.loadRules("US");
+await supplier.loadRules('US');
 
 const address = {
-  regionCode: "US",
-  addressLine: ["1600 Amphitheatre Pkwy"],
-  locality: "Mountain View",
-  administrativeArea: "California",
-  postalCode: "94043",
-  recipient: "Jane Doe",
+  regionCode: 'US',
+  addressLine: ['1600 Amphitheatre Pkwy'],
+  locality: 'Mountain View',
+  administrativeArea: 'California',
+  postalCode: '94043',
+  recipient: 'Jane Doe',
 };
 
 formatAddress(normalize(supplier, address));
@@ -50,7 +50,7 @@ formatAddress(normalize(supplier, address));
 const problems = await validate(supplier, address);
 // [] or e.g. [{ field: "POSTAL_CODE", problem: "MISMATCHING_VALUE" }]
 
-const layout = buildLayout("US", "en");
+const layout = buildLayout('US', 'en');
 // { rows: [[{ field: "RECIPIENT", labelId: "RECIPIENT_LABEL", ... }], ...] }
 // render however you like — labelId resolves to text via en[labelId]
 ```

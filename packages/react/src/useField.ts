@@ -1,7 +1,7 @@
-import { useContext } from "react";
-import type { AddressField } from "@piplup/libaddressinput";
-import { AddressContext } from "./context.js";
-import type { AddressState, FieldMeta } from "./types.js";
+import { useContext } from 'react';
+import type { AddressField } from '@piplup/libaddressinput';
+import { AddressContext } from './context.js';
+import type { AddressState, FieldMeta } from './types.js';
 
 export interface UseFieldOptions {
   state?: AddressState;
@@ -16,7 +16,7 @@ export function useField(
 
   if (!state) {
     throw new Error(
-      "useField must be used within an AddressProvider or supplied with an explicit state option",
+      'useField must be used within an AddressProvider or supplied with an explicit state option',
     );
   }
 
