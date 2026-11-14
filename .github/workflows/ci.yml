@@ -26,7 +26,9 @@ jobs:
       - name: Validate commit messages
         run: pnpm dlx commitlint --from ${{ github.event.pull_request.base.sha || 'origin/main~1' }} --to HEAD
         if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main'
+      # @piplup/code-infra needs Node 22.22.2+.
       - run: pnpm lint
+        if: matrix.node == 22
       - run: pnpm build
       - run: pnpm typecheck
       - run: pnpm test

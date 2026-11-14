@@ -2,9 +2,11 @@
 // reshaped for the id+params split (see messages.ts's header comment).
 
 import { describe, expect, it } from 'vitest';
-import { formatMessage, formatProblemMessage, getProblemMessage } from './messages.js';
-import { en } from './messages/en.js';
+
 import { createEmptyRule } from './internal/rule.js';
+import { en } from './messages/en.js';
+import { formatMessage, formatProblemMessage, getProblemMessage } from './messages.js';
+
 import type { AddressData } from './address-data.js';
 
 describe('formatMessage', () => {
@@ -34,7 +36,7 @@ describe('getProblemMessage', () => {
 
   it('UNKNOWN_VALUE includes the offending value', () => {
     const msg = getProblemMessage(
-      { regionCode: 'US', administrativeArea: 'Cupertino' },
+      { administrativeArea: 'Cupertino', regionCode: 'US' },
       'ADMIN_AREA',
       'UNKNOWN_VALUE',
       createEmptyRule(),
@@ -54,8 +56,8 @@ describe('getProblemMessage', () => {
     const rule = {
       ...createEmptyRule(),
       postalCodeExample: '90291,90210',
-      postServiceUrl: 'https://tools.usps.com/',
       postalCodeNameMessageId: 'IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL' as const,
+      postServiceUrl: 'https://tools.usps.com/',
     };
     const msg = getProblemMessage(address, 'POSTAL_CODE', 'MISSING_REQUIRED_FIELD', rule);
     expect(msg.id).toBe('MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL');
@@ -77,8 +79,8 @@ describe('getProblemMessage', () => {
   it('POSTAL_CODE MISMATCHING_VALUE picks the postal-code label variant when applicable', () => {
     const rule = {
       ...createEmptyRule(),
-      postServiceUrl: 'https://post.ch/',
       postalCodeNameMessageId: 'IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL' as const,
+      postServiceUrl: 'https://post.ch/',
     };
     const msg = getProblemMessage(address, 'POSTAL_CODE', 'MISMATCHING_VALUE', rule);
     expect(msg.id).toBe('MISMATCHING_VALUE_POSTAL_CODE_URL');

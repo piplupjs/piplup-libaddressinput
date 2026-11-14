@@ -1,12 +1,14 @@
 // Ported from cpp/test/address_formatter_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from 'vitest';
-import type { AddressData } from './address-data.js';
+
 import {
   formatAddress,
   formatAddressAsSingleLine,
   getStreetAddressLinesAsSingleLine,
 } from './formatter.js';
+
+import type { AddressData } from './address-data.js';
 
 describe('getStreetAddressLinesAsSingleLine', () => {
   it('is empty for an empty address (EmptyAddress)', () => {
@@ -14,7 +16,7 @@ describe('getStreetAddressLinesAsSingleLine', () => {
   });
 
   it('returns the line as-is for one line (1Line)', () => {
-    const address: AddressData = { regionCode: 'US', addressLine: ['Line 1'] };
+    const address: AddressData = { addressLine: ['Line 1'], regionCode: 'US' };
     expect(getStreetAddressLinesAsSingleLine(address)).toBe('Line 1');
     expect(getStreetAddressLinesAsSingleLine({ ...address, languageCode: 'en' })).toBe('Line 1');
     expect(getStreetAddressLinesAsSingleLine({ ...address, languageCode: 'zh-Hans' })).toBe(
@@ -24,8 +26,8 @@ describe('getStreetAddressLinesAsSingleLine', () => {
 
   it('picks a language-appropriate separator for two lines (2Lines)', () => {
     const address: AddressData = {
-      regionCode: 'US',
       addressLine: ['Line 1', 'Line 2'],
+      regionCode: 'US',
     };
     expect(getStreetAddressLinesAsSingleLine(address)).toBe('Line 1, Line 2');
     expect(getStreetAddressLinesAsSingleLine({ ...address, languageCode: 'en' })).toBe(
@@ -44,9 +46,9 @@ describe('getStreetAddressLinesAsSingleLine', () => {
 
   it('joins five lines with commas (5Lines)', () => {
     const address: AddressData = {
-      regionCode: 'US',
       addressLine: ['Line 1', 'Line 2', 'Line 3', 'Line 4', 'Line 5'],
       languageCode: 'fr',
+      regionCode: 'US',
     };
     expect(getStreetAddressLinesAsSingleLine(address)).toBe(
       'Line 1, Line 2, Line 3, Line 4, Line 5',
@@ -57,10 +59,10 @@ describe('getStreetAddressLinesAsSingleLine', () => {
 describe('formatAddress', () => {
   it('formats a local-language NZ address (GetFormattedNationalAddressLocalLanguage)', () => {
     const address: AddressData = {
-      regionCode: 'NZ',
       addressLine: ['Rotopapa', 'Irwell 3RD'],
       locality: 'Leeston',
       postalCode: '8704',
+      regionCode: 'NZ',
     };
     const expected = ['Rotopapa', 'Irwell 3RD', 'Leeston 8704'];
     expect(formatAddress(address)).toEqual(expected);
@@ -78,12 +80,12 @@ describe('formatAddress', () => {
     const postalCode = '106';
 
     const address: AddressData = {
-      regionCode: 'TW',
       addressLine: [taiwanStreetLine],
       administrativeArea: taiwanAdmin,
+      languageCode: 'zh-Hant',
       locality: taiwanCity,
       postalCode,
-      languageCode: 'zh-Hant',
+      regionCode: 'TW',
     };
     const expected = [postalCode, taiwanAdmin + taiwanCity, taiwanStreetLine];
     expect(formatAddress(address)).toEqual(expected);
@@ -93,12 +95,12 @@ describe('formatAddress', () => {
     );
 
     const latinAddress: AddressData = {
-      regionCode: 'TW',
       addressLine: ['No. 33, Section 3 Xinyi Rd'],
       administrativeArea: 'Taipei City',
+      languageCode: 'zh-Latn',
       locality: 'Da-an District',
       postalCode,
-      languageCode: 'zh-Latn',
+      regionCode: 'TW',
     };
     const expectedLatin = ['No. 33, Section 3 Xinyi Rd', 'Da-an District, Taipei City 106'];
     expect(formatAddress(latinAddress)).toEqual(expectedLatin);
@@ -109,23 +111,23 @@ describe('formatAddress', () => {
 
   it('formats a CA address (GetFormattedNationalAddressMultilingualCountry)', () => {
     const address: AddressData = {
-      regionCode: 'CA',
       addressLine: ['5 Rue du Tresor', 'Apt. 4'],
       administrativeArea: 'QC',
+      languageCode: 'fr',
       locality: 'Montmagny',
       postalCode: 'G1R 123',
-      languageCode: 'fr',
+      regionCode: 'CA',
     };
     expect(formatAddress(address)).toEqual(['5 Rue du Tresor', 'Apt. 4', 'Montmagny QC G1R 123']);
   });
 
   it('inlines the street address on a shared line (InlineStreetAddress)', () => {
     const address: AddressData = {
-      regionCode: 'CI',
       addressLine: ['32 Boulevard Carde'],
-      locality: 'Abidjan',
-      sortingCode: '64',
       languageCode: 'zh-Hant',
+      locality: 'Abidjan',
+      regionCode: 'CI',
+      sortingCode: '64',
     };
     expect(formatAddress(address)).toEqual(['64 32 Boulevard Carde Abidjan 64']);
   });
@@ -169,7 +171,7 @@ describe('formatAddress', () => {
     address = { ...address, administrativeArea: undefined };
     expect(formatAddress(address)).toEqual(['Los Angeles 90291']);
 
-    address = { ...address, locality: undefined, administrativeArea: 'CA' };
+    address = { ...address, administrativeArea: 'CA', locality: undefined };
     expect(formatAddress(address)).toEqual(['CA 90291']);
   });
 
@@ -185,7 +187,7 @@ describe('formatAddress', () => {
   });
 
   it('prunes a literal before a field (MissingFields_LiteralBeforeField)', () => {
-    let address: AddressData = { regionCode: 'JP', languageCode: 'ja' };
+    let address: AddressData = { languageCode: 'ja', regionCode: 'JP' };
     expect(formatAddress(address)).toEqual([]);
 
     address = { ...address, postalCode: '123' };
@@ -206,10 +208,10 @@ describe('formatAddress', () => {
   // lines rather than joined by the comma. Expected values match our data.
   it('handles a literal before one address line (LiteralBeforeOneAddressLine)', () => {
     const address: AddressData = {
-      regionCode: 'JP',
       addressLine: ['Roppongi Hills'],
       administrativeArea: 'Tokyo',
       languageCode: 'ja_Latn',
+      regionCode: 'JP',
     };
     // Live snapshot JP format has literal before address line in single format string
     expect(formatAddress(address)).toEqual(['Roppongi Hills, Tokyo']);
@@ -217,10 +219,10 @@ describe('formatAddress', () => {
 
   it('handles a literal before two address lines (LiteralBeforeTwoAddressLines)', () => {
     const address: AddressData = {
-      regionCode: 'JP',
       addressLine: ['Roppongi Hills', 'Mori Tower'],
       administrativeArea: 'Tokyo',
       languageCode: 'ja_Latn',
+      regionCode: 'JP',
     };
     // Live snapshot JP format joins the last address line with locality on same line
     expect(formatAddress(address)).toEqual(['Roppongi Hills', 'Mori Tower, Tokyo']);

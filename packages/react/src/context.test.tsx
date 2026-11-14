@@ -1,17 +1,19 @@
-import { describe, expect, it } from 'vitest';
 import { render, renderHook, screen } from '@testing-library/react';
-import type { AddressState } from './types.js';
+import { describe, expect, it } from 'vitest';
+
 import { AddressProvider, useAddressContext } from './context.js';
 
+import type { AddressState } from './types.js';
+
 const mockState: AddressState = {
+  error: null,
+  fields: [],
+  getField: () => undefined,
+  loading: false,
   region: 'US',
   rows: [],
-  fields: [],
-  tree: null,
-  loading: false,
-  error: null,
   supplier: {} as unknown as AddressState['supplier'],
-  getField: () => undefined,
+  tree: null,
 };
 
 describe('AddressContext', () => {

@@ -1,10 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
-import { HybridSource, FallbackAggregateSource, type Source } from './source.js';
+
+import { HybridSource, FallbackAggregateSource } from './source.js';
+
+import type { Source } from './source.js';
 
 describe('HybridSource', () => {
   it('returns primary source result if successful', async () => {
     const mockPrimary: Source = {
-      get: vi.fn().mockResolvedValue({ success: true, data: '{"id":"data/US"}' }),
+      get: vi.fn().mockResolvedValue({ data: '{"id":"data/US"}', success: true }),
     };
     const mockFallback: Source = {
       get: vi.fn(),
@@ -21,10 +24,10 @@ describe('HybridSource', () => {
 
   it('falls back to secondary source when primary returns success: false', async () => {
     const mockPrimary: Source = {
-      get: vi.fn().mockResolvedValue({ success: false, data: undefined }),
+      get: vi.fn().mockResolvedValue({ data: undefined, success: false }),
     };
     const mockFallback: Source = {
-      get: vi.fn().mockResolvedValue({ success: true, data: '{"id":"data/US/CA"}' }),
+      get: vi.fn().mockResolvedValue({ data: '{"id":"data/US/CA"}', success: true }),
     };
 
     const source = new HybridSource(mockPrimary, mockFallback);
@@ -40,7 +43,7 @@ describe('HybridSource', () => {
       get: vi.fn().mockRejectedValue(new Error('Network offline')),
     };
     const mockFallback: Source = {
-      get: vi.fn().mockResolvedValue({ success: true, data: '{"id":"data/US"}' }),
+      get: vi.fn().mockResolvedValue({ data: '{"id":"data/US"}', success: true }),
     };
 
     const source = new HybridSource(mockPrimary, mockFallback);
@@ -52,7 +55,7 @@ describe('HybridSource', () => {
 
   it('works with real FallbackAggregateSource as fallback', async () => {
     const mockPrimary: Source = {
-      get: vi.fn().mockResolvedValue({ success: false, data: undefined }),
+      get: vi.fn().mockResolvedValue({ data: undefined, success: false }),
     };
     const source = new HybridSource(mockPrimary, new FallbackAggregateSource());
     const result = await source.get('data/US');

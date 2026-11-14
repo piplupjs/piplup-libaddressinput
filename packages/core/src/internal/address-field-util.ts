@@ -3,26 +3,23 @@
 // Parses the `fmt`/`lfmt` format strings and the `require` field-list string
 // from the address metadata JSON (see rule.ts, Phase 1).
 
+import { fieldElement, literalElement, newlineElement } from './format-element.js';
+
+import type { FormatElement } from './format-element.js';
 import type { AddressField } from '../address-field.js';
-import {
-  fieldElement,
-  literalElement,
-  newlineElement,
-  type FormatElement,
-} from './format-element.js';
 
 // Mirrors kTokenMap in address_field_util.cc exactly, including the field
 // order (which matches AddressField's declaration order upstream).
 const TOKEN_TO_FIELD: Record<string, AddressField> = {
-  R: 'COUNTRY',
-  S: 'ADMIN_AREA',
+  A: 'STREET_ADDRESS',
   C: 'LOCALITY',
   D: 'DEPENDENT_LOCALITY',
+  N: 'RECIPIENT',
+  O: 'ORGANIZATION',
+  R: 'COUNTRY',
+  S: 'ADMIN_AREA',
   X: 'SORTING_CODE',
   Z: 'POSTAL_CODE',
-  A: 'STREET_ADDRESS',
-  O: 'ORGANIZATION',
-  N: 'RECIPIENT',
 };
 
 function parseFieldToken(c: string): AddressField | undefined {

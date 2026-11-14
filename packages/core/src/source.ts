@@ -2,9 +2,11 @@
 // reshaped as a Promise-based interface (see .planning/PLAN.md §3, design
 // decision 3).
 
+import { FALLBACK_DATA } from './data/fallback.js';
+
 export interface SourceResult {
-  success: boolean;
   data: string | undefined;
+  success: boolean;
 }
 
 /**
@@ -18,19 +20,17 @@ export interface Source {
 
 export interface FetchSourceOptions {
   /**
+   * Prefixed to `key` to form the request URL. Defaults to the public
+   * aggregate address-metadata endpoint upstream's own tooling uses.
+   */
+  baseUrl?: string;
+  /**
    * The function used to make requests. Defaults to `globalThis.fetch` if
    * present, so this only needs to be passed in environments without a
    * global `fetch` (or to use a proxy/instrumented client).
    */
   fetch?: typeof globalThis.fetch;
-  /**
-   * Prefixed to `key` to form the request URL. Defaults to the public
-   * aggregate address-metadata endpoint upstream's own tooling uses.
-   */
-  baseUrl?: string;
 }
-
-import { FALLBACK_DATA } from './data/fallback.js';
 
 const DEFAULT_BASE_URL =
   'https://www.gstatic.com/chrome/autofill/libaddressinput/chromium-i18n/ssl-aggregate-address/';
@@ -48,6 +48,7 @@ const LEGACY_BASE_URL = 'https://chromium-i18n.appspot.com/ssl-aggregate-address
  */
 export class FetchSource implements Source {
   private readonly fetchImpl: typeof globalThis.fetch;
+
   private readonly baseUrl: string;
 
   constructor(options: FetchSourceOptions = {}) {
@@ -63,7 +64,7 @@ export class FetchSource implements Source {
     try {
       const response = await this.fetchImpl(this.baseUrl + key);
       if (response.ok) {
-        return { success: true, data: await response.text() };
+        return { data: await response.text(), success: true };
       }
     } catch {
       // Primary fetch failed (network error, offline, CORS, adblocker, etc.)
@@ -71,25 +72,25 @@ export class FetchSource implements Source {
 
     // If using the default URL and it failed, try the legacy App Engine URL as fallback.
     // Vice versa if the caller explicitly configured the legacy App Engine URL.
-    const fallbackUrl =
-      this.baseUrl === DEFAULT_BASE_URL
-        ? LEGACY_BASE_URL
-        : this.baseUrl === LEGACY_BASE_URL
-          ? DEFAULT_BASE_URL
-          : undefined;
+    let fallbackUrl: string | undefined;
+    if (this.baseUrl === DEFAULT_BASE_URL) {
+      fallbackUrl = LEGACY_BASE_URL;
+    } else if (this.baseUrl === LEGACY_BASE_URL) {
+      fallbackUrl = DEFAULT_BASE_URL;
+    }
 
     if (fallbackUrl !== undefined) {
       try {
         const response = await this.fetchImpl(fallbackUrl + key);
         if (response.ok) {
-          return { success: true, data: await response.text() };
+          return { data: await response.text(), success: true };
         }
       } catch {
         // Fallback fetch also failed
       }
     }
 
-    return { success: false, data: undefined };
+    return { data: undefined, success: false };
   }
 }
 
@@ -107,9 +108,9 @@ export class FallbackAggregateSource implements Source {
       }
     }
     if (Object.keys(aggregate).length === 0) {
-      return { success: true, data: '{}' };
+      return { data: '{}', success: true };
     }
-    return { success: true, data: JSON.stringify(aggregate) };
+    return { data: JSON.stringify(aggregate), success: true };
   }
 }
 

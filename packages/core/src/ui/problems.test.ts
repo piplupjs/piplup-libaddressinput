@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   isUserProblem,
   getUserProblems,
   getProblemErrorMessage,
   groupProblemsByField,
 } from './problems.js';
+
 import type { ValidationProblem } from '../validator.js';
 
 describe('ui/problems', () => {

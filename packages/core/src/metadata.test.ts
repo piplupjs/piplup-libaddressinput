@@ -1,6 +1,7 @@
 // Ported from cpp/test/address_metadata_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from 'vitest';
+
 import { isFieldRequired, isFieldUsed } from './metadata.js';
 
 describe('isFieldRequired', () => {

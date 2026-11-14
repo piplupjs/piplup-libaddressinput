@@ -1,5 +1,6 @@
-import type { AddressField } from '../address-field.js';
 import { en } from '../messages/en.js';
+
+import type { AddressField } from '../address-field.js';
 import type { AddressProblem } from '../problem.js';
 import type { ValidationProblem } from '../validator.js';
 
@@ -9,7 +10,7 @@ import type { ValidationProblem } from '../validator.js';
  * rule database lacks sub-rules below a given depth, e.g. cities in US or IN,
  * not that the user entered an invalid address).
  */
-export function isUserProblem(problem: ValidationProblem | AddressProblem): boolean {
+export function isUserProblem(problem: AddressProblem | ValidationProblem): boolean {
   const type = typeof problem === 'string' ? problem : problem.problem;
   return type !== 'UNSUPPORTED_FIELD';
 }
@@ -34,20 +35,20 @@ export function getProblemErrorMessage(
 ): string {
   switch (problem.problem) {
     case 'MISSING_REQUIRED_FIELD':
-      return messages['MISSING_REQUIRED_FIELD'] ?? "You can't leave this empty.";
+      return messages.MISSING_REQUIRED_FIELD ?? "You can't leave this empty.";
     case 'INVALID_FORMAT':
-      return messages['UNRECOGNIZED_FORMAT_POSTAL_CODE'] ?? 'Invalid format for this field.';
+      return messages.UNRECOGNIZED_FORMAT_POSTAL_CODE ?? 'Invalid format for this field.';
     case 'UNKNOWN_VALUE':
       return 'This value is not recognized.';
     case 'MISMATCHING_VALUE':
       return (
-        messages['MISMATCHING_VALUE_POSTAL_CODE'] ??
+        messages.MISMATCHING_VALUE_POSTAL_CODE ??
         'This value does not match the surrounding region.'
       );
     case 'UNEXPECTED_FIELD':
       return 'This field is not expected for this region.';
     case 'USES_P_O_BOX':
-      return messages['PO_BOX_FORBIDDEN_VALUE'] ?? 'P.O. boxes are not allowed here.';
+      return messages.PO_BOX_FORBIDDEN_VALUE ?? 'P.O. boxes are not allowed here.';
     case 'UNSUPPORTED_FIELD':
       return '';
     default:
@@ -64,7 +65,9 @@ export function groupProblemsByField(
 ): Partial<Record<AddressField, ValidationProblem[]>> {
   const map: Partial<Record<AddressField, ValidationProblem[]>> = {};
   for (const p of problems) {
-    if (!isUserProblem(p)) continue;
+    if (!isUserProblem(p)) {
+      continue;
+    }
     const existing = map[p.field];
     if (existing) {
       existing.push(p);

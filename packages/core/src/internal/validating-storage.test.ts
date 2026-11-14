@@ -4,10 +4,12 @@
 // header comment for why.
 
 import { describe, expect, it } from 'vitest';
+
 import { MemoryStorage } from '../storage.js';
+
 import { __internal, ValidatingStorage } from './validating-storage.js';
 
-const { wrap, unwrap, STALENESS_THRESHOLD_MS } = __internal;
+const { STALENESS_THRESHOLD_MS, unwrap, wrap } = __internal;
 
 const DATA = "{'foo': 'bar'}";
 const TIMESTAMP_MS = 1_388_001_600_000;
@@ -52,7 +54,7 @@ describe('ValidatingStorage (adapted from ValidatingStorageTest)', () => {
   it('reports a miss as a miss', async () => {
     const storage = new ValidatingStorage(new MemoryStorage());
     const result = await storage.get('missing');
-    expect(result).toEqual({ success: false, data: undefined });
+    expect(result).toEqual({ data: undefined, success: false });
   });
 
   it('returns fresh data written through it', async () => {
@@ -60,7 +62,7 @@ describe('ValidatingStorage (adapted from ValidatingStorageTest)', () => {
     const storage = new ValidatingStorage(new MemoryStorage(), { now: () => now });
     await storage.put('key', DATA);
     now += 1000; // A second later is still fresh.
-    expect(await storage.get('key')).toEqual({ success: true, data: DATA });
+    expect(await storage.get('key')).toEqual({ data: DATA, success: true });
   });
 
   it('reports success:false but still returns stale data', async () => {
@@ -68,13 +70,13 @@ describe('ValidatingStorage (adapted from ValidatingStorageTest)', () => {
     const storage = new ValidatingStorage(new MemoryStorage(), { now: () => now });
     await storage.put('key', DATA);
     now += TWO_MONTHS_MS;
-    expect(await storage.get('key')).toEqual({ success: false, data: DATA });
+    expect(await storage.get('key')).toEqual({ data: DATA, success: false });
   });
 
   it('treats a malformed underlying entry as a miss', async () => {
     const underlying = new MemoryStorage();
     underlying.put('key', 'not wrapped at all');
     const storage = new ValidatingStorage(underlying);
-    expect(await storage.get('key')).toEqual({ success: false, data: undefined });
+    expect(await storage.get('key')).toEqual({ data: undefined, success: false });
   });
 });

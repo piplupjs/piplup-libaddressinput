@@ -7,12 +7,12 @@
 import type { Rule } from './rule.js';
 
 export interface Language {
-  /** The tag with "_" replaced by "-", e.g. "zh-Latn-CN". */
-  tag: string;
   /** The base subtag, lowercased, e.g. "zh". */
   base: string;
   /** True if the tag's 2nd or 3rd subtag is (case-insensitively) "Latn". */
   hasLatinScript: boolean;
+  /** The tag with "_" replaced by "-", e.g. "zh-Latn-CN". */
+  tag: string;
 }
 
 const LATIN_SCRIPT_SUBTAG = 'latn';
@@ -25,7 +25,7 @@ export function parseLanguage(languageTag: string): Language {
   // Only the second and third subtag positions are supported for script,
   // matching upstream.
   const hasLatinScript = subtags[1] === LATIN_SCRIPT_SUBTAG || subtags[2] === LATIN_SCRIPT_SUBTAG;
-  return { tag, base, hasLatinScript };
+  return { base, hasLatinScript, tag };
 }
 
 /**

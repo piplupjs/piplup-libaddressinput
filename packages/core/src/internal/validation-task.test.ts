@@ -13,13 +13,13 @@
 // tests never call.
 
 import { describe, expect, it } from 'vitest';
+
 import { LOOKUP_KEY_HIERARCHY } from './lookup-key.js';
-import { parseRule, type Rule } from './rule.js';
-import {
-  runValidationChecks,
-  type RunValidationChecksOptions,
-  type ValidationProblem,
-} from './validation-task.js';
+import { parseRule } from './rule.js';
+import { runValidationChecks } from './validation-task.js';
+
+import type { Rule } from './rule.js';
+import type { RunValidationChecksOptions, ValidationProblem } from './validation-task.js';
 import type { AddressData } from '../address-data.js';
 import type { AddressField } from '../address-field.js';
 import type { AddressProblem } from '../problem.js';
@@ -71,9 +71,9 @@ function run(
 ): ValidationProblem[] {
   const options: RunValidationChecksOptions = {
     allowPostal: false,
-    requireName: false,
     filter: DEFAULT_TEST_FILTER,
     maxDepth: MAX_DEPTH,
+    requireName: false,
     ...overrides,
   };
   return runValidationChecks(address, buildHierarchy(jsons), options);
@@ -130,13 +130,13 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
       require: 'ACSZO', // Require: ADMIN_AREA, LOCALITY, POSTAL_CODE, STREET_ADDRESS
     });
     const address: AddressData = {
-      regionCode: 'syn',
       addressLine: ['aaa'],
       administrativeArea: 'sss',
       locality: 'ccc',
-      postalCode: 'zzz',
       organization: 'ooo',
+      postalCode: 'zzz',
       recipient: 'nnn',
+      regionCode: 'syn',
     };
     const filter: ValidationProblem[] = [
       { field: 'ADMIN_AREA', problem: 'MISSING_REQUIRED_FIELD' },
@@ -153,7 +153,7 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
     const syntheticRule = JSON.stringify({
       fmt: '%R%S%C%Z%A%O%N', // Doesn't include %D (DEPENDENT_LOCALITY)
     });
-    const address: AddressData = { regionCode: 'syn', dependentLocality: 'ddd' };
+    const address: AddressData = { dependentLocality: 'ddd', regionCode: 'syn' };
     const filter: ValidationProblem[] = [
       { field: 'DEPENDENT_LOCALITY', problem: 'UNEXPECTED_FIELD' },
     ];
@@ -169,68 +169,68 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
   });
 
   it('reports UNKNOWN_VALUE for an unresolved sub-region (UnknownValueRuleNull)', () => {
-    const address: AddressData = { regionCode: 'rrr', administrativeArea: 'sss' };
+    const address: AddressData = { administrativeArea: 'sss', regionCode: 'rrr' };
     const json = ['{"fmt":"%R%S","require":"RS","sub_keys":"aa~bb"}'];
     expect(run(address, json)).toEqual([{ field: 'ADMIN_AREA', problem: 'UNKNOWN_VALUE' }]);
   });
 
   it('reports nothing once the sub-region resolves (NoUnknownValueRuleNotNull)', () => {
-    const address: AddressData = { regionCode: 'rrr', administrativeArea: 'sss' };
+    const address: AddressData = { administrativeArea: 'sss', regionCode: 'rrr' };
     const json = ['{"fmt":"%R%S","require":"RS","sub_keys":"aa~bb"}', '{}'];
     expect(run(address, json)).toEqual([]);
   });
 
   it('flags a too-short postal code (PostalCodeUnrecognizedFormatTooShort)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '12' };
+    const address: AddressData = { postalCode: '12', regionCode: 'rrr' };
     expect(run(address, ['{"fmt":"%Z","zip":"\\\\d{3}"}'])).toEqual([
       { field: 'POSTAL_CODE', problem: 'INVALID_FORMAT' },
     ]);
   });
 
   it('flags a too-long postal code (PostalCodeUnrecognizedFormatTooLong)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '1234' };
+    const address: AddressData = { postalCode: '1234', regionCode: 'rrr' };
     expect(run(address, ['{"fmt":"%Z","zip":"\\\\d{3}"}'])).toEqual([
       { field: 'POSTAL_CODE', problem: 'INVALID_FORMAT' },
     ]);
   });
 
   it('accepts a correctly-formatted postal code (PostalCodeRecognizedFormat)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '123' };
+    const address: AddressData = { postalCode: '123', regionCode: 'rrr' };
     expect(run(address, ['{"fmt":"%Z","zip":"\\\\d{3}"}'])).toEqual([]);
   });
 
   it('flags a mismatched postal code at depth 1 (PostalCodeMismatchingValue1)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '000' };
+    const address: AddressData = { postalCode: '000', regionCode: 'rrr' };
     const json = ['{"fmt":"%Z","zip":"\\\\d{3}"}', '{"zip":"1"}'];
     expect(run(address, json)).toEqual([{ field: 'POSTAL_CODE', problem: 'MISMATCHING_VALUE' }]);
   });
 
   it('flags a mismatched postal code at depth 2 (PostalCodeMismatchingValue2)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '100' };
+    const address: AddressData = { postalCode: '100', regionCode: 'rrr' };
     const json = ['{"fmt":"%Z","zip":"\\\\d{3}"}', '{"zip":"1"}', '{"zip":"12"}'];
     expect(run(address, json)).toEqual([{ field: 'POSTAL_CODE', problem: 'MISMATCHING_VALUE' }]);
   });
 
   it('flags a mismatched postal code at depth 3 (PostalCodeMismatchingValue3)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '120' };
+    const address: AddressData = { postalCode: '120', regionCode: 'rrr' };
     const json = ['{"fmt":"%Z","zip":"\\\\d{3}"}', '{"zip":"1"}', '{"zip":"12"}', '{"zip":"123"}'];
     expect(run(address, json)).toEqual([{ field: 'POSTAL_CODE', problem: 'MISMATCHING_VALUE' }]);
   });
 
   it('accepts a matching postal code at every depth (PostalCodeMatchingValue)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '123' };
+    const address: AddressData = { postalCode: '123', regionCode: 'rrr' };
     const json = ['{"fmt":"%Z","zip":"\\\\d{3}"}', '{"zip":"1"}', '{"zip":"12"}', '{"zip":"123"}'];
     expect(run(address, json)).toEqual([]);
   });
 
   it('flags a mismatched postal code prefix (PostalCodePrefixMismatchingValue)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '10960' };
+    const address: AddressData = { postalCode: '10960', regionCode: 'rrr' };
     const json = ['{"fmt":"%Z","zip":"\\\\d{5}"}', '{"zip":"9[0-5]|96[01]"}'];
     expect(run(address, json)).toEqual([{ field: 'POSTAL_CODE', problem: 'MISMATCHING_VALUE' }]);
   });
 
   it('a filter for INVALID_FORMAT alone suppresses MISMATCHING_VALUE (PostalCodeFilterIgnoresMismatching)', () => {
-    const address: AddressData = { regionCode: 'rrr', postalCode: '000' };
+    const address: AddressData = { postalCode: '000', regionCode: 'rrr' };
     const json = ['{"zip":"\\\\d{3}"}', '{"zip":"1"}'];
     const filter: ValidationProblem[] = [{ field: 'POSTAL_CODE', problem: 'INVALID_FORMAT' }];
     expect(run(address, json, { filter })).toEqual([]);
@@ -238,8 +238,8 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
 
   it('detects a P.O. box with the default (und) matcher (UsesPoBoxLanguageUnd)', () => {
     const address: AddressData = {
-      regionCode: 'rrr',
       addressLine: ['aaa', 'P.O. Box', 'aaa'],
+      regionCode: 'rrr',
     };
     expect(run(address, ['{"fmt":"%A"}'])).toEqual([
       { field: 'STREET_ADDRESS', problem: 'USES_P_O_BOX' },
@@ -248,8 +248,8 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
 
   it('detects a P.O. box via a declared language (UsesPoBoxLanguageDa)', () => {
     const address: AddressData = {
-      regionCode: 'rrr',
       addressLine: ['aaa', 'Postboks', 'aaa'],
+      regionCode: 'rrr',
     };
     expect(run(address, ['{"fmt":"%A","languages":"da"}'])).toEqual([
       { field: 'STREET_ADDRESS', problem: 'USES_P_O_BOX' },
@@ -258,16 +258,16 @@ describe('runValidationChecks (ValidationTaskTest)', () => {
 
   it("doesn't match another language's pattern (UsesPoBoxLanguageDaNotMatchDe)", () => {
     const address: AddressData = {
-      regionCode: 'rrr',
       addressLine: ['aaa', 'Postfach', 'aaa'],
+      regionCode: 'rrr',
     };
     expect(run(address, ['{"fmt":"%A","languages":"da"}'])).toEqual([]);
   });
 
   it('allowPostal suppresses USES_P_O_BOX (UsesPoBoxAllowPostal)', () => {
     const address: AddressData = {
-      regionCode: 'rrr',
       addressLine: ['aaa', 'P.O. Box', 'aaa'],
+      regionCode: 'rrr',
     };
     expect(run(address, ['{"fmt":"%A"}'], { allowPostal: true })).toEqual([]);
   });

@@ -7,21 +7,22 @@
 // .planning/PLAN.md §3, design decision 6) — the original object is never
 // modified.
 
-import type { AddressData } from './address-data.js';
 import { isFieldEmpty, getFieldValue } from './address-data.js';
 import {
   LOOKUP_KEY_HIERARCHY,
   lookupKeyFromAddress,
   lookupKeyFromParent,
-  type LookupKey,
 } from './internal/lookup-key.js';
 import { naturalEquals } from './internal/string-compare.js';
+
+import type { AddressData } from './address-data.js';
+import type { LookupKey } from './internal/lookup-key.js';
 import type { PreloadSupplier } from './supplier/preload.js';
 
 const HIERARCHY_FIELD_KEYS = {
   ADMIN_AREA: 'administrativeArea',
-  LOCALITY: 'locality',
   DEPENDENT_LOCALITY: 'dependentLocality',
+  LOCALITY: 'locality',
 } as const;
 
 /**
@@ -47,7 +48,7 @@ export function normalize(supplier: PreloadSupplier, address: AddressData): Addr
   const languages =
     parentRule.languages.length === 0 ? [''] : ['', ...parentRule.languages.slice(1)]; // Default language needs no tag.
 
-  for (let depth = 1; depth < LOOKUP_KEY_HIERARCHY.length; depth++) {
+  for (let depth = 1; depth < LOOKUP_KEY_HIERARCHY.length; depth += 1) {
     const field = LOOKUP_KEY_HIERARCHY[depth]!;
     if (isFieldEmpty(result, field)) {
       return result;
@@ -56,7 +57,9 @@ export function normalize(supplier: PreloadSupplier, address: AddressData): Addr
     let matched = false;
 
     for (const subKey of parentRule.subKeys) {
-      if (matched) break;
+      if (matched) {
+        break;
+      }
       for (const languageTag of languages) {
         const lookupKey: LookupKey = {
           ...lookupKeyFromParent(parentKey, subKey),
@@ -66,7 +69,9 @@ export function normalize(supplier: PreloadSupplier, address: AddressData): Addr
         // A rule with this key and language tag was expected in a certain
         // format (e.g. data/CA/QC--fr) but wasn't found — a possible
         // inconsistency in the data. Matches upstream's `continue`.
-        if (rule === undefined) continue;
+        if (rule === undefined) {
+          continue;
+        }
 
         const matchesLatinName = naturalEquals(fieldValue, rule.latinName);
         const matchesLocalNameId =

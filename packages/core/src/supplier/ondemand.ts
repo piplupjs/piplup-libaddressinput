@@ -13,22 +13,22 @@ import {
   lookupKeyDepth,
   lookupKeyRegionCode,
   lookupKeyToString,
-  type LookupKey,
 } from '../internal/lookup-key.js';
 import * as RegionDataConstants from '../internal/region-data-constants.js';
-import { parseRule, type Rule } from '../internal/rule.js';
 import { Retriever } from '../internal/retriever.js';
+import { parseRule } from '../internal/rule.js';
+
+import { createEmptyRuleHierarchy } from './supplier.js';
+
+import type { LookupKey } from '../internal/lookup-key.js';
+import type { Rule } from '../internal/rule.js';
 import type { Source } from '../source.js';
 import type { Storage } from '../storage.js';
-import {
-  createEmptyRuleHierarchy,
-  type RuleHierarchy,
-  type Supplier,
-  type SupplyResult,
-} from './supplier.js';
+import type { RuleHierarchy, Supplier, SupplyResult } from './supplier.js';
 
 export class OndemandSupplier implements Supplier {
   private readonly retriever: Retriever;
+
   private readonly ruleCache = new Map<string, Rule>();
 
   constructor(source: Source, storage: Storage) {
@@ -50,7 +50,7 @@ export class OndemandSupplier implements Supplier {
         lookupKeyDepth(lookupKey),
         RegionDataConstants.getMaxLookupKeyDepth(regionCode),
       );
-      for (let depth = 0; depth <= maxDepth; depth++) {
+      for (let depth = 0; depth <= maxDepth; depth += 1) {
         const key = lookupKeyToString(lookupKey, depth);
         const cached = this.ruleCache.get(key);
         if (cached !== undefined) {
@@ -65,11 +65,13 @@ export class OndemandSupplier implements Supplier {
     await Promise.all(
       toFetch.map(async ({ depth, key }) => {
         const ok = await this.load(depth, key, hierarchy);
-        if (!ok) success = false;
+        if (!ok) {
+          success = false;
+        }
       }),
     );
 
-    return { success, lookupKey, hierarchy };
+    return { hierarchy, lookupKey, success };
   }
 
   private async load(depth: number, key: string, hierarchy: RuleHierarchy): Promise<boolean> {

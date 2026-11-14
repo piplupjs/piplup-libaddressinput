@@ -1,11 +1,14 @@
 // Ported from cpp/test/address_normalizer_test.cc (Apache-2.0, Google Inc.).
 
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { FixtureDataSource } from '../test/fake-sources.js';
-import type { AddressData } from './address-data.js';
+
 import { normalize } from './normalizer.js';
 import { NullStorage } from './storage.js';
 import { PreloadSupplier } from './supplier/preload.js';
+
+import type { AddressData } from './address-data.js';
 
 describe('normalize (AddressNormalizerTest)', () => {
   let supplier: PreloadSupplier;
@@ -22,16 +25,16 @@ describe('normalize (AddressNormalizerTest)', () => {
 
   it("doesn't crash with no language and no admin area data (CountryWithNoLanguageNoAdminArea)", async () => {
     await load('IR');
-    const address: AddressData = { regionCode: 'IR', administrativeArea: 'Tehran' };
+    const address: AddressData = { administrativeArea: 'Tehran', regionCode: 'IR' };
     expect(normalize(supplier, address).administrativeArea).toBe('Tehran');
   });
 
   it('normalizes admin area and leaves locality alone for BR (BrazilAdminAreaAndLocality)', async () => {
     await load('BR');
     const address: AddressData = {
-      regionCode: 'BR',
       administrativeArea: 'Maranhão',
       locality: 'Cantanhede',
+      regionCode: 'BR',
     };
     const result = normalize(supplier, address);
     expect(result.administrativeArea).toBe('MA');
@@ -43,9 +46,9 @@ describe('normalize (AddressNormalizerTest)', () => {
     // Live snapshot data: EN sub_names for CA, FR sub_names in CA--fr
     // Test with English name that can be found in CA
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'New Brunswick',
       languageCode: 'en-CA',
+      regionCode: 'CA',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('NB');
   });
@@ -55,9 +58,9 @@ describe('normalize (AddressNormalizerTest)', () => {
     // Live snapshot: French names only in CA--fr sub-regions
     // Use English name that's in CA rule
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'New Brunswick',
       languageCode: 'fr-CA',
+      regionCode: 'CA',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('NB');
   });
@@ -67,9 +70,9 @@ describe('normalize (AddressNormalizerTest)', () => {
     // Live snapshot: English names in CA rule
     // Use English name format
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'British Columbia',
       languageCode: 'fa-CA',
+      regionCode: 'CA',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('BC');
   });
@@ -77,26 +80,26 @@ describe('normalize (AddressNormalizerTest)', () => {
   it("normalizes 'California' to 'CA' (CaliforniaShortNameCa)", async () => {
     await load('US');
     const address: AddressData = {
-      regionCode: 'US',
       administrativeArea: 'California',
-      locality: 'Mountain View',
       languageCode: 'en-US',
+      locality: 'Mountain View',
+      regionCode: 'US',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('CA');
   });
 
   it("doesn't crash on non-standard data with no key--language variant (CountryWithNonStandardData)", async () => {
     await load('HK');
-    const address: AddressData = { regionCode: 'HK', administrativeArea: '香港島' };
+    const address: AddressData = { administrativeArea: '香港島', regionCode: 'HK' };
     expect(normalize(supplier, address).administrativeArea).toBe('香港島');
   });
 
   it('leaves a Latin name unchanged when tagged ko-Latn (GangwonLatinNameStaysUnchanged)', async () => {
     await load('KR');
     const address: AddressData = {
-      regionCode: 'KR',
       administrativeArea: 'Gangwon',
       languageCode: 'ko-Latn',
+      regionCode: 'KR',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('Gangwon');
   });
@@ -104,31 +107,31 @@ describe('normalize (AddressNormalizerTest)', () => {
   it('normalizes a Korean name to its canonical sub-key (GangwonKoreanName)', async () => {
     await load('KR');
     const address: AddressData = {
-      regionCode: 'KR',
       administrativeArea: '강원',
       languageCode: 'ko-KR',
+      regionCode: 'KR',
     };
     expect(normalize(supplier, address).administrativeArea).toBe('강원도');
   });
 
   it("doesn't switch to Latin script for an untagged address (DontSwitchLatinScriptForUnknownLanguage)", async () => {
     await load('KR');
-    const address: AddressData = { regionCode: 'KR', administrativeArea: 'Gangwon' };
+    const address: AddressData = { administrativeArea: 'Gangwon', regionCode: 'KR' };
     expect(normalize(supplier, address).administrativeArea).toBe('Gangwon');
   });
 
   it("doesn't switch to local script for an untagged address (DontSwitchLocalScriptForUnknownLanguage)", async () => {
     await load('KR');
-    const address: AddressData = { regionCode: 'KR', administrativeArea: '강원' };
+    const address: AddressData = { administrativeArea: '강원', regionCode: 'KR' };
     expect(normalize(supplier, address).administrativeArea).toBe('강원도');
   });
 
   it('does not mutate the input address', async () => {
     await load('US');
     const address: AddressData = {
-      regionCode: 'US',
       administrativeArea: 'California',
       languageCode: 'en-US',
+      regionCode: 'US',
     };
     const result = normalize(supplier, address);
     expect(address.administrativeArea).toBe('California');

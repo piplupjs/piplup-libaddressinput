@@ -1,29 +1,31 @@
-import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import type { AddressState } from './types.js';
+import { describe, expect, it } from 'vitest';
+
 import { AddressProvider } from './context.js';
 import { useField } from './useField.js';
 
+import type { AddressState } from './types.js';
+
 const mockField = {
+  autoComplete: 'postal-code',
   field: 'POSTAL_CODE' as const,
+  isSelect: false,
   key: 'postalCode' as const,
   label: 'ZIP code',
-  required: true,
-  autoComplete: 'postal-code',
-  isSelect: false,
-  multiline: false,
   length: 'short' as const,
+  multiline: false,
+  required: true,
 };
 
 const mockState: AddressState = {
+  error: null,
+  fields: [mockField],
+  getField: (query) => (query === 'POSTAL_CODE' || query === 'postalCode' ? mockField : undefined),
+  loading: false,
   region: 'US',
   rows: [[mockField]],
-  fields: [mockField],
-  tree: null,
-  loading: false,
-  error: null,
   supplier: {} as unknown as AddressState['supplier'],
-  getField: (query) => (query === 'POSTAL_CODE' || query === 'postalCode' ? mockField : undefined),
+  tree: null,
 };
 
 describe('useField', () => {

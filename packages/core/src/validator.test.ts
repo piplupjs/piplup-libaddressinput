@@ -9,15 +9,19 @@
 // same OSS fixture (via TestdataSource) for this particular test file.
 
 import { describe, expect, it } from 'vitest';
+
 import { FixtureDataSource } from '../test/fake-sources.js';
-import type { AddressData } from './address-data.js';
+
 import { NullStorage } from './storage.js';
 import { OndemandSupplier } from './supplier/ondemand.js';
 import { PreloadSupplier } from './supplier/preload.js';
-import type { Supplier } from './supplier/supplier.js';
-import { validate, type ValidationProblem } from './validator.js';
+import { validate } from './validator.js';
 
-type SupplierKind = 'preload' | 'ondemand';
+import type { AddressData } from './address-data.js';
+import type { Supplier } from './supplier/supplier.js';
+import type { ValidationProblem } from './validator.js';
+
+type SupplierKind = 'ondemand' | 'preload';
 
 async function makeSupplier(kind: SupplierKind, regionCode?: string): Promise<Supplier> {
   const fixtureSource = new FixtureDataSource();
@@ -25,7 +29,9 @@ async function makeSupplier(kind: SupplierKind, regionCode?: string): Promise<Su
     const supplier = new PreloadSupplier(fixtureSource, new NullStorage());
     if (regionCode !== undefined && regionCode.length > 0) {
       const result = await supplier.loadRules(regionCode);
-      if (!result.success) throw new Error(`failed to load ${regionCode}`);
+      if (!result.success) {
+        throw new Error(`failed to load ${regionCode}`);
+      }
     }
     return supplier;
   }
@@ -72,12 +78,12 @@ describe('validate (AddressValidatorTest)', () => {
   it.each(SUPPLIER_KINDS)('accepts a valid US address [%s] (ValidAddressUS)', async (kind) => {
     const supplier = await makeSupplier(kind, 'US');
     const address: AddressData = {
-      regionCode: 'US',
       addressLine: ['1600 Amphitheatre Parkway'],
       administrativeArea: 'CA',
+      languageCode: 'en',
       locality: 'Mountain View',
       postalCode: '94043',
-      languageCode: 'en',
+      regionCode: 'US',
     };
     const problems = await validate(supplier, address);
     const expected: ValidationProblem[] =
@@ -92,7 +98,7 @@ describe('validate (AddressValidatorTest)', () => {
 
   it.each(SUPPLIER_KINDS)('flags a minimal US address [%s] (InvalidAddressUS)', async (kind) => {
     const supplier = await makeSupplier(kind, 'US');
-    const address: AddressData = { regionCode: 'US', postalCode: '123' };
+    const address: AddressData = { postalCode: '123', regionCode: 'US' };
     const problems = await validate(supplier, address);
     // Live snapshot US requires LOCALITY and STREET_ADDRESS; ondemand can't validate postal code format
     const expected: ValidationProblem[] =
@@ -115,11 +121,11 @@ describe('validate (AddressValidatorTest)', () => {
   it.each(SUPPLIER_KINDS)('accepts a valid CH address [%s] (ValidAddressCH)', async (kind) => {
     const supplier = await makeSupplier(kind, 'CH');
     const address: AddressData = {
-      regionCode: 'CH',
       addressLine: ['Brandschenkestrasse 110'],
+      languageCode: 'de',
       locality: 'ZH',
       postalCode: '8002',
-      languageCode: 'de',
+      regionCode: 'CH',
     };
     const problems = await validate(supplier, address);
     const expected: ValidationProblem[] =
@@ -134,7 +140,7 @@ describe('validate (AddressValidatorTest)', () => {
 
   it.each(SUPPLIER_KINDS)('flags a minimal CH address [%s] (InvalidAddressCH)', async (kind) => {
     const supplier = await makeSupplier(kind, 'CH');
-    const address: AddressData = { regionCode: 'CH', postalCode: '123' };
+    const address: AddressData = { postalCode: '123', regionCode: 'CH' };
     const problems = await validate(supplier, address);
     // Live snapshot CH requires LOCALITY and STREET_ADDRESS; preload validates postal code
     const expected: ValidationProblem[] =
@@ -156,12 +162,12 @@ describe('validate (AddressValidatorTest)', () => {
   it.each(SUPPLIER_KINDS)('accepts a valid MX address [%s] (ValidPostalCodeMX)', async (kind) => {
     const supplier = await makeSupplier(kind, 'MX');
     const address: AddressData = {
-      regionCode: 'MX',
       addressLine: ['Av Gregorio Méndez Magaña 1400'],
       administrativeArea: 'TAB',
+      languageCode: 'es',
       locality: 'Villahermosa',
       postalCode: '86070',
-      languageCode: 'es',
+      regionCode: 'MX',
     };
     const problems = await validate(supplier, address);
     const expected: ValidationProblem[] =
@@ -179,12 +185,12 @@ describe('validate (AddressValidatorTest)', () => {
     async (kind) => {
       const supplier = await makeSupplier(kind, 'MX');
       const address: AddressData = {
-        regionCode: 'MX',
         addressLine: ['Av Gregorio Méndez Magaña 1400'],
         administrativeArea: 'TAB',
+        languageCode: 'es',
         locality: 'Villahermosa',
         postalCode: '80000',
-        languageCode: 'es',
+        regionCode: 'MX',
       };
       const problems = await validate(supplier, address);
       // Live snapshot MX postal code "80000" doesn't match TAB (preload validates postal codes)
@@ -202,7 +208,7 @@ describe('validate (AddressValidatorTest)', () => {
 
   it.each(SUPPLIER_KINDS)('honors a filter [%s] (ValidateFilter)', async (kind) => {
     const supplier = await makeSupplier(kind, 'CH');
-    const address: AddressData = { regionCode: 'CH', postalCode: '123' };
+    const address: AddressData = { postalCode: '123', regionCode: 'CH' };
     const problems = await validate(supplier, address, {
       filter: [{ field: 'POSTAL_CODE', problem: 'INVALID_FORMAT' }],
     });
@@ -226,11 +232,11 @@ describe('validate (AddressValidatorTest)', () => {
     async (kind) => {
       const supplier = await makeSupplier(kind, 'JP');
       const address: AddressData = {
-        regionCode: 'JP',
         addressLine: ['徳島市...'],
         administrativeArea: '徳島県',
-        postalCode: '770-0847',
         languageCode: 'ja',
+        postalCode: '770-0847',
+        regionCode: 'JP',
       };
       const problems = await validate(supplier, address);
       const expected: ValidationProblem[] = [
@@ -254,11 +260,11 @@ describe('validate (AddressValidatorTest)', () => {
   it('validates a Latin-script JP address [preload] (ValidLatinAddressJP)', async () => {
     const supplier = await makeSupplier('preload', 'JP');
     const address: AddressData = {
-      regionCode: 'JP',
       addressLine: ['...Tokushima'],
       administrativeArea: 'Tokushima',
-      postalCode: '770-0847',
       languageCode: 'ja-Latn',
+      postalCode: '770-0847',
+      regionCode: 'JP',
     };
     const problems = await validate(supplier, address);
     expectSameProblems(problems, [
@@ -271,12 +277,12 @@ describe('validate (AddressValidatorTest)', () => {
   it('validates a BR address by natural-language sub-region name [preload] (ValidAddressBR)', async () => {
     const supplier = await makeSupplier('preload', 'BR');
     const address: AddressData = {
-      regionCode: 'BR',
       addressLine: ['Rodovia Raposo Tavares, 6388-6682'],
       administrativeArea: 'São Paulo',
+      languageCode: 'pt',
       locality: 'Presidente Prudente',
       postalCode: '19063-008',
-      languageCode: 'pt',
+      regionCode: 'BR',
     };
     const problems = await validate(supplier, address);
     expectSameProblems(problems, [{ field: 'DEPENDENT_LOCALITY', problem: 'UNSUPPORTED_FIELD' }]);
@@ -285,12 +291,12 @@ describe('validate (AddressValidatorTest)', () => {
   it('validates a CA address in English [preload] (ValidAddressCA_en)', async () => {
     const supplier = await makeSupplier('preload', 'CA');
     const address: AddressData = {
-      regionCode: 'CA',
       addressLine: ['...'],
       administrativeArea: 'New Brunswick',
+      languageCode: 'en',
       locality: 'Saint John County',
       postalCode: 'E2L 4Z6',
-      languageCode: 'en',
+      regionCode: 'CA',
     };
     const problems = await validate(supplier, address);
     expectSameProblems(problems, [
@@ -303,12 +309,12 @@ describe('validate (AddressValidatorTest)', () => {
     const supplier = await makeSupplier('preload', 'CA');
     // Live snapshot CA has English province names, not French
     const address: AddressData = {
-      regionCode: 'CA',
       addressLine: ['...'],
       administrativeArea: 'New Brunswick',
+      languageCode: 'fr',
       locality: 'Saint John',
       postalCode: 'E2L 4Z6',
-      languageCode: 'fr',
+      regionCode: 'CA',
     };
     const problems = await validate(supplier, address);
     // Live snapshot: CA has depth 1 (admin area only), so LOCALITY/DEPENDENT_LOCALITY are unsupported
@@ -319,13 +325,13 @@ describe('validate (AddressValidatorTest)', () => {
 describe('validate: supplier failure', () => {
   it('returns no problems when the supplier fails to resolve a hierarchy', async () => {
     const failingSupplier: Supplier = {
+      getLoadedRuleDepth: () => 0,
       async supply(lookupKey) {
-        return { success: false, lookupKey, hierarchy: [] };
+        return { hierarchy: [], lookupKey, success: false };
       },
       async supplyGlobally(lookupKey) {
-        return { success: false, lookupKey, hierarchy: [] };
+        return { hierarchy: [], lookupKey, success: false };
       },
-      getLoadedRuleDepth: () => 0,
     };
     const problems = await validate(failingSupplier, { regionCode: 'US' });
     expectSameProblems(problems, []);

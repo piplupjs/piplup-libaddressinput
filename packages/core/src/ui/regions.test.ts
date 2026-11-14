@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+
 import { getRegionOptions, formatRegionOption, findSubRegions } from './regions.js';
+
 import type { RegionData } from '../region-data.js';
 
 describe('ui/regions', () => {

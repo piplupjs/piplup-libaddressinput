@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
+
 import {
   buildLayout,
   buildRegionTree,
@@ -7,20 +8,28 @@ import {
   getFieldAutocomplete,
   getFieldKey,
   getFieldLabel,
-  type AddressData,
-  type AddressField,
-  type AddressLayout,
-  type PreloadSupplier,
-  type RegionData,
 } from '@piplup/libaddressinput';
+
 import type { AddressOptions, AddressState, FieldMeta, SubRegion } from './types.js';
+import type {
+  AddressData,
+  AddressField,
+  AddressLayout,
+  PreloadSupplier,
+  RegionData,
+} from '@piplup/libaddressinput';
 
 function buildFieldMetaRows(
   layout: AddressLayout | null,
-  tree: RegionData | null,
-  opts: AddressOptions,
+  tree: null | RegionData,
+  opts: {
+    labels: AddressOptions['labels'] | undefined;
+    messages: AddressOptions['messages'] | undefined;
+  },
 ): FieldMeta[][] {
-  if (!layout) return [];
+  if (!layout) {
+    return [];
+  }
   const rows: FieldMeta[][] = [];
 
   const labelOpts =
@@ -34,7 +43,9 @@ function buildFieldMetaRows(
   for (const row of layout.rows) {
     const rowFields: FieldMeta[] = [];
     for (const item of row) {
-      if (item.kind !== 'field') continue;
+      if (item.kind !== 'field') {
+        continue;
+      }
       const key = getFieldKey(item.field);
       const label = getFieldLabel(item, labelOpts);
 
@@ -42,21 +53,21 @@ function buildFieldMetaRows(
       if (item.field === 'ADMIN_AREA' && tree && tree.subRegions.length > 0) {
         options = tree.subRegions.map((sub) => ({
           key: sub.key,
-          name: sub.name,
           label: formatRegionOption(sub),
+          name: sub.name,
         }));
       }
 
       rowFields.push({
+        autoComplete: getFieldAutocomplete(item.field),
         field: item.field,
+        isSelect: options !== undefined && options.length > 0,
         key,
         label,
-        required: item.required,
-        autoComplete: getFieldAutocomplete(item.field),
-        options,
-        isSelect: options !== undefined && options.length > 0,
-        multiline: item.multiline,
         length: item.length,
+        multiline: item.multiline,
+        options,
+        required: item.required,
       });
     }
     if (rowFields.length > 0) {
@@ -68,24 +79,28 @@ function buildFieldMetaRows(
 }
 
 export function useAddress(opts: AddressOptions): AddressState {
-  const { supplier, region, locale = 'en', includeLiterals = false } = opts;
+  const { includeLiterals = false, labels, locale = 'en', messages, region, supplier } = opts;
 
   // Build initial layout synchronously if region is non-empty
-  const initialLayout = useMemo(() => {
-    if (!region) return null;
+  const initialLayout = React.useMemo(() => {
+    if (!region) {
+      return null;
+    }
     return buildLayout(region, locale, { includeLiterals });
   }, [region, locale, includeLiterals]);
 
-  const [tree, setTree] = useState<RegionData | null>(null);
-  const [loading, setLoading] = useState(Boolean(region));
-  const [error, setError] = useState<Error | null>(null);
+  const [tree, setTree] = React.useState<null | RegionData>(null);
+  const [loading, setLoading] = React.useState(Boolean(region));
+  const [error, setError] = React.useState<Error | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!region) {
+      // Resetting state when the region is cleared; there is nothing to load.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTree(null);
       setLoading(false);
       setError(null);
-      return;
+      return undefined;
     }
 
     let cancelled = false;
@@ -95,14 +110,14 @@ export function useAddress(opts: AddressOptions): AddressState {
     async function load() {
       try {
         const sup = supplier as unknown as Record<string, unknown>;
-        if (typeof sup['loadRules'] === 'function') {
+        if (typeof sup.loadRules === 'function') {
           const isLoaded =
-            typeof sup['isLoaded'] === 'function'
-              ? Boolean((sup['isLoaded'] as (code: string) => boolean)(region))
+            typeof sup.isLoaded === 'function'
+              ? Boolean((sup.isLoaded as (code: string) => boolean)(region))
               : false;
 
           if (!isLoaded) {
-            const res = await (sup['loadRules'] as (code: string) => Promise<{ success: boolean }>)(
+            const res = await (sup.loadRules as (code: string) => Promise<{ success: boolean }>)(
               region,
             );
             if (!res.success && !cancelled) {
@@ -113,9 +128,11 @@ export function useAddress(opts: AddressOptions): AddressState {
           }
         }
 
-        if (cancelled) return;
+        if (cancelled) {
+          return;
+        }
 
-        let regionTree: RegionData | null = null;
+        let regionTree: null | RegionData = null;
         try {
           regionTree = buildRegionTree(supplier as PreloadSupplier, region, locale).tree;
         } catch {
@@ -141,13 +158,13 @@ export function useAddress(opts: AddressOptions): AddressState {
     };
   }, [supplier, region, locale]);
 
-  const rows = useMemo(() => {
-    return buildFieldMetaRows(initialLayout, tree, opts);
-  }, [initialLayout, tree, opts.labels, opts.messages]);
+  const rows = React.useMemo(() => {
+    return buildFieldMetaRows(initialLayout, tree, { labels, messages });
+  }, [initialLayout, tree, labels, messages]);
 
-  const fields = useMemo(() => rows.flat(), [rows]);
+  const fields = React.useMemo(() => rows.flat(), [rows]);
 
-  const getField = useMemo(() => {
+  const getField = React.useMemo(() => {
     return (field: AddressField | string): FieldMeta | undefined => {
       return fields.find(
         (f) =>
@@ -159,13 +176,13 @@ export function useAddress(opts: AddressOptions): AddressState {
   }, [fields]);
 
   return {
+    error,
+    fields,
+    getField,
+    loading,
     region,
     rows,
-    fields,
-    tree,
-    loading,
-    error,
     supplier,
-    getField,
+    tree,
   };
 }

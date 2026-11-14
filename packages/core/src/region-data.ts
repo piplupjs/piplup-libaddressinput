@@ -12,17 +12,19 @@
 // callers who want it can memoize `buildRegionTree()` themselves on
 // `(regionCode, bestLanguageTag)`.
 
+import { chooseBestAddressLanguage, parseLanguage } from './internal/language.js';
 import {
   LOOKUP_KEY_HIERARCHY,
   lookupKeyDepth,
   lookupKeyFromAddress,
   lookupKeyFromParent,
   lookupKeyToString,
-  type LookupKey,
 } from './internal/lookup-key.js';
-import { chooseBestAddressLanguage, parseLanguage } from './internal/language.js';
 import * as RegionDataConstants from './internal/region-data-constants.js';
-import { parseRule, type Rule } from './internal/rule.js';
+import { parseRule } from './internal/rule.js';
+
+import type { LookupKey } from './internal/lookup-key.js';
+import type { Rule } from './internal/rule.js';
 import type { PreloadSupplier } from './supplier/preload.js';
 
 export interface RegionData {
@@ -32,7 +34,6 @@ export interface RegionData {
 }
 
 export interface BuildRegionTreeResult {
-  tree: RegionData;
   /**
    * The BCP-47 tag of the language actually used for `name`s in the tree
    * (may differ from `uiLanguageTag` — see `chooseBestAddressLanguage`).
@@ -40,6 +41,7 @@ export interface BuildRegionTreeResult {
    * when the rule declares no languages (matches upstream's kUndefinedLanguage).
    */
   bestLanguageTag: string;
+  tree: RegionData;
 }
 
 const MAX_LOOKUP_KEY_DEPTH = LOOKUP_KEY_HIERARCHY.length - 1;
@@ -137,5 +139,5 @@ export function buildRegionTree(
   const rules = supplier.getRulesForRegion(regionCode);
   const tree = buildRegion(rules, regionCode, bestLanguage);
 
-  return { tree, bestLanguageTag: bestLanguage.tag };
+  return { bestLanguageTag: bestLanguage.tag, tree };
 }

@@ -6,7 +6,7 @@
 // available here via the bundled fallback dataset (data/fallback.ts).
 
 import { describe, expect, it } from 'vitest';
-import type { AddressData } from '../address-data.js';
+
 import {
   LOOKUP_KEY_HIERARCHY,
   lookupKeyDepth,
@@ -14,6 +14,8 @@ import {
   lookupKeyRegionCode,
   lookupKeyToString,
 } from './lookup-key.js';
+
+import type { AddressData } from '../address-data.js';
 
 const MAX_DEPTH = LOOKUP_KEY_HIERARCHY.length - 1;
 
@@ -31,8 +33,8 @@ describe('lookupKeyFromAddress', () => {
 
   it('depth 2 (AddressDepth2)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
+      regionCode: '111',
     });
     expect(lookupKeyDepth(key)).toBe(1);
     expect(lookupKeyToString(key, MAX_DEPTH)).toBe('data/111/222');
@@ -40,9 +42,9 @@ describe('lookupKeyFromAddress', () => {
 
   it('depth 3 (AddressDepth3)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
       locality: '333',
+      regionCode: '111',
     });
     expect(lookupKeyDepth(key)).toBe(2);
     expect(lookupKeyToString(key, MAX_DEPTH)).toBe('data/111/222/333');
@@ -50,10 +52,10 @@ describe('lookupKeyFromAddress', () => {
 
   it('depth 4 (AddressDepth4)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
-      locality: '333',
       dependentLocality: '444',
+      locality: '333',
+      regionCode: '111',
     });
     expect(lookupKeyDepth(key)).toBe(3);
     expect(lookupKeyToString(key, MAX_DEPTH)).toBe('data/111/222/333/444');
@@ -61,10 +63,10 @@ describe('lookupKeyFromAddress', () => {
 
   it('stops at the first gap (AddressDepthNonContiguous)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
       // No locality specified.
       dependentLocality: '444',
+      regionCode: '111',
     });
     expect(lookupKeyDepth(key)).toBe(1);
     expect(lookupKeyToString(key, MAX_DEPTH)).toBe('data/111/222');
@@ -72,10 +74,10 @@ describe('lookupKeyFromAddress', () => {
 
   it('terminates on a slash in a field value (AddressDepthTerminateOnSlash)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
-      locality: '3/3', // No data should be requested for this locality.
       dependentLocality: '444',
+      locality: '3/3', // No data should be requested for this locality.
+      regionCode: '111',
     });
     expect(lookupKeyDepth(key)).toBe(1);
     expect(lookupKeyToString(key, MAX_DEPTH)).toBe('data/111/222');
@@ -83,10 +85,10 @@ describe('lookupKeyFromAddress', () => {
 
   it('supports requesting shallower depths (RequestDepth)', () => {
     const key = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
-      locality: '333',
       dependentLocality: '444',
+      locality: '333',
+      regionCode: '111',
     });
     expect(lookupKeyToString(key, 0)).toBe('data/111');
     expect(lookupKeyToString(key, 1)).toBe('data/111/222');
@@ -96,9 +98,9 @@ describe('lookupKeyFromAddress', () => {
 
   it('omits the language suffix for the default language (WithLanguageCodeDefaultLanguage)', () => {
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'ON',
       languageCode: 'en',
+      regionCode: 'CA',
     };
     const key = lookupKeyFromAddress(address);
     expect(lookupKeyToString(key, 0)).toBe('data/CA');
@@ -107,9 +109,9 @@ describe('lookupKeyFromAddress', () => {
 
   it('adds the language suffix for an alternate language (WithLanguageCodeAlternateLanguage)', () => {
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'ON',
       languageCode: 'fr',
+      regionCode: 'CA',
     };
     const key = lookupKeyFromAddress(address);
     expect(lookupKeyToString(key, 0)).toBe('data/CA--fr');
@@ -118,9 +120,9 @@ describe('lookupKeyFromAddress', () => {
 
   it("omits the suffix for a language the region doesn't support (WithLanguageCodeInvalidLanguage)", () => {
     const address: AddressData = {
-      regionCode: 'CA',
       administrativeArea: 'ON',
       languageCode: 'de',
+      regionCode: 'CA',
     };
     const key = lookupKeyFromAddress(address);
     expect(lookupKeyToString(key, 0)).toBe('data/CA');
@@ -130,7 +132,7 @@ describe('lookupKeyFromAddress', () => {
   it('omits the suffix for a region with no subregions (WithLanguageCodeAlternateLanguageNoState)', () => {
     // Afghanistan has no subregion data, so no language suffix is added
     // regardless of language.
-    const address: AddressData = { regionCode: 'AF', languageCode: 'ps' };
+    const address: AddressData = { languageCode: 'ps', regionCode: 'AF' };
     const key = lookupKeyFromAddress(address);
     expect(lookupKeyToString(key, 0)).toBe('data/AF');
   });
@@ -142,8 +144,8 @@ describe('lookupKeyFromAddress', () => {
 
   it('each call is independent (FromAddressClearsExistingNodes)', () => {
     const withState = lookupKeyFromAddress({
-      regionCode: '111',
       administrativeArea: '222',
+      regionCode: '111',
     });
     expect(lookupKeyToString(withState, MAX_DEPTH)).toBe('data/111/222');
 

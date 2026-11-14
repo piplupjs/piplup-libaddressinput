@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { getFieldLabel, DEFAULT_FIELD_LABEL_IDS } from './labels.js';
+
 import { en } from '../messages/en.js';
+
+import { getFieldLabel, DEFAULT_FIELD_LABEL_IDS } from './labels.js';
+
 import type { LayoutField } from '../layout.js';
 
 describe('ui/labels', () => {
@@ -17,46 +20,46 @@ describe('ui/labels', () => {
 
   it('resolves labels from LayoutField with explicit labelId', () => {
     const fieldWithCustomLabel: LayoutField = {
-      kind: 'field',
       field: 'ADMIN_AREA',
+      kind: 'field',
       labelId: 'STATE',
-      required: true,
       length: 'short',
       multiline: false,
+      required: true,
     };
     expect(getFieldLabel(fieldWithCustomLabel)).toBe('State');
 
     const pinCodeField: LayoutField = {
-      kind: 'field',
       field: 'POSTAL_CODE',
+      kind: 'field',
       labelId: 'PIN_CODE_LABEL',
-      required: true,
       length: 'short',
       multiline: false,
+      required: true,
     };
     expect(getFieldLabel(pinCodeField)).toBe('PIN code');
   });
 
   it('resolves CEDEX for SORTING_CODE LayoutField', () => {
     const cedexField: LayoutField = {
-      kind: 'field',
       field: 'SORTING_CODE',
+      kind: 'field',
       labelId: 'CEDEX',
-      required: false,
       length: 'short',
       multiline: false,
+      required: false,
     };
     expect(getFieldLabel(cedexField)).toBe('CEDEX');
   });
 
   it('falls back cleanly when labelId is undefined on LayoutField', () => {
     const standardLocalityField: LayoutField = {
-      kind: 'field',
       field: 'LOCALITY',
+      kind: 'field',
       labelId: undefined,
-      required: true,
       length: 'short',
       multiline: false,
+      required: true,
     };
     expect(getFieldLabel(standardLocalityField)).toBe('City');
   });

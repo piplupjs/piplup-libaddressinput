@@ -1,13 +1,14 @@
-import { describe, expect, it } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
 import { FallbackAggregateSource, MemoryStorage, PreloadSupplier } from '@piplup/libaddressinput';
+import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { useAddress } from './useAddress.js';
 
 const supplier = new PreloadSupplier(new FallbackAggregateSource(), new MemoryStorage());
 
 describe('useAddress', () => {
   it('handles empty region', () => {
-    const { result } = renderHook(() => useAddress({ supplier, region: '' }));
+    const { result } = renderHook(() => useAddress({ region: '', supplier }));
 
     expect(result.current.loading).toBe(false);
     expect(result.current.rows).toEqual([]);
@@ -16,7 +17,7 @@ describe('useAddress', () => {
   });
 
   it('loads layout and resolves fields for a region', async () => {
-    const { result } = renderHook(() => useAddress({ supplier, region: 'US' }));
+    const { result } = renderHook(() => useAddress({ region: 'US', supplier }));
 
     // Fields should be synchronously constructed from layout
     expect(result.current.fields.length).toBeGreaterThan(0);
@@ -50,11 +51,11 @@ describe('useAddress', () => {
   it('supports custom labels and messages', async () => {
     const { result } = renderHook(() =>
       useAddress({
-        supplier,
-        region: 'US',
         labels: {
           STREET_ADDRESS: 'Custom Address Line',
         },
+        region: 'US',
+        supplier,
       }),
     );
 

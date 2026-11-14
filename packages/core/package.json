@@ -3,6 +3,11 @@
   "version": "0.2.7",
   "description": "Headless, dependency-free port of Google's libaddressinput",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piplupjs/piplup-libaddressinput.git",
+    "directory": "packages/core"
+  },
   "type": "module",
   "sideEffects": false,
   "engines": {
@@ -66,5 +71,8 @@
   },
   "devDependencies": {
     "tsup": "^8.3.5"
-  }
+  },
+  "browserslist": [
+    "baseline widely available"
+  ]
 }

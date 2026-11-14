@@ -1,19 +1,20 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import * as React from 'react';
+
 import type { AddressState } from './types.js';
 
-export const AddressContext = createContext<AddressState | null>(null);
+export const AddressContext = React.createContext<AddressState | null>(null);
 
 export interface AddressProviderProps {
+  children?: React.ReactNode;
   value: AddressState;
-  children?: ReactNode;
 }
 
-export function AddressProvider({ value, children }: AddressProviderProps) {
+export function AddressProvider({ children, value }: AddressProviderProps) {
   return <AddressContext.Provider value={value}>{children}</AddressContext.Provider>;
 }
 
 export function useAddressContext(): AddressState {
-  const context = useContext(AddressContext);
+  const context = React.useContext(AddressContext);
   if (!context) {
     throw new Error('useAddressContext must be used within an AddressProvider');
   }

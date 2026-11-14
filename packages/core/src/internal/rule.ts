@@ -13,8 +13,9 @@
 // not from arrays on the parent. An earlier draft of PLAN.md listed those
 // extra keys; that was wrong and has been corrected.
 
-import type { AddressField } from '../address-field.js';
 import { parseAddressFieldsRequired, parseFormatRule } from './address-field-util.js';
+
+import type { AddressField } from '../address-field.js';
 import type { FormatElement } from './format-element.js';
 
 const SEPARATOR = '~';
@@ -30,23 +31,23 @@ export type NameTypeMessageId =
   | 'IDS_LIBADDRESSINPUT_DEPARTMENT'
   | 'IDS_LIBADDRESSINPUT_DISTRICT'
   | 'IDS_LIBADDRESSINPUT_DO_SI'
+  | 'IDS_LIBADDRESSINPUT_EIR_CODE_LABEL'
   | 'IDS_LIBADDRESSINPUT_EMIRATE'
   | 'IDS_LIBADDRESSINPUT_ISLAND'
+  | 'IDS_LIBADDRESSINPUT_LOCALITY_LABEL'
+  | 'IDS_LIBADDRESSINPUT_NEIGHBORHOOD'
   | 'IDS_LIBADDRESSINPUT_OBLAST'
   | 'IDS_LIBADDRESSINPUT_PARISH'
+  | 'IDS_LIBADDRESSINPUT_PIN_CODE_LABEL'
+  | 'IDS_LIBADDRESSINPUT_POST_TOWN'
+  | 'IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL'
   | 'IDS_LIBADDRESSINPUT_PREFECTURE'
   | 'IDS_LIBADDRESSINPUT_PROVINCE'
   | 'IDS_LIBADDRESSINPUT_STATE'
-  | 'IDS_LIBADDRESSINPUT_EIR_CODE_LABEL'
-  | 'IDS_LIBADDRESSINPUT_PIN_CODE_LABEL'
-  | 'IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL'
-  | 'IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL'
-  | 'IDS_LIBADDRESSINPUT_LOCALITY_LABEL'
-  | 'IDS_LIBADDRESSINPUT_POST_TOWN'
   | 'IDS_LIBADDRESSINPUT_SUBURB'
-  | 'IDS_LIBADDRESSINPUT_NEIGHBORHOOD'
   | 'IDS_LIBADDRESSINPUT_TOWNLAND'
-  | 'IDS_LIBADDRESSINPUT_VILLAGE_TOWNSHIP';
+  | 'IDS_LIBADDRESSINPUT_VILLAGE_TOWNSHIP'
+  | 'IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL';
 
 // Mirrors kAdminAreaMessageIds / kPostalCodeMessageIds / kLocalityMessageIds /
 // kSublocalityMessageIds in rule.cc exactly.
@@ -88,44 +89,44 @@ const SUBLOCALITY_NAME_IDS: Record<string, NameTypeMessageId> = {
 };
 
 export interface Rule {
-  id: string;
+  adminAreaNameMessageId: NameTypeMessageId | undefined;
   format: FormatElement[];
-  latinFormat: FormatElement[];
-  required: AddressField[];
-  subKeys: string[];
+  id: string;
   languages: string[];
+  latinFormat: FormatElement[];
+  latinName: string;
+  localityNameMessageId: NameTypeMessageId | undefined;
+  name: string;
+  postalCodeExample: string;
   /** Compiled from `zip`, anchored at the start like upstream's RE2 matcher. */
   postalCodeMatcher: RegExp | undefined;
+  postalCodeNameMessageId: NameTypeMessageId | undefined;
+  postServiceUrl: string;
+  required: AddressField[];
   /** Set only when `zip` is a literal value rather than a pattern. */
   solePostalCode: string;
-  adminAreaNameMessageId: NameTypeMessageId | undefined;
-  postalCodeNameMessageId: NameTypeMessageId | undefined;
-  localityNameMessageId: NameTypeMessageId | undefined;
+  subKeys: string[];
   sublocalityNameMessageId: NameTypeMessageId | undefined;
-  name: string;
-  latinName: string;
-  postalCodeExample: string;
-  postServiceUrl: string;
 }
 
 export function createEmptyRule(): Rule {
   return {
-    id: '',
-    format: [],
-    latinFormat: [],
-    required: [],
-    subKeys: [],
-    languages: [],
-    postalCodeMatcher: undefined,
-    solePostalCode: '',
     adminAreaNameMessageId: undefined,
-    postalCodeNameMessageId: undefined,
-    localityNameMessageId: undefined,
-    sublocalityNameMessageId: undefined,
-    name: '',
+    format: [],
+    id: '',
+    languages: [],
+    latinFormat: [],
     latinName: '',
+    localityNameMessageId: undefined,
+    name: '',
     postalCodeExample: '',
+    postalCodeMatcher: undefined,
+    postalCodeNameMessageId: undefined,
     postServiceUrl: '',
+    required: [],
+    solePostalCode: '',
+    subKeys: [],
+    sublocalityNameMessageId: undefined,
   };
 }
 
@@ -198,22 +199,34 @@ export function parseJsonRule(json: Record<string, unknown>, base: Rule = create
   };
 
   const id = str('id');
-  if (id !== undefined) rule.id = id;
+  if (id !== undefined) {
+    rule.id = id;
+  }
 
   const fmt = str('fmt');
-  if (fmt !== undefined) rule.format = parseFormatRule(fmt);
+  if (fmt !== undefined) {
+    rule.format = parseFormatRule(fmt);
+  }
 
   const lfmt = str('lfmt');
-  if (lfmt !== undefined) rule.latinFormat = parseFormatRule(lfmt);
+  if (lfmt !== undefined) {
+    rule.latinFormat = parseFormatRule(lfmt);
+  }
 
   const require = str('require');
-  if (require !== undefined) rule.required = parseAddressFieldsRequired(require);
+  if (require !== undefined) {
+    rule.required = parseAddressFieldsRequired(require);
+  }
 
   const subKeys = str('sub_keys');
-  if (subKeys !== undefined) rule.subKeys = splitList(subKeys);
+  if (subKeys !== undefined) {
+    rule.subKeys = splitList(subKeys);
+  }
 
   const languages = str('languages');
-  if (languages !== undefined) rule.languages = splitList(languages);
+  if (languages !== undefined) {
+    rule.languages = splitList(languages);
+  }
 
   const zip = str('zip');
   if (zip !== undefined) {
@@ -242,16 +255,24 @@ export function parseJsonRule(json: Record<string, unknown>, base: Rule = create
   }
 
   const name = str('name');
-  if (name !== undefined) rule.name = name;
+  if (name !== undefined) {
+    rule.name = name;
+  }
 
   const latinName = str('lname');
-  if (latinName !== undefined) rule.latinName = latinName;
+  if (latinName !== undefined) {
+    rule.latinName = latinName;
+  }
 
   const zipex = str('zipex');
-  if (zipex !== undefined) rule.postalCodeExample = zipex;
+  if (zipex !== undefined) {
+    rule.postalCodeExample = zipex;
+  }
 
   const posturl = str('posturl');
-  if (posturl !== undefined) rule.postServiceUrl = posturl;
+  if (posturl !== undefined) {
+    rule.postServiceUrl = posturl;
+  }
 
   return rule;
 }

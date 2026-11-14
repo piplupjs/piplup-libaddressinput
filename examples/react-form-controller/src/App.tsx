@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import * as React from 'react';
+
 import {
   HybridSource,
   MemoryStorage,
   PreloadSupplier,
   getProblemErrorMessage,
-  type AddressData,
-  type AddressField,
 } from '@piplup/libaddressinput';
 import {
   AddressProvider,
@@ -16,14 +15,16 @@ import {
   useValidate,
 } from '@piplup/libaddressinput-react';
 
+import type { AddressData, AddressField, ValidationProblem } from '@piplup/libaddressinput';
+
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
 
 export function App() {
-  const [regionCode, setRegionCode] = useState('US');
-  const [values, setValues] = useState<AddressData>({ regionCode: 'US' });
-  const address = useAddress({ supplier, region: regionCode });
-  const { validate, validating, problems, isValid } = useValidate(supplier);
-  const [hasValidated, setHasValidated] = useState(false);
+  const [regionCode, setRegionCode] = React.useState('US');
+  const [values, setValues] = React.useState<AddressData>({ regionCode: 'US' });
+  const address = useAddress({ region: regionCode, supplier });
+  const { isValid, problems, validate, validating } = useValidate(supplier);
+  const [hasValidated, setHasValidated] = React.useState(false);
 
   function setField(key: keyof AddressData, value: string): void {
     setValues((prev) => ({
@@ -46,44 +47,44 @@ export function App() {
   return (
     <main
       style={{
-        maxWidth: '32rem',
-        margin: '2rem auto',
         fontFamily: 'system-ui, sans-serif',
+        margin: '2rem auto',
+        maxWidth: '32rem',
       }}
     >
       <h1>Address form (react-form-controller)</h1>
 
       <AddressProvider value={address}>
-        <RegionSelector value={regionCode} onChange={handleRegionChange} />
+        <RegionSelector onChange={handleRegionChange} value={regionCode} />
 
         {address.loading && <p>Loading region data…</p>}
 
         <AddressFields
-          values={values}
           onChange={setField}
           problems={hasValidated ? problems : []}
+          values={values}
         />
 
         <button
-          type="button"
-          onClick={() => void handleValidate()}
-          disabled={address.loading || validating}
           style={{
-            marginTop: '1.25rem',
-            padding: '0.6rem 1.25rem',
             background: '#0052cc',
-            color: '#fff',
             border: 'none',
             borderRadius: '4px',
-            fontWeight: 600,
+            color: '#fff',
             cursor: address.loading || validating ? 'not-allowed' : 'pointer',
+            fontWeight: 600,
+            marginTop: '1.25rem',
+            padding: '0.6rem 1.25rem',
           }}
+          disabled={address.loading || validating}
+          onClick={() => void handleValidate()}
+          type="button"
         >
           {validating ? 'Validating…' : 'Validate now'}
         </button>
 
         {hasValidated && isValid && !address.loading && (
-          <div style={{ marginTop: '1rem', color: '#006644', fontWeight: 600 }}>
+          <div style={{ color: '#006644', fontWeight: 600, marginTop: '1rem' }}>
             ✓ Form is valid
           </div>
         )}
@@ -93,11 +94,11 @@ export function App() {
 }
 
 function RegionSelector({
-  value,
   onChange,
+  value,
 }: {
-  value: string;
   onChange: (region: string) => void;
+  value: string;
 }) {
   const countries = useCountries({ priority: ['US', 'CA', 'GB', 'IN'] });
 
@@ -105,14 +106,14 @@ function RegionSelector({
     <label>
       Region
       <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
         style={{
           display: 'block',
-          width: '100%',
-          padding: '0.5rem',
           marginTop: '0.25rem',
+          padding: '0.5rem',
+          width: '100%',
         }}
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
       >
         {countries.map(({ code, name }) => (
           <option key={code} value={code}>
@@ -125,13 +126,13 @@ function RegionSelector({
 }
 
 function AddressFields({
-  values,
   onChange,
   problems,
+  values,
 }: {
-  values: AddressData;
   onChange: (key: keyof AddressData, value: string) => void;
-  problems: import('@piplup/libaddressinput').ValidationProblem[];
+  problems: ValidationProblem[];
+  values: AddressData;
 }) {
   const { rows } = useAddressContext();
 
@@ -144,7 +145,7 @@ function AddressFields({
     problems.filter((p) => p.field === field).map((p) => getProblemErrorMessage(p));
 
   return (
-    <>
+    <React.Fragment>
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} style={{ display: 'flex', gap: '0.5rem' }}>
           {row.map((item) => {
@@ -163,14 +164,14 @@ function AddressFields({
                   {item.required ? ' *' : ''}
                   {isSelect && options ? (
                     <select
-                      value={(values[item.key] as string) ?? ''}
-                      onChange={(e) => onChange(item.key, e.target.value)}
                       style={{
                         display: 'block',
-                        width: '100%',
-                        padding: '0.5rem',
                         marginTop: '0.25rem',
+                        padding: '0.5rem',
+                        width: '100%',
                       }}
+                      onChange={(event) => onChange(item.key, event.target.value)}
+                      value={(values[item.key] as string) ?? ''}
                     >
                       <option value="">Select {item.label}…</option>
                       {options.map((opt) => (
@@ -181,31 +182,31 @@ function AddressFields({
                     </select>
                   ) : (
                     <input
-                      type="text"
-                      autoComplete={item.autoComplete}
+                      style={{
+                        boxSizing: 'border-box',
+                        display: 'block',
+                        marginTop: '0.25rem',
+                        padding: '0.5rem',
+                        width: '100%',
+                      }}
                       value={
                         Array.isArray(values[item.key])
                           ? ((values[item.key] as string[])[0] ?? '')
                           : ((values[item.key] as string) ?? '')
                       }
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '0.5rem',
-                        marginTop: '0.25rem',
-                      }}
-                      onChange={(e) => onChange(item.key, e.target.value)}
+                      autoComplete={item.autoComplete}
+                      onChange={(event) => onChange(item.key, event.target.value)}
+                      type="text"
                     />
                   )}
                   {errors.map((msg, i) => (
                     <div
-                      key={i}
                       style={{
                         color: '#b00020',
                         fontSize: '0.85em',
                         marginTop: '0.25rem',
                       }}
+                      key={i}
                     >
                       {msg}
                     </div>
@@ -216,6 +217,6 @@ function AddressFields({
           })}
         </div>
       ))}
-    </>
+    </React.Fragment>
   );
 }

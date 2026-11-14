@@ -3,9 +3,11 @@
 // of upstream's TestdataSource(/* aggregate= */ true).
 
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { FixtureDataSource } from '../../test/fake-sources.js';
 import { lookupKeyFromAddress } from '../internal/lookup-key.js';
 import { NullStorage } from '../storage.js';
+
 import { PreloadSupplier } from './preload.js';
 
 describe('PreloadSupplier (PreloadSupplierTest)', () => {
@@ -32,7 +34,7 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
 
   it('gets a sub-region rule by key (GetUsCaRule)', async () => {
     await supplier.loadRules('US');
-    const key = lookupKeyFromAddress({ regionCode: 'US', administrativeArea: 'CA' });
+    const key = lookupKeyFromAddress({ administrativeArea: 'CA', regionCode: 'US' });
     const rule = supplier.getRule(key);
     expect(rule?.id).toBe('data/US/CA');
   });
@@ -40,8 +42,8 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
   it('gets a sub-region rule by its human name (GetUsCaliforniaRule)', async () => {
     await supplier.loadRules('US');
     const key = lookupKeyFromAddress({
-      regionCode: 'US',
       administrativeArea: 'California',
+      regionCode: 'US',
     });
     const rule = supplier.getRule(key);
     expect(rule?.id).toBe('data/US/CA');
@@ -56,16 +58,16 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
 
   it('returns undefined for an unknown sub-region (GetUnknownRule)', async () => {
     await supplier.loadRules('US');
-    const key = lookupKeyFromAddress({ regionCode: 'US', administrativeArea: 'ZZ' });
+    const key = lookupKeyFromAddress({ administrativeArea: 'ZZ', regionCode: 'US' });
     expect(supplier.getRule(key)).toBeUndefined();
   });
 
   it('returns undefined for a too-precise key (GetTooPreciseRule)', async () => {
     await supplier.loadRules('US');
     const key = lookupKeyFromAddress({
-      regionCode: 'US',
       administrativeArea: 'CA',
       locality: 'Mountain View',
+      regionCode: 'US',
     });
     expect(supplier.getRule(key)).toBeUndefined();
   });
@@ -79,7 +81,7 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
 
   it('supplies the full hierarchy for a key (SupplyRegionCode)', async () => {
     await supplier.loadRules('CA');
-    const key = lookupKeyFromAddress({ regionCode: 'CA', administrativeArea: 'NB' });
+    const key = lookupKeyFromAddress({ administrativeArea: 'NB', regionCode: 'CA' });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
     expect(result.hierarchy[0]?.id).toBe('data/CA');
@@ -90,7 +92,7 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
 
   it('supplyGlobally matches supply for an in-language key (SupplyGloballyRegionCode)', async () => {
     await supplier.loadRules('CA');
-    const key = lookupKeyFromAddress({ regionCode: 'CA', administrativeArea: 'NB' });
+    const key = lookupKeyFromAddress({ administrativeArea: 'NB', regionCode: 'CA' });
     const result = await supplier.supplyGlobally(key);
     expect(result.success).toBe(true);
     expect(result.hierarchy[1]?.id).toBe('data/CA/NB');
@@ -99,8 +101,8 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
   it('supplies via a human-readable region name (SupplyRegionName)', async () => {
     await supplier.loadRules('CA');
     const key = lookupKeyFromAddress({
-      regionCode: 'CA',
       administrativeArea: 'New Brunswick',
+      regionCode: 'CA',
     });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
@@ -130,13 +132,13 @@ describe('PreloadSupplier (PreloadSupplierTest)', () => {
       // regions already in `exported`.
       const offline = {
         async get() {
-          return { success: false, data: undefined };
+          return { data: undefined, success: false };
         },
       };
       const rehydrated = PreloadSupplier.from(offline, new NullStorage(), exported);
 
       expect(rehydrated.isLoaded('US')).toBe(true);
-      const key = lookupKeyFromAddress({ regionCode: 'US', administrativeArea: 'CA' });
+      const key = lookupKeyFromAddress({ administrativeArea: 'CA', regionCode: 'US' });
       expect(rehydrated.getRule(key)?.id).toBe(supplier.getRule(key)?.id);
     });
 

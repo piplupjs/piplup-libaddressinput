@@ -4,14 +4,17 @@
 
 import fc from 'fast-check';
 import { beforeAll, describe, expect, it } from 'vitest';
+
 import { FallbackAggregateSource } from '../test/fake-sources.js';
-import type { AddressData } from './address-data.js';
+
 import { formatAddress, getStreetAddressLinesAsSingleLine } from './formatter.js';
 import { buildLayout, getRegionCodes } from './layout.js';
 import { normalize } from './normalizer.js';
 import { NullStorage } from './storage.js';
 import { PreloadSupplier } from './supplier/preload.js';
 import { validate } from './validator.js';
+
+import type { AddressData } from './address-data.js';
 
 // A handful of structurally different regions (deep hierarchy, shallow,
 // Latin+native scripts, RTL-adjacent) rather than all 252 — enough to
@@ -34,18 +37,18 @@ const optionalShortString = fc.option(shortString, { nil: undefined });
 function addressArbitrary(regionCode: string): fc.Arbitrary<AddressData> {
   return fc.record(
     {
-      regionCode: fc.constant(regionCode),
       addressLine: fc.option(fc.array(shortString, { maxLength: 3 }), { nil: undefined }),
       administrativeArea: optionalShortString,
-      locality: optionalShortString,
       dependentLocality: optionalShortString,
-      postalCode: optionalShortString,
-      sortingCode: optionalShortString,
       languageCode: fc.option(fc.constantFrom('en', 'fr', 'ja', 'zh', 'de', ''), {
         nil: undefined,
       }),
+      locality: optionalShortString,
       organization: optionalShortString,
+      postalCode: optionalShortString,
       recipient: optionalShortString,
+      regionCode: fc.constant(regionCode),
+      sortingCode: optionalShortString,
     },
     { requiredKeys: ['regionCode'] },
   );

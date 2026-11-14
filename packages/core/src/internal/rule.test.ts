@@ -12,8 +12,11 @@
 // to copy into, since each parseRule() call already returns a fresh object.
 
 import { describe, expect, it } from 'vitest';
+
 import { fieldElement } from './format-element.js';
-import { parseJsonRule, parseRule, type NameTypeMessageId } from './rule.js';
+import { parseJsonRule, parseRule } from './rule.js';
+
+import type { NameTypeMessageId } from './rule.js';
 
 describe('parseRule', () => {
   it('returns undefined for an empty string (EmptyStringIsNotValid)', () => {
@@ -28,11 +31,11 @@ describe('parseRule', () => {
     const first = parseRule(
       JSON.stringify({
         fmt: '%S%Z',
+        posturl: 'http://www.testpost.com',
         state_name_type: 'area',
         zip: '1234',
         zip_name_type: 'postal',
         zipex: '1234',
-        posturl: 'http://www.testpost.com',
       }),
     )!;
     expect(first.format).not.toEqual([]);
@@ -45,10 +48,10 @@ describe('parseRule', () => {
     const second = parseRule(
       JSON.stringify({
         fmt: '',
+        posturl: 'http://www.fakepost.com',
         state_name_type: 'do_si',
         zip_name_type: 'zip',
         zipex: '5678',
-        posturl: 'http://www.fakepost.com',
       }),
     )!;
     expect(second.format).toEqual([]);

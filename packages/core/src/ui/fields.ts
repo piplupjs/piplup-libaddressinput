@@ -6,29 +6,29 @@ import type { AddressField } from '../address-field.js';
  */
 export const FIELD_TO_DATA_KEY: Record<AddressField, keyof AddressData> = {
   ADMIN_AREA: 'administrativeArea',
-  LOCALITY: 'locality',
-  DEPENDENT_LOCALITY: 'dependentLocality',
-  SORTING_CODE: 'sortingCode',
-  POSTAL_CODE: 'postalCode',
-  STREET_ADDRESS: 'addressLine',
-  ORGANIZATION: 'organization',
-  RECIPIENT: 'recipient',
   COUNTRY: 'regionCode',
+  DEPENDENT_LOCALITY: 'dependentLocality',
+  LOCALITY: 'locality',
+  ORGANIZATION: 'organization',
+  POSTAL_CODE: 'postalCode',
+  RECIPIENT: 'recipient',
+  SORTING_CODE: 'sortingCode',
+  STREET_ADDRESS: 'addressLine',
 };
 
 /**
  * Maps an AddressData property key back to its AddressField enum.
  */
 export const DATA_KEY_TO_FIELD: Partial<Record<keyof AddressData, AddressField>> = {
-  administrativeArea: 'ADMIN_AREA',
-  locality: 'LOCALITY',
-  dependentLocality: 'DEPENDENT_LOCALITY',
-  sortingCode: 'SORTING_CODE',
-  postalCode: 'POSTAL_CODE',
   addressLine: 'STREET_ADDRESS',
+  administrativeArea: 'ADMIN_AREA',
+  dependentLocality: 'DEPENDENT_LOCALITY',
+  locality: 'LOCALITY',
   organization: 'ORGANIZATION',
+  postalCode: 'POSTAL_CODE',
   recipient: 'RECIPIENT',
   regionCode: 'COUNTRY',
+  sortingCode: 'SORTING_CODE',
 };
 
 /**
@@ -36,15 +36,15 @@ export const DATA_KEY_TO_FIELD: Partial<Record<keyof AddressData, AddressField>>
  * Enables modern browser autofill out of the box in form inputs.
  */
 export const FIELD_TO_AUTOCOMPLETE: Record<AddressField, string> = {
-  RECIPIENT: 'name',
-  ORGANIZATION: 'organization',
-  STREET_ADDRESS: 'street-address',
   ADMIN_AREA: 'address-level1',
-  LOCALITY: 'address-level2',
-  DEPENDENT_LOCALITY: 'address-level3',
-  POSTAL_CODE: 'postal-code',
-  SORTING_CODE: 'postal-code',
   COUNTRY: 'country',
+  DEPENDENT_LOCALITY: 'address-level3',
+  LOCALITY: 'address-level2',
+  ORGANIZATION: 'organization',
+  POSTAL_CODE: 'postal-code',
+  RECIPIENT: 'name',
+  SORTING_CODE: 'postal-code',
+  STREET_ADDRESS: 'street-address',
 };
 
 /**

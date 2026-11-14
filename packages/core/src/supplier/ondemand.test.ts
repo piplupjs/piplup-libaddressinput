@@ -3,9 +3,11 @@
 // against MapSource/FixtureDataSource rather than the aggregate fake.
 
 import { describe, expect, it } from 'vitest';
+
 import { FixtureDataSource } from '../../test/fake-sources.js';
 import { lookupKeyFromAddress } from '../internal/lookup-key.js';
 import { NullStorage } from '../storage.js';
+
 import { OndemandSupplier } from './ondemand.js';
 
 describe('OndemandSupplier', () => {
@@ -19,7 +21,7 @@ describe('OndemandSupplier', () => {
 
   it('supplies a sub-region rule by key', async () => {
     const supplier = new OndemandSupplier(new FixtureDataSource(false), new NullStorage());
-    const key = lookupKeyFromAddress({ regionCode: 'US', administrativeArea: 'CA' });
+    const key = lookupKeyFromAddress({ administrativeArea: 'CA', regionCode: 'US' });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
     expect(result.hierarchy[0]?.id).toBe('data/US');

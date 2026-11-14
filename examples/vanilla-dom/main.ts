@@ -16,7 +16,7 @@ import {
 } from '@piplup/libaddressinput';
 
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
-const form = createAddressForm({ supplier, initial: { regionCode: 'US' } });
+const form = createAddressForm({ initial: { regionCode: 'US' }, supplier });
 
 const regionSelect = document.querySelector<HTMLSelectElement>('#region')!;
 const fieldsForm = document.querySelector<HTMLFormElement>('#fields')!;
@@ -59,8 +59,10 @@ validateButton.addEventListener('click', () => {
 let currentRenderedRegion = '';
 
 form.subscribe((state) => {
-  const { layout, values, userProblems } = state;
-  if (!layout) return;
+  const { layout, userProblems, values } = state;
+  if (!layout) {
+    return;
+  }
 
   // Only re-build DOM structure when the country/region changes
   const regionChanged = currentRenderedRegion !== values.regionCode;
@@ -73,9 +75,13 @@ form.subscribe((state) => {
       rowDiv.className = 'row';
 
       for (const item of row) {
-        if (item.kind !== 'field') continue;
+        if (item.kind !== 'field') {
+          continue;
+        }
         const key = getFieldKey(item.field);
-        if (key === 'regionCode') continue;
+        if (key === 'regionCode') {
+          continue;
+        }
 
         const colDiv = document.createElement('div');
         const label = document.createElement('label');
@@ -128,7 +134,9 @@ form.subscribe((state) => {
   // Reactively sync validation error messages and error styles
   for (const row of layout.rows) {
     for (const item of row) {
-      if (item.kind !== 'field') continue;
+      if (item.kind !== 'field') {
+        continue;
+      }
       const errorEl = document.querySelector<HTMLDivElement>(`#error-${item.field}`);
       const inputEl = document.querySelector<HTMLElement>(`#field-${item.field}`);
       const problem = userProblems.find((p) => p.field === item.field);

@@ -1,23 +1,23 @@
+export {
+  DATA_KEY_TO_FIELD,
+  FIELD_TO_AUTOCOMPLETE,
+  FIELD_TO_DATA_KEY,
+  getFieldAutocomplete,
+  getFieldKey,
+} from './fields.js';
+
 export { DEFAULT_FIELD_LABEL_IDS, getFieldLabel } from './labels.js';
 
 export {
-  FIELD_TO_DATA_KEY,
-  DATA_KEY_TO_FIELD,
-  FIELD_TO_AUTOCOMPLETE,
-  getFieldKey,
-  getFieldAutocomplete,
-} from './fields.js';
-
-export {
-  isUserProblem,
-  getUserProblems,
   getProblemErrorMessage,
+  getUserProblems,
   groupProblemsByField,
+  isUserProblem,
 } from './problems.js';
 
 export {
-  type RegionOption,
-  getRegionOptions,
-  formatRegionOption,
   findSubRegions,
+  formatRegionOption,
+  getRegionOptions,
+  type RegionOption,
 } from './regions.js';

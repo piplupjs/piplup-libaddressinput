@@ -1,13 +1,11 @@
 // Ported from cpp/test/address_field_util_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from 'vitest';
+
 import { parseAddressFieldsRequired, parseFormatRule } from './address-field-util.js';
-import {
-  fieldElement,
-  literalElement,
-  newlineElement,
-  type FormatElement,
-} from './format-element.js';
+import { fieldElement, literalElement, newlineElement } from './format-element.js';
+
+import type { FormatElement } from './format-element.js';
 
 describe('parseFormatRule', () => {
   it('parses fields, newlines, and literals (FormatParseNewline)', () => {

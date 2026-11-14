@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { useFormat } from './useFormat.js';
 
 describe('useFormat', () => {
@@ -7,11 +8,11 @@ describe('useFormat', () => {
     const { result } = renderHook(() => useFormat());
 
     const address = {
-      regionCode: 'US',
+      addressLine: ['100 Main St'],
       administrativeArea: 'CA',
       locality: 'San Jose',
       postalCode: '95110',
-      addressLine: ['100 Main St'],
+      regionCode: 'US',
     };
 
     const lines = result.current.format(address);

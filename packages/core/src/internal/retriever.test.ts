@@ -5,9 +5,13 @@
 // test/fake-sources.ts.
 
 import { describe, expect, it } from 'vitest';
+
 import { FixtureDataSource, MapSource } from '../../test/fake-sources.js';
-import { MemoryStorage, NullStorage, type Storage, type StorageResult } from '../storage.js';
+import { MemoryStorage, NullStorage } from '../storage.js';
+
 import { Retriever } from './retriever.js';
+
+import type { Storage, StorageResult } from '../storage.js';
 
 const KEY = 'data/CA/AB--fr';
 const EMPTY_DATA = '{}';
@@ -53,7 +57,7 @@ describe('Retriever (RetrieverTest)', () => {
       async get(_key: string): Promise<StorageResult> {
         // A stale-but-well-formed entry: 2 months old.
         const twoMonthsAgo = Date.now() - 60 * 24 * 60 * 60 * 1000;
-        return { success: true, data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}` };
+        return { data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}`, success: true };
       },
       put(_key: string, _data: string): void {
         putCalled = true;
@@ -71,7 +75,7 @@ describe('Retriever (RetrieverTest)', () => {
     const staleStorage: Storage = {
       async get(_key: string): Promise<StorageResult> {
         const twoMonthsAgo = Date.now() - 60 * 24 * 60 * 60 * 1000;
-        return { success: true, data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}` };
+        return { data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}`, success: true };
       },
       put(_key: string, _data: string): void {
         putCalled = true;

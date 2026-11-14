@@ -5,11 +5,14 @@
 // ValidationTaskTest calls `task->supplied_` directly instead of going
 // through a real Supplier.
 
-import { isFieldEmpty, type AddressData } from '../address-data.js';
-import type { AddressField } from '../address-field.js';
+import { isFieldEmpty } from '../address-data.js';
+import { isFieldUsed } from '../metadata.js';
+
 import { LOOKUP_KEY_HIERARCHY } from './lookup-key.js';
 import { getPostBoxMatchers } from './post-box-matchers.js';
-import { isFieldUsed } from '../metadata.js';
+
+import type { AddressData } from '../address-data.js';
+import type { AddressField } from '../address-field.js';
 import type { AddressProblem } from '../problem.js';
 import type { Rule } from './rule.js';
 import type { RuleHierarchy } from '../supplier/supplier.js';
@@ -21,14 +24,14 @@ export interface ValidationProblem {
 
 export interface RunValidationChecksOptions {
   allowPostal: boolean;
-  requireName: boolean;
-  filter: ValidationProblem[] | undefined;
+  filter: undefined | ValidationProblem[];
   /** From `supplier.getLoadedRuleDepth()`, captured before resolving `hierarchy`. */
   maxDepth: number;
+  requireName: boolean;
 }
 
 function shouldReport(
-  filter: ValidationProblem[] | undefined,
+  filter: undefined | ValidationProblem[],
   field: AddressField,
   problem: AddressProblem,
 ): boolean {
@@ -86,7 +89,7 @@ export function runValidationChecks(
   hierarchy: RuleHierarchy,
   options: RunValidationChecksOptions,
 ): ValidationProblem[] {
-  const { allowPostal, requireName, filter, maxDepth } = options;
+  const { allowPostal, filter, maxDepth, requireName } = options;
   const problems: ValidationProblem[] = [];
 
   const report = (field: AddressField, problem: AddressProblem): void => {
@@ -166,7 +169,7 @@ function checkUnknownValue(
   hierarchy: RuleHierarchy,
   reportMaybe: ReportFn,
 ): void {
-  for (let depth = 1; depth < LOOKUP_KEY_HIERARCHY.length; depth++) {
+  for (let depth = 1; depth < LOOKUP_KEY_HIERARCHY.length; depth += 1) {
     const field = LOOKUP_KEY_HIERARCHY[depth]!;
     const parent = hierarchy[depth - 1];
     const isUnknown = !(
@@ -182,7 +185,7 @@ function checkUnknownValue(
 }
 
 function checkUnsupportedField(maxDepth: number, reportMaybe: ReportFn): void {
-  for (let depth = maxDepth; depth < LOOKUP_KEY_HIERARCHY.length; depth++) {
+  for (let depth = maxDepth; depth < LOOKUP_KEY_HIERARCHY.length; depth += 1) {
     reportMaybe(LOOKUP_KEY_HIERARCHY[depth]!, 'UNSUPPORTED_FIELD');
   }
 }
@@ -193,7 +196,7 @@ function checkPostalCodeFormatAndValue(
   address: AddressData,
   hierarchy: RuleHierarchy,
   problems: ValidationProblem[],
-  filter: ValidationProblem[] | undefined,
+  filter: undefined | ValidationProblem[],
   report: ReportFn,
 ): void {
   const countryRule = hierarchy[0]!;
@@ -229,7 +232,7 @@ function checkPostalCodeFormatAndValue(
     return;
   }
 
-  for (let depth = LOOKUP_KEY_HIERARCHY.length - 1; depth > 0; depth--) {
+  for (let depth = LOOKUP_KEY_HIERARCHY.length - 1; depth > 0; depth -= 1) {
     const rule = hierarchy[depth];
     if (rule !== undefined) {
       // Validate sub-region-specific postal code format: a sub-region
@@ -249,7 +252,7 @@ function checkUsesPoBox(
   address: AddressData,
   hierarchy: RuleHierarchy,
   allowPostal: boolean,
-  filter: ValidationProblem[] | undefined,
+  filter: undefined | ValidationProblem[],
   report: ReportFn,
 ): void {
   const countryRule = hierarchy[0]!;

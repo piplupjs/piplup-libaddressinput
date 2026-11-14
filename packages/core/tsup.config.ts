@@ -1,22 +1,22 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
+  clean: true,
+  dts: { resolve: false },
   entry: {
-    index: 'src/index.ts',
-    format: 'src/formatter.ts',
-    validate: 'src/validator.ts',
-    layout: 'src/layout.ts',
     form: 'src/form/controller.ts',
-    ui: 'src/ui/index.ts',
-    'messages/en': 'src/messages/en.ts',
+    format: 'src/formatter.ts',
+    index: 'src/index.ts',
     'labels/en': 'src/labels/en.ts',
+    layout: 'src/layout.ts',
+    'messages/en': 'src/messages/en.ts',
+    ui: 'src/ui/index.ts',
+    validate: 'src/validator.ts',
   },
   format: ['esm', 'cjs'],
-  dts: { resolve: false },
-  tsconfig: 'tsconfig.build.json',
+  platform: 'neutral',
   sourcemap: true,
-  clean: true,
   splitting: true,
   target: 'es2020',
-  platform: 'neutral',
+  tsconfig: 'tsconfig.build.json',
 });

@@ -4,10 +4,14 @@
 // reset.
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { FixtureDataSource } from '../../test/fake-sources.js';
 import { NullStorage } from '../storage.js';
 import { PreloadSupplier } from '../supplier/preload.js';
-import { createAddressForm, type AddressFormState } from './controller.js';
+
+import { createAddressForm } from './controller.js';
+
+import type { AddressFormState } from './controller.js';
 
 describe('createAddressForm', () => {
   let supplier: PreloadSupplier;
@@ -52,8 +56,8 @@ describe('createAddressForm', () => {
 
   it("setRegion drops values the new region doesn't use", async () => {
     const form = createAddressForm({
+      initial: { dependentLocality: 'should be dropped for US', regionCode: 'US' },
       supplier,
-      initial: { regionCode: 'US', dependentLocality: 'should be dropped for US' },
     });
     await form.setRegion('US');
     // US's format doesn't include DEPENDENT_LOCALITY.
@@ -62,8 +66,8 @@ describe('createAddressForm', () => {
 
   it('setRegion carries over values for fields the new region still uses', async () => {
     const form = createAddressForm({
+      initial: { postalCode: '94043', regionCode: 'US' },
       supplier,
-      initial: { regionCode: 'US', postalCode: '94043' },
     });
     await form.setRegion('US');
     expect(form.getState().values.postalCode).toBe('94043');
@@ -117,7 +121,7 @@ describe('createAddressForm', () => {
   });
 
   it('reset restores the initial address and re-loads its region', async () => {
-    const form = createAddressForm({ supplier, initial: { regionCode: 'US' } });
+    const form = createAddressForm({ initial: { regionCode: 'US' }, supplier });
     await form.setRegion('US');
     form.setField('locality', 'Mountain View');
     expect(form.getState().dirty).toBe(true);

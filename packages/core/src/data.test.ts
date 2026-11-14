@@ -3,6 +3,7 @@
 // regressions when updating the snapshot.
 
 import { describe, expect, it } from 'vitest';
+
 import {
   FALLBACK_DATA,
   FALLBACK_REGION_CODES,
@@ -40,11 +41,11 @@ describe('Bundled live-snapshot data (FALLBACK_DATA)', () => {
 
   it('China (CN) and Korea (KR) have multi-level data', () => {
     // CN should have depth 2 or 3 (city/province levels)
-    const cnDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH['CN'];
+    const cnDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH.CN;
     expect(cnDepth).toBeGreaterThanOrEqual(2);
 
     // KR should have depth 2 (city/province levels)
-    const krDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH['KR'];
+    const krDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH.KR;
     expect(krDepth).toBeGreaterThanOrEqual(2);
 
     // Both should have sub-region entries in the data (at least one level deep)
@@ -57,7 +58,7 @@ describe('Bundled live-snapshot data (FALLBACK_DATA)', () => {
 
   it('United States (US) has 50+ sub-regions', () => {
     // US should have depth 1 (state-level at minimum)
-    const usDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH['US'];
+    const usDepth = FALLBACK_MAX_LOOKUP_KEY_DEPTH.US;
     expect(usDepth).toBeGreaterThanOrEqual(1);
 
     // US should have many sub-region entries (states, territories, etc.)

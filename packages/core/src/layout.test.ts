@@ -1,7 +1,10 @@
 // Ported from cpp/test/address_ui_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from 'vitest';
-import { buildLayout, getRegionCodes, type LayoutField } from './layout.js';
+
+import { buildLayout, getRegionCodes } from './layout.js';
+
+import type { LayoutField } from './layout.js';
 
 const UI_LANGUAGE_TAG = 'en';
 

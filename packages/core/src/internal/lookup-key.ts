@@ -4,11 +4,12 @@
 // to look up address metadata, either in the bundled fallback dataset or
 // from a remote/data supplier (Phase 2).
 
-import type { AddressData } from '../address-data.js';
-import type { AddressField } from '../address-field.js';
 import { parseLanguage } from './language.js';
 import * as RegionDataConstants from './region-data-constants.js';
 import { parseRule } from './rule.js';
+
+import type { AddressData } from '../address-data.js';
+import type { AddressField } from '../address-field.js';
 
 /** Mirrors LookupKey::kHierarchy: the levels a lookup key can descend through. */
 export const LOOKUP_KEY_HIERARCHY: readonly AddressField[] = [
@@ -57,9 +58,9 @@ function shouldSetLanguageForKey(languageTagNoLatn: string, regionCode: string):
 }
 
 export interface LookupKey {
+  readonly language: string;
   /** Ordered nodes from COUNTRY down to however deep the address goes. */
   readonly nodes: ReadonlyMap<AddressField, string>;
-  readonly language: string;
 }
 
 /** Builds a LookupKey from an address, mirroring `LookupKey::FromAddress`. */
@@ -94,7 +95,7 @@ export function lookupKeyFromAddress(address: AddressData): LookupKey {
     ? languageTagNoLatn
     : '';
 
-  return { nodes, language };
+  return { language, nodes };
 }
 
 /**
@@ -111,7 +112,7 @@ export function lookupKeyFromParent(parent: LookupKey, childNode: string): Looku
   const nodes = new Map(parent.nodes);
   const childField = LOOKUP_KEY_HIERARCHY[nodes.size]!;
   nodes.set(childField, childNode);
-  return { nodes, language: parent.language };
+  return { language: parent.language, nodes };
 }
 
 /**
@@ -126,10 +127,12 @@ export function lookupKeyToString(key: LookupKey, maxDepth: number): string {
     );
   }
   let result = 'data';
-  for (let i = 0; i <= maxDepth; i++) {
+  for (let i = 0; i <= maxDepth; i += 1) {
     const field = LOOKUP_KEY_HIERARCHY[i]!;
     const value = key.nodes.get(field);
-    if (value === undefined) break;
+    if (value === undefined) {
+      break;
+    }
     result += `/${value}`;
   }
   if (key.language.length > 0) {

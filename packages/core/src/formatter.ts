@@ -1,10 +1,12 @@
 // Port of cpp/src/address_formatter.cc (Apache-2.0, Google Inc.).
 
-import { getFieldValue, isFieldEmpty, type AddressData } from './address-data.js';
-import type { FormatElement } from './internal/format-element.js';
+import { getFieldValue, isFieldEmpty } from './address-data.js';
 import { parseLanguage } from './internal/language.js';
 import * as RegionDataConstants from './internal/region-data-constants.js';
 import { parseRule } from './internal/rule.js';
+
+import type { AddressData } from './address-data.js';
+import type { FormatElement } from './internal/format-element.js';
 
 const COMMA_SEPARATOR = ', ';
 const SPACE_SEPARATOR = ' ';
@@ -68,7 +70,7 @@ export function formatAddress(address: AddressData): string[] {
   //  (1) it's not immediately followed by an empty field, and
   //  (2) it's not immediately preceded by a field we just dropped.
   const prunedFormat: FormatElement[] = [];
-  for (let i = 0; i < format.length; i++) {
+  for (let i = 0; i < format.length; i += 1) {
     const element = format[i]!;
     if (element.kind === 'newline') {
       prunedFormat.push(element);
@@ -113,7 +115,7 @@ export function formatAddress(address: AddressData): string[] {
           if (addressLines.length > 1) {
             lines.push(line);
             line = '';
-            for (let i = 1; i < addressLines.length - 1; i++) {
+            for (let i = 1; i < addressLines.length - 1; i += 1) {
               lines.push(addressLines[i]!);
             }
             line += addressLines[addressLines.length - 1];

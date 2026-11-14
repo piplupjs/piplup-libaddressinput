@@ -5,6 +5,7 @@
 // Phase 6 when buildLayout() is implemented.
 
 import { describe, expect, it } from 'vitest';
+
 import { parseLanguage } from './language.js';
 
 describe('parseLanguage (LanguageTestCases)', () => {

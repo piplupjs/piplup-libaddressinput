@@ -16,8 +16,9 @@ import {
   normalize,
   validate,
   getUserProblems,
-  type AddressData,
 } from '@piplup/libaddressinput';
+
+import type { AddressData } from '@piplup/libaddressinput';
 
 function printHelp(): void {
   console.log(`Usage: node main.ts [options]
@@ -46,9 +47,10 @@ function parseArgs(argv: string[]): AddressData | undefined {
   const address: AddressData = { regionCode: '' };
   const addressLine: string[] = [];
 
-  for (let i = 0; i < argv.length; i++) {
+  for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i];
-    const value = argv[++i];
+    i += 1;
+    const value = argv[i];
     switch (flag) {
       case '--region':
         address.regionCode = value ?? '';
@@ -69,7 +71,9 @@ function parseArgs(argv: string[]): AddressData | undefined {
         address.sortingCode = value;
         break;
       case '--address-line':
-        if (value !== undefined) addressLine.push(value);
+        if (value !== undefined) {
+          addressLine.push(value);
+        }
         break;
       case '--organization':
         address.organization = value;
@@ -87,7 +91,9 @@ function parseArgs(argv: string[]): AddressData | undefined {
     }
   }
 
-  if (addressLine.length > 0) address.addressLine = addressLine;
+  if (addressLine.length > 0) {
+    address.addressLine = addressLine;
+  }
 
   if (address.regionCode.length === 0) {
     console.error('Error: --region is required.\n');
@@ -100,7 +106,9 @@ function parseArgs(argv: string[]): AddressData | undefined {
 
 async function main(): Promise<void> {
   const address = parseArgs(process.argv.slice(2));
-  if (address === undefined) return; // --help
+  if (address === undefined) {
+    return;
+  } // --help
 
   const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
   const loaded = await supplier.loadRules(address.regionCode);

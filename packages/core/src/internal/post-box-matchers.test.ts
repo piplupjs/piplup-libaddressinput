@@ -1,6 +1,7 @@
 // Ported from cpp/test/post_box_matchers_test.cc (Apache-2.0, Google Inc.).
 
 import { describe, expect, it } from 'vitest';
+
 import { getPostBoxMatchers } from './post-box-matchers.js';
 import { createEmptyRule } from './rule.js';
 

@@ -1,20 +1,18 @@
-import { useState } from 'react';
-import {
-  HybridSource,
-  MemoryStorage,
-  PreloadSupplier,
-  type AddressData,
-} from '@piplup/libaddressinput';
+import * as React from 'react';
+
+import { HybridSource, MemoryStorage, PreloadSupplier } from '@piplup/libaddressinput';
 import { useAddress, useCountries, useValidate } from '@piplup/libaddressinput-react';
+
+import type { AddressData } from '@piplup/libaddressinput';
 
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
 
 export function App() {
-  const [regionCode, setRegionCode] = useState('US');
-  const [values, setValues] = useState<AddressData>({ regionCode: 'US' });
+  const [regionCode, setRegionCode] = React.useState('US');
+  const [values, setValues] = React.useState<AddressData>({ regionCode: 'US' });
   const countries = useCountries();
-  const address = useAddress({ supplier, region: regionCode });
-  const { validate, validating, problems } = useValidate(supplier);
+  const address = useAddress({ region: regionCode, supplier });
+  const { problems, validate, validating } = useValidate(supplier);
 
   function setField(key: keyof AddressData, value: string): void {
     setValues((prev) => ({
@@ -31,23 +29,23 @@ export function App() {
   return (
     <main
       style={{
-        maxWidth: '32rem',
-        margin: '2rem auto',
         fontFamily: 'system-ui, sans-serif',
+        margin: '2rem auto',
+        maxWidth: '32rem',
       }}
     >
       <h1>Address form (react-basic)</h1>
       <label>
         Region
         <select
-          value={regionCode}
-          onChange={(e) => handleRegionChange(e.target.value)}
           style={{
             display: 'block',
-            width: '100%',
-            padding: '0.5rem',
             marginTop: '0.25rem',
+            padding: '0.5rem',
+            width: '100%',
           }}
+          onChange={(event) => handleRegionChange(event.target.value)}
+          value={regionCode}
         >
           {countries.map(({ code, name }) => (
             <option key={code} value={code}>
@@ -71,15 +69,15 @@ export function App() {
                 {item.required ? ' *' : ''}
                 {item.isSelect && item.options ? (
                   <select
-                    value={(values[item.key] as string) ?? ''}
-                    onChange={(e) => setField(item.key, e.target.value)}
                     style={{
-                      display: 'block',
-                      width: '100%',
                       boxSizing: 'border-box',
-                      padding: '0.5rem',
+                      display: 'block',
                       marginTop: '0.25rem',
+                      padding: '0.5rem',
+                      width: '100%',
                     }}
+                    onChange={(event) => setField(item.key, event.target.value)}
+                    value={(values[item.key] as string) ?? ''}
                   >
                     <option value="">Select {item.label}…</option>
                     {item.options.map((opt) => (
@@ -90,16 +88,16 @@ export function App() {
                   </select>
                 ) : (
                   <input
-                    type="text"
-                    autoComplete={item.autoComplete}
                     style={{
-                      display: 'block',
-                      width: '100%',
                       boxSizing: 'border-box',
-                      padding: '0.5rem',
+                      display: 'block',
                       marginTop: '0.25rem',
+                      padding: '0.5rem',
+                      width: '100%',
                     }}
-                    onChange={(e) => setField(item.key, e.target.value)}
+                    autoComplete={item.autoComplete}
+                    onChange={(event) => setField(item.key, event.target.value)}
+                    type="text"
                   />
                 )}
               </label>
@@ -109,19 +107,19 @@ export function App() {
       ))}
 
       <button
-        type="button"
-        onClick={() => void validate(values)}
-        disabled={address.loading || validating}
         style={{
-          marginTop: '1.25rem',
-          padding: '0.6rem 1.25rem',
           background: '#0052cc',
-          color: '#fff',
           border: 'none',
           borderRadius: '4px',
-          fontWeight: 600,
+          color: '#fff',
           cursor: address.loading || validating ? 'not-allowed' : 'pointer',
+          fontWeight: 600,
+          marginTop: '1.25rem',
+          padding: '0.6rem 1.25rem',
         }}
+        disabled={address.loading || validating}
+        onClick={() => void validate(values)}
+        type="button"
       >
         {validating ? 'Validating…' : 'Validate'}
       </button>

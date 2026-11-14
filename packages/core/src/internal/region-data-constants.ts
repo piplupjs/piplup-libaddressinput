@@ -18,7 +18,10 @@ import {
   FALLBACK_MAX_LOOKUP_KEY_DEPTH,
   FALLBACK_REGION_CODES,
 } from '../data/fallback.js';
-import { parseRule, type Rule } from './rule.js';
+
+import { parseRule } from './rule.js';
+
+import type { Rule } from './rule.js';
 
 export function isSupported(regionCode: string): boolean {
   return Object.prototype.hasOwnProperty.call(FALLBACK_DATA, `data/${regionCode}`);

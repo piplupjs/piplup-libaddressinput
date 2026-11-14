@@ -6,6 +6,7 @@
 // formatElementsEqual().
 
 import { describe, expect, it } from 'vitest';
+
 import {
   fieldElement,
   formatElementsEqual,

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { ADDRESS_FIELDS, isAddressField } from './address-field.js';
 
 describe('isAddressField', () => {

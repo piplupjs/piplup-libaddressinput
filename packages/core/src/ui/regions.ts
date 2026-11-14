@@ -1,4 +1,5 @@
 import { getRegionCodes } from '../layout.js';
+
 import type { RegionData } from '../region-data.js';
 
 export interface RegionOption {
@@ -63,7 +64,7 @@ export function formatRegionOption(sub: { key: string; name?: string }): string 
  * @param parentKeyOrName The parent key (e.g. "CA") or name (e.g. "California").
  */
 export function findSubRegions(
-  tree: RegionData | null,
+  tree: null | RegionData,
   parentKeyOrName: string | undefined,
 ): RegionData[] {
   if (tree === null || parentKeyOrName === undefined || parentKeyOrName === '') {

@@ -1,7 +1,9 @@
 // Ported from cpp/test/region_data_builder_test.cc (Apache-2.0, Google Inc.).
 
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { FixtureDataSource } from '../test/fake-sources.js';
+
 import { buildRegionTree } from './region-data.js';
 import { NullStorage } from './storage.js';
 import { PreloadSupplier } from './supplier/preload.js';
@@ -49,7 +51,7 @@ describe('buildRegionTree (RegionDataBuilderTest)', () => {
 
   it('gives US states abbreviated keys and full names (UsTreeHasStateAbbreviationsAndNames)', async () => {
     await load('US');
-    const { tree, bestLanguageTag } = buildRegionTree(supplier, 'US', 'en-US');
+    const { bestLanguageTag, tree } = buildRegionTree(supplier, 'US', 'en-US');
     expect(bestLanguageTag).toBe('en');
     expect(tree.subRegions[0]!.key).toBe('AL');
     expect(tree.subRegions[0]!.name).toBe('Alabama');
@@ -57,7 +59,7 @@ describe('buildRegionTree (RegionDataBuilderTest)', () => {
 
   it('uses Korean keys with Latin-script names for ko-Latn (KrWithKoLatnLanguageHasKoreanKeysAndLatinScriptNames)', async () => {
     await load('KR');
-    const { tree, bestLanguageTag } = buildRegionTree(supplier, 'KR', 'ko-Latn');
+    const { bestLanguageTag, tree } = buildRegionTree(supplier, 'KR', 'ko-Latn');
     expect(bestLanguageTag).toBe('ko-Latn');
     expect(tree.subRegions[0]!.key).toBe('강원도');
     expect(tree.subRegions[0]!.name).toBe('Gangwon');
@@ -65,7 +67,7 @@ describe('buildRegionTree (RegionDataBuilderTest)', () => {
 
   it('uses Korean keys and names for ko-KR (KrWithKoKrLanguageHasKoreanKeysAndNames)', async () => {
     await load('KR');
-    const { tree, bestLanguageTag } = buildRegionTree(supplier, 'KR', 'ko-KR');
+    const { bestLanguageTag, tree } = buildRegionTree(supplier, 'KR', 'ko-KR');
     expect(bestLanguageTag).toBe('ko');
     expect(tree.subRegions[0]!.key).toBe('강원도');
     expect(tree.subRegions[0]!.name).toBe('강원');

@@ -7,22 +7,22 @@
 import type { AddressField } from './address-field.js';
 
 export interface AddressData {
-  /** CLDR region code, e.g. "US", "JP". Required for most operations. */
-  regionCode: string;
   /** Street address lines, in order. */
   addressLine?: string[] | undefined;
   /** Top-level administrative subdivision (state/province/region). */
   administrativeArea?: string | undefined;
-  /** City/town. */
-  locality?: string | undefined;
   /** Subdivision of locality (e.g. suburb, neighborhood). */
   dependentLocality?: string | undefined;
-  postalCode?: string | undefined;
-  sortingCode?: string | undefined;
   /** BCP-47 language tag of the address's contents. */
   languageCode?: string | undefined;
+  /** City/town. */
+  locality?: string | undefined;
   organization?: string | undefined;
+  postalCode?: string | undefined;
   recipient?: string | undefined;
+  /** CLDR region code, e.g. "US", "JP". Required for most operations. */
+  regionCode: string;
+  sortingCode?: string | undefined;
 }
 
 /** Returns a new AddressData with all optional fields defaulted to omitted/empty. */
@@ -38,14 +38,14 @@ function isStringEmpty(value: string): boolean {
 }
 
 const SCALAR_FIELD_KEYS: Partial<Record<AddressField, keyof AddressData>> = {
-  COUNTRY: 'regionCode',
   ADMIN_AREA: 'administrativeArea',
-  LOCALITY: 'locality',
+  COUNTRY: 'regionCode',
   DEPENDENT_LOCALITY: 'dependentLocality',
-  SORTING_CODE: 'sortingCode',
-  POSTAL_CODE: 'postalCode',
+  LOCALITY: 'locality',
   ORGANIZATION: 'organization',
+  POSTAL_CODE: 'postalCode',
   RECIPIENT: 'recipient',
+  SORTING_CODE: 'sortingCode',
 };
 
 /**

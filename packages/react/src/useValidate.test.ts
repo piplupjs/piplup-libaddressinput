@@ -1,7 +1,10 @@
-import { describe, expect, it } from 'vitest';
-import { act, renderHook } from '@testing-library/react';
 import { FallbackAggregateSource, MemoryStorage, PreloadSupplier } from '@piplup/libaddressinput';
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
 import { createValidator, useValidate } from './useValidate.js';
+
+import type { ValidationProblem } from '@piplup/libaddressinput';
 
 const supplier = new PreloadSupplier(new FallbackAggregateSource(), new MemoryStorage());
 
@@ -12,7 +15,7 @@ describe('useValidate & createValidator', () => {
 
     expect(result.current.validating).toBe(false);
 
-    let problems: import('@piplup/libaddressinput').ValidationProblem[] = [];
+    let problems: ValidationProblem[] = [];
     await act(async () => {
       problems = await result.current.validate({
         regionCode: 'US',
@@ -30,11 +33,11 @@ describe('useValidate & createValidator', () => {
     const validator = createValidator(supplier);
 
     const validAddress = {
-      regionCode: 'US',
+      addressLine: ['100 Main St'],
       administrativeArea: 'CA',
       locality: 'San Jose',
       postalCode: '95110',
-      addressLine: ['100 Main St'],
+      regionCode: 'US',
     };
 
     const problems = await validator(validAddress);

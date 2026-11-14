@@ -9,8 +9,8 @@
 import type { AddressField } from '../address-field.js';
 
 export interface FieldElement {
-  kind: 'field';
   field: AddressField;
+  kind: 'field';
 }
 
 export interface NewlineElement {
@@ -22,10 +22,10 @@ export interface LiteralElement {
   literal: string;
 }
 
-export type FormatElement = FieldElement | NewlineElement | LiteralElement;
+export type FormatElement = FieldElement | LiteralElement | NewlineElement;
 
 export function fieldElement(field: AddressField): FieldElement {
-  return { kind: 'field', field };
+  return { field, kind: 'field' };
 }
 
 export function newlineElement(): NewlineElement {
@@ -40,8 +40,14 @@ export function literalElement(literal: string): LiteralElement {
 }
 
 export function formatElementsEqual(a: FormatElement, b: FormatElement): boolean {
-  if (a.kind !== b.kind) return false;
-  if (a.kind === 'field' && b.kind === 'field') return a.field === b.field;
-  if (a.kind === 'literal' && b.kind === 'literal') return a.literal === b.literal;
+  if (a.kind !== b.kind) {
+    return false;
+  }
+  if (a.kind === 'field' && b.kind === 'field') {
+    return a.field === b.field;
+  }
+  if (a.kind === 'literal' && b.kind === 'literal') {
+    return a.literal === b.literal;
+  }
   return true; // both newline
 }

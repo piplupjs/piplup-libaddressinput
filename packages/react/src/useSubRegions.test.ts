@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import type { AddressState } from './types.js';
+import { describe, expect, it } from 'vitest';
+
 import { useSubRegions } from './useSubRegions.js';
+
+import type { AddressState } from './types.js';
 
 const mockTree = {
   key: 'US',
@@ -27,14 +29,14 @@ const mockTree = {
 };
 
 const mockState: AddressState = {
+  error: null,
+  fields: [],
+  getField: () => undefined,
+  loading: false,
   region: 'US',
   rows: [],
-  fields: [],
-  tree: mockTree,
-  loading: false,
-  error: null,
   supplier: {} as unknown as AddressState['supplier'],
-  getField: () => undefined,
+  tree: mockTree,
 };
 
 describe('useSubRegions', () => {
@@ -43,19 +45,19 @@ describe('useSubRegions', () => {
     expect(result.current.length).toBe(2);
     expect(result.current[0]).toEqual({
       key: 'CA',
-      name: 'California',
       label: 'California (CA)',
+      name: 'California',
     });
     expect(result.current[1]).toEqual({
       key: 'NY',
-      name: 'New York',
       label: 'New York (NY)',
+      name: 'New York',
     });
   });
 
   it('extracts nested subregions for LOCALITY given parentKey', () => {
     const { result } = renderHook(() =>
-      useSubRegions('LOCALITY', { state: mockState, parentKey: 'CA' }),
+      useSubRegions('LOCALITY', { parentKey: 'CA', state: mockState }),
     );
     expect(result.current.length).toBe(1);
     expect(result.current[0]?.key).toBe('Los Angeles');
