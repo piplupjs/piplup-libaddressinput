@@ -33,10 +33,6 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
 
-  # Deno and Bun jobs require Linux runners due to setup issues on Windows
-  # These are optional runtime compatibility checks, not critical for releases
-  # Uncomment and move to a separate linux-only workflow if needed in the future
-
   examples:
     runs-on: ubuntu-latest
     steps:
@@ -61,7 +57,3 @@ jobs:
       - run: pnpm --filter react-ssr-example typecheck
       # Smoke test: node-cli's --help exits 0 with no network access needed.
       - run: pnpm --filter node-cli-example start -- --help
-
-  # golden-crosscheck: C++ cross-validation with Linux bash scripts
-  # Requires cmake, ninja, and Linux build tools - not practical on Windows
-  # Can be restored in a separate Linux-only workflow if needed
