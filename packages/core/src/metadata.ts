@@ -1,9 +1,10 @@
 // Port of cpp/src/address_metadata.cc (Apache-2.0, Google Inc.).
 
-import type { AddressField } from "./address-field.js";
-import { formatElementsEqual, fieldElement } from "./internal/format-element.js";
-import * as RegionDataConstants from "./internal/region-data-constants.js";
-import { parseRule } from "./internal/rule.js";
+import { formatElementsEqual, fieldElement } from './internal/format-element.js';
+import * as RegionDataConstants from './internal/region-data-constants.js';
+import { parseRule } from './internal/rule.js';
+
+import type { AddressField } from './address-field.js';
 
 function getRule(regionCode: string) {
   return parseRule(
@@ -13,7 +14,7 @@ function getRule(regionCode: string) {
 }
 
 export function isFieldRequired(field: AddressField, regionCode: string): boolean {
-  if (field === "COUNTRY") {
+  if (field === 'COUNTRY') {
     return true;
   }
   const rule = getRule(regionCode);
@@ -24,7 +25,7 @@ export function isFieldRequired(field: AddressField, regionCode: string): boolea
 }
 
 export function isFieldUsed(field: AddressField, regionCode: string): boolean {
-  if (field === "COUNTRY") {
+  if (field === 'COUNTRY') {
     return true;
   }
   const rule = getRule(regionCode);

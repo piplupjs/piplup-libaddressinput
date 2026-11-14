@@ -6,88 +6,87 @@
 // tree-shakeable package (messages/en.ts) resolves those into English text.
 // A consumer supplying their own translations only ever needs this module.
 
-import type { AddressData } from "./address-data.js";
-import type { AddressField } from "./address-field.js";
-import type { AddressProblem } from "./problem.js";
-import type { Rule } from "./internal/rule.js";
-import { getFieldValue } from "./address-data.js";
+import { getFieldValue } from './address-data.js';
+
+import type { AddressData } from './address-data.js';
+import type { AddressField } from './address-field.js';
+// NameTypeMessageId mirrors rule.ts's ids (state/postal/locality/sublocality
+// name-type labels) 1:1 — re-exported under the MessageId names above so
+// layout.ts and this module share one id space. (rule.ts can't import from
+// here without a cycle, so the mapping lives here instead.)
+import type { NameTypeMessageId, Rule } from './internal/rule.js';
+import type { AddressProblem } from './problem.js';
 
 // Every IDS_LIBADDRESSINPUT_* id from cpp/res/messages.grdp that this port
 // uses (all of them — the grdp has no ids this library doesn't need).
 export type MessageId =
-  | "COUNTRY_OR_REGION_LABEL"
-  | "LOCALITY_LABEL"
-  | "POST_TOWN"
-  | "SUBURB"
-  | "TOWNLAND"
-  | "VILLAGE_TOWNSHIP"
-  | "ADDRESS_LINE_1_LABEL"
-  | "EIR_CODE_LABEL"
-  | "PIN_CODE_LABEL"
-  | "POSTAL_CODE_LABEL"
-  | "ZIP_CODE_LABEL"
-  | "AREA"
-  | "COUNTY"
-  | "DEPARTMENT"
-  | "DISTRICT"
-  | "DO_SI"
-  | "EMIRATE"
-  | "ISLAND"
-  | "OBLAST"
-  | "PARISH"
-  | "PREFECTURE"
-  | "PROVINCE"
-  | "STATE"
-  | "ORGANIZATION_LABEL"
-  | "RECIPIENT_LABEL"
-  | "NEIGHBORHOOD"
-  | "MISSING_REQUIRED_FIELD"
-  | "MISSING_REQUIRED_POSTAL_CODE_EXAMPLE_AND_URL"
-  | "MISSING_REQUIRED_POSTAL_CODE_EXAMPLE"
-  | "MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL"
-  | "MISSING_REQUIRED_ZIP_CODE_EXAMPLE"
-  | "UNKNOWN_VALUE"
-  | "UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE_AND_URL"
-  | "UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE"
-  | "UNRECOGNIZED_FORMAT_POSTAL_CODE"
-  | "UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE_AND_URL"
-  | "UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE"
-  | "UNRECOGNIZED_FORMAT_ZIP"
-  | "MISMATCHING_VALUE_POSTAL_CODE_URL"
-  | "MISMATCHING_VALUE_POSTAL_CODE"
-  | "MISMATCHING_VALUE_ZIP_URL"
-  | "MISMATCHING_VALUE_ZIP"
-  | "PO_BOX_FORBIDDEN_VALUE";
-
-// Mirrors rule.ts's NameTypeMessageId ids (state/postal/locality/sublocality
-// name-type labels) 1:1 — re-exported under the MessageId names above so
-// layout.ts and this module share one id space. (rule.ts can't import from
-// here without a cycle, so the mapping lives here instead.)
-import type { NameTypeMessageId } from "./internal/rule.js";
+  | 'ADDRESS_LINE_1_LABEL'
+  | 'AREA'
+  | 'COUNTRY_OR_REGION_LABEL'
+  | 'COUNTY'
+  | 'DEPARTMENT'
+  | 'DISTRICT'
+  | 'DO_SI'
+  | 'EIR_CODE_LABEL'
+  | 'EMIRATE'
+  | 'ISLAND'
+  | 'LOCALITY_LABEL'
+  | 'MISMATCHING_VALUE_POSTAL_CODE'
+  | 'MISMATCHING_VALUE_POSTAL_CODE_URL'
+  | 'MISMATCHING_VALUE_ZIP'
+  | 'MISMATCHING_VALUE_ZIP_URL'
+  | 'MISSING_REQUIRED_FIELD'
+  | 'MISSING_REQUIRED_POSTAL_CODE_EXAMPLE'
+  | 'MISSING_REQUIRED_POSTAL_CODE_EXAMPLE_AND_URL'
+  | 'MISSING_REQUIRED_ZIP_CODE_EXAMPLE'
+  | 'MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL'
+  | 'NEIGHBORHOOD'
+  | 'OBLAST'
+  | 'ORGANIZATION_LABEL'
+  | 'PARISH'
+  | 'PIN_CODE_LABEL'
+  | 'PO_BOX_FORBIDDEN_VALUE'
+  | 'POST_TOWN'
+  | 'POSTAL_CODE_LABEL'
+  | 'PREFECTURE'
+  | 'PROVINCE'
+  | 'RECIPIENT_LABEL'
+  | 'STATE'
+  | 'SUBURB'
+  | 'TOWNLAND'
+  | 'UNKNOWN_VALUE'
+  | 'UNRECOGNIZED_FORMAT_POSTAL_CODE'
+  | 'UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE'
+  | 'UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE_AND_URL'
+  | 'UNRECOGNIZED_FORMAT_ZIP'
+  | 'UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE'
+  | 'UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE_AND_URL'
+  | 'VILLAGE_TOWNSHIP'
+  | 'ZIP_CODE_LABEL';
 
 const NAME_TYPE_TO_MESSAGE_ID: Record<NameTypeMessageId, MessageId> = {
-  IDS_LIBADDRESSINPUT_AREA: "AREA",
-  IDS_LIBADDRESSINPUT_COUNTY: "COUNTY",
-  IDS_LIBADDRESSINPUT_DEPARTMENT: "DEPARTMENT",
-  IDS_LIBADDRESSINPUT_DISTRICT: "DISTRICT",
-  IDS_LIBADDRESSINPUT_DO_SI: "DO_SI",
-  IDS_LIBADDRESSINPUT_EMIRATE: "EMIRATE",
-  IDS_LIBADDRESSINPUT_ISLAND: "ISLAND",
-  IDS_LIBADDRESSINPUT_OBLAST: "OBLAST",
-  IDS_LIBADDRESSINPUT_PARISH: "PARISH",
-  IDS_LIBADDRESSINPUT_PREFECTURE: "PREFECTURE",
-  IDS_LIBADDRESSINPUT_PROVINCE: "PROVINCE",
-  IDS_LIBADDRESSINPUT_STATE: "STATE",
-  IDS_LIBADDRESSINPUT_EIR_CODE_LABEL: "EIR_CODE_LABEL",
-  IDS_LIBADDRESSINPUT_PIN_CODE_LABEL: "PIN_CODE_LABEL",
-  IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL: "POSTAL_CODE_LABEL",
-  IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL: "ZIP_CODE_LABEL",
-  IDS_LIBADDRESSINPUT_LOCALITY_LABEL: "LOCALITY_LABEL",
-  IDS_LIBADDRESSINPUT_POST_TOWN: "POST_TOWN",
-  IDS_LIBADDRESSINPUT_SUBURB: "SUBURB",
-  IDS_LIBADDRESSINPUT_NEIGHBORHOOD: "NEIGHBORHOOD",
-  IDS_LIBADDRESSINPUT_TOWNLAND: "TOWNLAND",
-  IDS_LIBADDRESSINPUT_VILLAGE_TOWNSHIP: "VILLAGE_TOWNSHIP",
+  IDS_LIBADDRESSINPUT_AREA: 'AREA',
+  IDS_LIBADDRESSINPUT_COUNTY: 'COUNTY',
+  IDS_LIBADDRESSINPUT_DEPARTMENT: 'DEPARTMENT',
+  IDS_LIBADDRESSINPUT_DISTRICT: 'DISTRICT',
+  IDS_LIBADDRESSINPUT_DO_SI: 'DO_SI',
+  IDS_LIBADDRESSINPUT_EIR_CODE_LABEL: 'EIR_CODE_LABEL',
+  IDS_LIBADDRESSINPUT_EMIRATE: 'EMIRATE',
+  IDS_LIBADDRESSINPUT_ISLAND: 'ISLAND',
+  IDS_LIBADDRESSINPUT_LOCALITY_LABEL: 'LOCALITY_LABEL',
+  IDS_LIBADDRESSINPUT_NEIGHBORHOOD: 'NEIGHBORHOOD',
+  IDS_LIBADDRESSINPUT_OBLAST: 'OBLAST',
+  IDS_LIBADDRESSINPUT_PARISH: 'PARISH',
+  IDS_LIBADDRESSINPUT_PIN_CODE_LABEL: 'PIN_CODE_LABEL',
+  IDS_LIBADDRESSINPUT_POST_TOWN: 'POST_TOWN',
+  IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL: 'POSTAL_CODE_LABEL',
+  IDS_LIBADDRESSINPUT_PREFECTURE: 'PREFECTURE',
+  IDS_LIBADDRESSINPUT_PROVINCE: 'PROVINCE',
+  IDS_LIBADDRESSINPUT_STATE: 'STATE',
+  IDS_LIBADDRESSINPUT_SUBURB: 'SUBURB',
+  IDS_LIBADDRESSINPUT_TOWNLAND: 'TOWNLAND',
+  IDS_LIBADDRESSINPUT_VILLAGE_TOWNSHIP: 'VILLAGE_TOWNSHIP',
+  IDS_LIBADDRESSINPUT_ZIP_CODE_LABEL: 'ZIP_CODE_LABEL',
 };
 
 /**
@@ -101,31 +100,31 @@ const NAME_TYPE_TO_MESSAGE_ID: Record<NameTypeMessageId, MessageId> = {
  */
 export function getFieldLabelId(field: AddressField, rule: Rule): MessageId | undefined {
   switch (field) {
-    case "COUNTRY":
-      return "COUNTRY_OR_REGION_LABEL";
-    case "ADMIN_AREA":
+    case 'COUNTRY':
+      return 'COUNTRY_OR_REGION_LABEL';
+    case 'ADMIN_AREA':
       return rule.adminAreaNameMessageId
         ? NAME_TYPE_TO_MESSAGE_ID[rule.adminAreaNameMessageId]
         : undefined;
-    case "LOCALITY":
+    case 'LOCALITY':
       return rule.localityNameMessageId
         ? NAME_TYPE_TO_MESSAGE_ID[rule.localityNameMessageId]
         : undefined;
-    case "DEPENDENT_LOCALITY":
+    case 'DEPENDENT_LOCALITY':
       return rule.sublocalityNameMessageId
         ? NAME_TYPE_TO_MESSAGE_ID[rule.sublocalityNameMessageId]
         : undefined;
-    case "POSTAL_CODE":
+    case 'POSTAL_CODE':
       return rule.postalCodeNameMessageId
         ? NAME_TYPE_TO_MESSAGE_ID[rule.postalCodeNameMessageId]
         : undefined;
-    case "STREET_ADDRESS":
-      return "ADDRESS_LINE_1_LABEL";
-    case "ORGANIZATION":
-      return "ORGANIZATION_LABEL";
-    case "RECIPIENT":
-      return "RECIPIENT_LABEL";
-    case "SORTING_CODE":
+    case 'STREET_ADDRESS':
+      return 'ADDRESS_LINE_1_LABEL';
+    case 'ORGANIZATION':
+      return 'ORGANIZATION_LABEL';
+    case 'RECIPIENT':
+      return 'RECIPIENT_LABEL';
+    case 'SORTING_CODE':
       return undefined; // Literal "CEDEX" — see layout.ts.
     default:
       return undefined;
@@ -148,7 +147,7 @@ export interface GetProblemMessageOptions {
 function pushUrlParams(url: string, params: string[]): void {
   // Matches upstream's PushBackUrl exactly, including embedding raw HTML —
   // see this file's header comment on why that's kept as-is.
-  params.push(`<a href="${url}">`, "</a>");
+  params.push(`<a href="${url}">`, '</a>');
 }
 
 /**
@@ -166,13 +165,13 @@ export function getProblemMessage(
 ): ProblemMessage {
   const { enableExamples = true, enableLinks = true } = options;
 
-  if (field === "POSTAL_CODE") {
+  if (field === 'POSTAL_CODE') {
     const postalCodeExample = enableExamples
-      ? (countryRule.postalCodeExample.split(",")[0] ?? "")
-      : "";
-    const postServiceUrl = enableLinks ? countryRule.postServiceUrl : "";
+      ? (countryRule.postalCodeExample.split(',')[0] ?? '')
+      : '';
+    const postServiceUrl = enableLinks ? countryRule.postServiceUrl : '';
     const usesPostalCodeAsLabel =
-      countryRule.postalCodeNameMessageId === "IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL";
+      countryRule.postalCodeNameMessageId === 'IDS_LIBADDRESSINPUT_POSTAL_CODE_LABEL';
     return getPostalCodeProblemMessage(
       problem,
       usesPostalCodeAsLabel,
@@ -181,22 +180,18 @@ export function getProblemMessage(
     );
   }
 
-  if (problem === "MISSING_REQUIRED_FIELD") {
-    return { id: "MISSING_REQUIRED_FIELD", params: [] };
+  if (problem === 'MISSING_REQUIRED_FIELD') {
+    return { id: 'MISSING_REQUIRED_FIELD', params: [] };
   }
-  if (problem === "UNKNOWN_VALUE") {
+  if (problem === 'UNKNOWN_VALUE') {
     const value =
-      field === "STREET_ADDRESS"
-        ? (address.addressLine?.[0] ?? "")
-        : getFieldValue(address, field);
-    return { id: "UNKNOWN_VALUE", params: [value] };
+      field === 'STREET_ADDRESS' ? (address.addressLine?.[0] ?? '') : getFieldValue(address, field);
+    return { id: 'UNKNOWN_VALUE', params: [value] };
   }
-  if (problem === "USES_P_O_BOX") {
-    return { id: "PO_BOX_FORBIDDEN_VALUE", params: [] };
+  if (problem === 'USES_P_O_BOX') {
+    return { id: 'PO_BOX_FORBIDDEN_VALUE', params: [] };
   }
-  throw new Error(
-    `getProblemMessage: unsupported (field, problem) pair: (${field}, ${problem})`,
-  );
+  throw new Error(`getProblemMessage: unsupported (field, problem) pair: (${field}, ${problem})`);
 }
 
 function getPostalCodeProblemMessage(
@@ -207,57 +202,53 @@ function getPostalCodeProblemMessage(
 ): ProblemMessage {
   const params: string[] = [];
 
-  if (problem === "MISSING_REQUIRED_FIELD") {
+  if (problem === 'MISSING_REQUIRED_FIELD') {
     let id: MessageId;
     if (postalCodeExample.length > 0 && postServiceUrl.length > 0) {
       id = usesPostalCodeAsLabel
-        ? "MISSING_REQUIRED_POSTAL_CODE_EXAMPLE_AND_URL"
-        : "MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL";
+        ? 'MISSING_REQUIRED_POSTAL_CODE_EXAMPLE_AND_URL'
+        : 'MISSING_REQUIRED_ZIP_CODE_EXAMPLE_AND_URL';
       params.push(postalCodeExample);
       pushUrlParams(postServiceUrl, params);
     } else if (postalCodeExample.length > 0) {
       id = usesPostalCodeAsLabel
-        ? "MISSING_REQUIRED_POSTAL_CODE_EXAMPLE"
-        : "MISSING_REQUIRED_ZIP_CODE_EXAMPLE";
+        ? 'MISSING_REQUIRED_POSTAL_CODE_EXAMPLE'
+        : 'MISSING_REQUIRED_ZIP_CODE_EXAMPLE';
       params.push(postalCodeExample);
     } else {
-      id = "MISSING_REQUIRED_FIELD";
+      id = 'MISSING_REQUIRED_FIELD';
     }
     return { id, params };
   }
 
-  if (problem === "INVALID_FORMAT") {
+  if (problem === 'INVALID_FORMAT') {
     let id: MessageId;
     if (postalCodeExample.length > 0 && postServiceUrl.length > 0) {
       id = usesPostalCodeAsLabel
-        ? "UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE_AND_URL"
-        : "UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE_AND_URL";
+        ? 'UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE_AND_URL'
+        : 'UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE_AND_URL';
       params.push(postalCodeExample);
       pushUrlParams(postServiceUrl, params);
     } else if (postalCodeExample.length > 0) {
       id = usesPostalCodeAsLabel
-        ? "UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE"
-        : "UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE";
+        ? 'UNRECOGNIZED_FORMAT_POSTAL_CODE_EXAMPLE'
+        : 'UNRECOGNIZED_FORMAT_ZIP_CODE_EXAMPLE';
       params.push(postalCodeExample);
     } else {
-      id = usesPostalCodeAsLabel
-        ? "UNRECOGNIZED_FORMAT_POSTAL_CODE"
-        : "UNRECOGNIZED_FORMAT_ZIP";
+      id = usesPostalCodeAsLabel ? 'UNRECOGNIZED_FORMAT_POSTAL_CODE' : 'UNRECOGNIZED_FORMAT_ZIP';
     }
     return { id, params };
   }
 
-  if (problem === "MISMATCHING_VALUE") {
+  if (problem === 'MISMATCHING_VALUE') {
     let id: MessageId;
     if (postServiceUrl.length > 0) {
       id = usesPostalCodeAsLabel
-        ? "MISMATCHING_VALUE_POSTAL_CODE_URL"
-        : "MISMATCHING_VALUE_ZIP_URL";
+        ? 'MISMATCHING_VALUE_POSTAL_CODE_URL'
+        : 'MISMATCHING_VALUE_ZIP_URL';
       pushUrlParams(postServiceUrl, params);
     } else {
-      id = usesPostalCodeAsLabel
-        ? "MISMATCHING_VALUE_POSTAL_CODE"
-        : "MISMATCHING_VALUE_ZIP";
+      id = usesPostalCodeAsLabel ? 'MISMATCHING_VALUE_POSTAL_CODE' : 'MISMATCHING_VALUE_ZIP';
     }
     return { id, params };
   }
@@ -271,9 +262,11 @@ function getPostalCodeProblemMessage(
  */
 export function formatMessage(template: string, params: string[] = []): string {
   return template.replace(/\$(\$|\d+)/g, (_match, token: string) => {
-    if (token === "$") return "$";
+    if (token === '$') {
+      return '$';
+    }
     const index = Number(token) - 1;
-    return index >= 0 && index < params.length ? params[index]! : "";
+    return index >= 0 && index < params.length ? params[index]! : '';
   });
 }
 
@@ -285,6 +278,8 @@ export function formatProblemMessage(
   dictionary: Record<string, string>,
 ): string {
   const template = dictionary[message.id];
-  if (!template) return message.id;
+  if (!template) {
+    return message.id;
+  }
   return formatMessage(template, message.params);
 }

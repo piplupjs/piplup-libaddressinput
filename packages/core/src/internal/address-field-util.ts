@@ -3,26 +3,23 @@
 // Parses the `fmt`/`lfmt` format strings and the `require` field-list string
 // from the address metadata JSON (see rule.ts, Phase 1).
 
-import type { AddressField } from "../address-field.js";
-import {
-  fieldElement,
-  literalElement,
-  newlineElement,
-  type FormatElement,
-} from "./format-element.js";
+import { fieldElement, literalElement, newlineElement } from './format-element.js';
+
+import type { FormatElement } from './format-element.js';
+import type { AddressField } from '../address-field.js';
 
 // Mirrors kTokenMap in address_field_util.cc exactly, including the field
 // order (which matches AddressField's declaration order upstream).
 const TOKEN_TO_FIELD: Record<string, AddressField> = {
-  R: "COUNTRY",
-  S: "ADMIN_AREA",
-  C: "LOCALITY",
-  D: "DEPENDENT_LOCALITY",
-  X: "SORTING_CODE",
-  Z: "POSTAL_CODE",
-  A: "STREET_ADDRESS",
-  O: "ORGANIZATION",
-  N: "RECIPIENT",
+  A: 'STREET_ADDRESS',
+  C: 'LOCALITY',
+  D: 'DEPENDENT_LOCALITY',
+  N: 'RECIPIENT',
+  O: 'ORGANIZATION',
+  R: 'COUNTRY',
+  S: 'ADMIN_AREA',
+  X: 'SORTING_CODE',
+  Z: 'POSTAL_CODE',
 };
 
 function parseFieldToken(c: string): AddressField | undefined {
@@ -40,7 +37,7 @@ export function parseFormatRule(format: string): FormatElement[] {
   let literalStart = 0;
 
   while (i < format.length) {
-    const percentIndex = format.indexOf("%", i);
+    const percentIndex = format.indexOf('%', i);
     if (percentIndex === -1) {
       break;
     }
@@ -56,7 +53,7 @@ export function parseFormatRule(format: string): FormatElement[] {
       break;
     }
     const token = format[tokenIndex] as string;
-    if (token === "n") {
+    if (token === 'n') {
       elements.push(newlineElement());
     } else {
       const field = parseFieldToken(token);

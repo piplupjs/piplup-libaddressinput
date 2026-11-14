@@ -4,30 +4,29 @@
 // upstream's TestdataSource, and MapSource in place of MockSource — see
 // test/fake-sources.ts.
 
-import { describe, expect, it } from "vitest";
-import { FixtureDataSource, MapSource } from "../../test/fake-sources.js";
-import {
-  MemoryStorage,
-  NullStorage,
-  type Storage,
-  type StorageResult,
-} from "../storage.js";
-import { Retriever } from "./retriever.js";
+import { describe, expect, it } from 'vitest';
 
-const KEY = "data/CA/AB--fr";
-const EMPTY_DATA = "{}";
+import { FixtureDataSource, MapSource } from '../../test/fake-sources.js';
+import { MemoryStorage, NullStorage } from '../storage.js';
 
-describe("Retriever (RetrieverTest)", () => {
-  it("retrieves data (RetrieveData)", async () => {
+import { Retriever } from './retriever.js';
+
+import type { Storage, StorageResult } from '../storage.js';
+
+const KEY = 'data/CA/AB--fr';
+const EMPTY_DATA = '{}';
+
+describe('Retriever (RetrieverTest)', () => {
+  it('retrieves data (RetrieveData)', async () => {
     const retriever = new Retriever(new FixtureDataSource(false), new NullStorage());
     const result = await retriever.retrieve(KEY);
     expect(result.success).toBe(true);
     expect(result.key).toBe(KEY);
-    expect(result.data).not.toBe("");
+    expect(result.data).not.toBe('');
     expect(result.data).not.toBe(EMPTY_DATA);
   });
 
-  it("reads data from storage on a repeat request (ReadDataFromStorage)", async () => {
+  it('reads data from storage on a repeat request (ReadDataFromStorage)', async () => {
     const retriever = new Retriever(new FixtureDataSource(false), new MemoryStorage());
     const first = await retriever.retrieve(KEY);
     const second = await retriever.retrieve(KEY);
@@ -35,11 +34,11 @@ describe("Retriever (RetrieverTest)", () => {
     expect(second.data).toBe(first.data);
   });
 
-  it("returns empty data for a missing key (MissingKeyReturnsEmptyData)", async () => {
+  it('returns empty data for a missing key (MissingKeyReturnsEmptyData)', async () => {
     const retriever = new Retriever(new FixtureDataSource(false), new NullStorage());
-    const result = await retriever.retrieve("junk");
+    const result = await retriever.retrieve('junk');
     expect(result.success).toBe(true);
-    expect(result.key).toBe("junk");
+    expect(result.key).toBe('junk');
     expect(result.data).toBe(EMPTY_DATA);
   });
 
@@ -49,16 +48,16 @@ describe("Retriever (RetrieverTest)", () => {
     const result = await retriever.retrieve(KEY);
     expect(result.success).toBe(false);
     expect(result.key).toBe(KEY);
-    expect(result.data).toBe("");
+    expect(result.data).toBe('');
   });
 
-  it("uses stale data when the source fails (UseStaleDataWhenSourceFails)", async () => {
+  it('uses stale data when the source fails (UseStaleDataWhenSourceFails)', async () => {
     let putCalled = false;
     const staleStorage: Storage = {
       async get(_key: string): Promise<StorageResult> {
         // A stale-but-well-formed entry: 2 months old.
         const twoMonthsAgo = Date.now() - 60 * 24 * 60 * 60 * 1000;
-        return { success: true, data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}` };
+        return { data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}`, success: true };
       },
       put(_key: string, _data: string): void {
         putCalled = true;
@@ -71,12 +70,12 @@ describe("Retriever (RetrieverTest)", () => {
     expect(putCalled).toBe(false);
   });
 
-  it("prefers fresh data over stale (DoNotUseStaleDataWhenSourceSucceeds)", async () => {
+  it('prefers fresh data over stale (DoNotUseStaleDataWhenSourceSucceeds)', async () => {
     let putCalled = false;
     const staleStorage: Storage = {
       async get(_key: string): Promise<StorageResult> {
         const twoMonthsAgo = Date.now() - 60 * 24 * 60 * 60 * 1000;
-        return { success: true, data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}` };
+        return { data: `timestamp=${twoMonthsAgo}\n{"foo":"bar"}`, success: true };
       },
       put(_key: string, _data: string): void {
         putCalled = true;
@@ -85,7 +84,7 @@ describe("Retriever (RetrieverTest)", () => {
     const retriever = new Retriever(new FixtureDataSource(false), staleStorage);
     const result = await retriever.retrieve(KEY);
     expect(result.success).toBe(true);
-    expect(result.data).not.toBe("");
+    expect(result.data).not.toBe('');
     expect(result.data).not.toBe(EMPTY_DATA);
     expect(result.data).not.toBe('{"foo":"bar"}');
     expect(putCalled).toBe(true);

@@ -2,161 +2,156 @@
 // using FixtureDataSource (upstream's testdata/countryinfo.txt) in place
 // of upstream's TestdataSource(/* aggregate= */ true).
 
-import { beforeEach, describe, expect, it } from "vitest";
-import { FixtureDataSource } from "../../test/fake-sources.js";
-import { lookupKeyFromAddress } from "../internal/lookup-key.js";
-import { NullStorage } from "../storage.js";
-import { PreloadSupplier } from "./preload.js";
+import { beforeEach, describe, expect, it } from 'vitest';
 
-describe("PreloadSupplier (PreloadSupplierTest)", () => {
+import { FixtureDataSource } from '../../test/fake-sources.js';
+import { lookupKeyFromAddress } from '../internal/lookup-key.js';
+import { NullStorage } from '../storage.js';
+
+import { PreloadSupplier } from './preload.js';
+
+describe('PreloadSupplier (PreloadSupplierTest)', () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
     supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
-  it("loadRules reports success and marks the region loaded", async () => {
-    const result = await supplier.loadRules("US");
+  it('loadRules reports success and marks the region loaded', async () => {
+    const result = await supplier.loadRules('US');
     expect(result.success).toBe(true);
-    expect(result.regionCode).toBe("US");
+    expect(result.regionCode).toBe('US');
     expect(result.ruleCount).toBeGreaterThan(0);
-    expect(supplier.isLoaded("US")).toBe(true);
+    expect(supplier.isLoaded('US')).toBe(true);
   });
 
-  it("gets the country rule (GetUsRule)", async () => {
-    await supplier.loadRules("US");
-    const key = lookupKeyFromAddress({ regionCode: "US" });
+  it('gets the country rule (GetUsRule)', async () => {
+    await supplier.loadRules('US');
+    const key = lookupKeyFromAddress({ regionCode: 'US' });
     const rule = supplier.getRule(key);
-    expect(rule?.id).toBe("data/US");
+    expect(rule?.id).toBe('data/US');
   });
 
-  it("gets a sub-region rule by key (GetUsCaRule)", async () => {
-    await supplier.loadRules("US");
-    const key = lookupKeyFromAddress({ regionCode: "US", administrativeArea: "CA" });
+  it('gets a sub-region rule by key (GetUsCaRule)', async () => {
+    await supplier.loadRules('US');
+    const key = lookupKeyFromAddress({ administrativeArea: 'CA', regionCode: 'US' });
     const rule = supplier.getRule(key);
-    expect(rule?.id).toBe("data/US/CA");
+    expect(rule?.id).toBe('data/US/CA');
   });
 
-  it("gets a sub-region rule by its human name (GetUsCaliforniaRule)", async () => {
-    await supplier.loadRules("US");
+  it('gets a sub-region rule by its human name (GetUsCaliforniaRule)', async () => {
+    await supplier.loadRules('US');
     const key = lookupKeyFromAddress({
-      regionCode: "US",
-      administrativeArea: "California",
+      administrativeArea: 'California',
+      regionCode: 'US',
     });
     const rule = supplier.getRule(key);
-    expect(rule?.id).toBe("data/US/CA");
+    expect(rule?.id).toBe('data/US/CA');
   });
 
-  it("gets a country rule with no sub-regions (GetZwRule)", async () => {
-    await supplier.loadRules("ZW");
-    const key = lookupKeyFromAddress({ regionCode: "ZW" });
+  it('gets a country rule with no sub-regions (GetZwRule)', async () => {
+    await supplier.loadRules('ZW');
+    const key = lookupKeyFromAddress({ regionCode: 'ZW' });
     const rule = supplier.getRule(key);
-    expect(rule?.id).toBe("data/ZW");
+    expect(rule?.id).toBe('data/ZW');
   });
 
-  it("returns undefined for an unknown sub-region (GetUnknownRule)", async () => {
-    await supplier.loadRules("US");
-    const key = lookupKeyFromAddress({ regionCode: "US", administrativeArea: "ZZ" });
+  it('returns undefined for an unknown sub-region (GetUnknownRule)', async () => {
+    await supplier.loadRules('US');
+    const key = lookupKeyFromAddress({ administrativeArea: 'ZZ', regionCode: 'US' });
     expect(supplier.getRule(key)).toBeUndefined();
   });
 
-  it("returns undefined for a too-precise key (GetTooPreciseRule)", async () => {
-    await supplier.loadRules("US");
+  it('returns undefined for a too-precise key (GetTooPreciseRule)', async () => {
+    await supplier.loadRules('US');
     const key = lookupKeyFromAddress({
-      regionCode: "US",
-      administrativeArea: "CA",
-      locality: "Mountain View",
+      administrativeArea: 'CA',
+      locality: 'Mountain View',
+      regionCode: 'US',
     });
     expect(supplier.getRule(key)).toBeUndefined();
   });
 
-  it("lists every rule for a region (GetRulesForRegion)", async () => {
-    await supplier.loadRules("CN");
-    const rules = supplier.getRulesForRegion("CN");
-    expect(rules.has("data/CN")).toBe(true);
+  it('lists every rule for a region (GetRulesForRegion)', async () => {
+    await supplier.loadRules('CN');
+    const rules = supplier.getRulesForRegion('CN');
+    expect(rules.has('data/CN')).toBe(true);
     expect(rules.size).toBeGreaterThan(1);
   });
 
-  it("supplies the full hierarchy for a key (SupplyRegionCode)", async () => {
-    await supplier.loadRules("CA");
-    const key = lookupKeyFromAddress({ regionCode: "CA", administrativeArea: "NB" });
+  it('supplies the full hierarchy for a key (SupplyRegionCode)', async () => {
+    await supplier.loadRules('CA');
+    const key = lookupKeyFromAddress({ administrativeArea: 'NB', regionCode: 'CA' });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
-    expect(result.hierarchy[0]?.id).toBe("data/CA");
-    expect(result.hierarchy[1]?.id).toBe("data/CA/NB");
+    expect(result.hierarchy[0]?.id).toBe('data/CA');
+    expect(result.hierarchy[1]?.id).toBe('data/CA/NB');
     expect(result.hierarchy[2]).toBeUndefined();
     expect(result.hierarchy[3]).toBeUndefined();
   });
 
-  it("supplyGlobally matches supply for an in-language key (SupplyGloballyRegionCode)", async () => {
-    await supplier.loadRules("CA");
-    const key = lookupKeyFromAddress({ regionCode: "CA", administrativeArea: "NB" });
+  it('supplyGlobally matches supply for an in-language key (SupplyGloballyRegionCode)', async () => {
+    await supplier.loadRules('CA');
+    const key = lookupKeyFromAddress({ administrativeArea: 'NB', regionCode: 'CA' });
     const result = await supplier.supplyGlobally(key);
     expect(result.success).toBe(true);
-    expect(result.hierarchy[1]?.id).toBe("data/CA/NB");
+    expect(result.hierarchy[1]?.id).toBe('data/CA/NB');
   });
 
-  it("supplies via a human-readable region name (SupplyRegionName)", async () => {
-    await supplier.loadRules("CA");
+  it('supplies via a human-readable region name (SupplyRegionName)', async () => {
+    await supplier.loadRules('CA');
     const key = lookupKeyFromAddress({
-      regionCode: "CA",
-      administrativeArea: "New Brunswick",
+      administrativeArea: 'New Brunswick',
+      regionCode: 'CA',
     });
     const result = await supplier.supply(key);
     expect(result.success).toBe(true);
-    expect(result.hierarchy[1]?.id).toBe("data/CA/NB");
+    expect(result.hierarchy[1]?.id).toBe('data/CA/NB');
   });
 
-  it("dedupes concurrent loadRules calls for the same region", async () => {
-    const [a, b] = await Promise.all([
-      supplier.loadRules("FR"),
-      supplier.loadRules("FR"),
-    ]);
+  it('dedupes concurrent loadRules calls for the same region', async () => {
+    const [a, b] = await Promise.all([supplier.loadRules('FR'), supplier.loadRules('FR')]);
     expect(a).toEqual(b);
-    expect(supplier.isLoaded("FR")).toBe(true);
+    expect(supplier.isLoaded('FR')).toBe(true);
   });
 
-  it("computes the loaded rule depth (GetLoadedRuleDepth-equivalent)", async () => {
-    await supplier.loadRules("CN");
-    expect(supplier.getLoadedRuleDepth("CN")).toBeGreaterThan(1);
-    await supplier.loadRules("ZW");
-    expect(supplier.getLoadedRuleDepth("ZW")).toBe(1);
+  it('computes the loaded rule depth (GetLoadedRuleDepth-equivalent)', async () => {
+    await supplier.loadRules('CN');
+    expect(supplier.getLoadedRuleDepth('CN')).toBeGreaterThan(1);
+    await supplier.loadRules('ZW');
+    expect(supplier.getLoadedRuleDepth('ZW')).toBe(1);
   });
 
-  describe("export / from (server-to-client hand-off)", () => {
-    it("rehydrates a supplier with no network access, matching the original", async () => {
-      await supplier.loadRules("US");
+  describe('export / from (server-to-client hand-off)', () => {
+    it('rehydrates a supplier with no network access, matching the original', async () => {
+      await supplier.loadRules('US');
       const exported = supplier.export();
-      expect(Object.keys(exported)).toEqual(["US"]);
+      expect(Object.keys(exported)).toEqual(['US']);
 
       // A source that fails every request: from() must not need it for the
       // regions already in `exported`.
       const offline = {
         async get() {
-          return { success: false, data: undefined };
+          return { data: undefined, success: false };
         },
       };
       const rehydrated = PreloadSupplier.from(offline, new NullStorage(), exported);
 
-      expect(rehydrated.isLoaded("US")).toBe(true);
-      const key = lookupKeyFromAddress({ regionCode: "US", administrativeArea: "CA" });
+      expect(rehydrated.isLoaded('US')).toBe(true);
+      const key = lookupKeyFromAddress({ administrativeArea: 'CA', regionCode: 'US' });
       expect(rehydrated.getRule(key)?.id).toBe(supplier.getRule(key)?.id);
     });
 
-    it("from() can still load further regions given a working source", async () => {
-      await supplier.loadRules("US");
+    it('from() can still load further regions given a working source', async () => {
+      await supplier.loadRules('US');
       const exported = supplier.export();
-      const rehydrated = PreloadSupplier.from(
-        new FixtureDataSource(),
-        new NullStorage(),
-        exported,
-      );
-      expect(rehydrated.isLoaded("US")).toBe(true);
-      expect(rehydrated.isLoaded("CA")).toBe(false);
+      const rehydrated = PreloadSupplier.from(new FixtureDataSource(), new NullStorage(), exported);
+      expect(rehydrated.isLoaded('US')).toBe(true);
+      expect(rehydrated.isLoaded('CA')).toBe(false);
 
-      const result = await rehydrated.loadRules("CA");
+      const result = await rehydrated.loadRules('CA');
       expect(result.success).toBe(true);
-      expect(rehydrated.isLoaded("CA")).toBe(true);
+      expect(rehydrated.isLoaded('CA')).toBe(true);
     });
   });
 });

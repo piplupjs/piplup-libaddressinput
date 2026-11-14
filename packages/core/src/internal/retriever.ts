@@ -4,21 +4,21 @@
 // and (on success) writes back to storage. If the source fails, falls back
 // to stale data from storage one time rather than surfacing an error.
 
-import type { Source } from "../source.js";
-import type { Storage } from "../storage.js";
-import {
-  ValidatingStorage,
-  type ValidatingStorageOptions,
-} from "./validating-storage.js";
+import { ValidatingStorage } from './validating-storage.js';
+
+import type { ValidatingStorageOptions } from './validating-storage.js';
+import type { Source } from '../source.js';
+import type { Storage } from '../storage.js';
 
 export interface RetrieverResult {
-  success: boolean;
-  key: string;
   data: string;
+  key: string;
+  success: boolean;
 }
 
 export class Retriever {
   private readonly source: Source;
+
   private readonly storage: ValidatingStorage;
 
   constructor(source: Source, storage: Storage, options?: ValidatingStorageOptions) {
@@ -31,27 +31,25 @@ export class Retriever {
     if (validated.success) {
       // validated.data is defined whenever success is true (see
       // ValidatingStorage.get's contract).
-      return { success: true, key, data: validated.data! };
+      return { data: validated.data!, key, success: true };
     }
 
     // ValidatingStorage reports (false, stale-data) for valid-but-stale
     // entries, and (false, undefined) for a miss or a corrupt entry.
     const staleData =
-      validated.data !== undefined && validated.data.length > 0
-        ? validated.data
-        : undefined;
+      validated.data !== undefined && validated.data.length > 0 ? validated.data : undefined;
 
     const fresh = await this.source.get(key);
     if (fresh.success && fresh.data !== undefined) {
       await this.storage.put(key, fresh.data);
-      return { success: true, key, data: fresh.data };
+      return { data: fresh.data, key, success: true };
     }
     if (staleData !== undefined) {
       // Reuse the stale data if a download fails. It's better to have
       // slightly outdated validation rules than to suddenly lose validation
       // ability (matches upstream's comment verbatim).
-      return { success: true, key, data: staleData };
+      return { data: staleData, key, success: true };
     }
-    return { success: false, key, data: "" };
+    return { data: '', key, success: false };
   }
 }

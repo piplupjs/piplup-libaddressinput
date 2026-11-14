@@ -3,47 +3,51 @@
 // + region tree + value pruning), field updates, debounced validation, and
 // reset.
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { FixtureDataSource } from "../../test/fake-sources.js";
-import { NullStorage } from "../storage.js";
-import { PreloadSupplier } from "../supplier/preload.js";
-import { createAddressForm, type AddressFormState } from "./controller.js";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe("createAddressForm", () => {
+import { FixtureDataSource } from '../../test/fake-sources.js';
+import { NullStorage } from '../storage.js';
+import { PreloadSupplier } from '../supplier/preload.js';
+
+import { createAddressForm } from './controller.js';
+
+import type { AddressFormState } from './controller.js';
+
+describe('createAddressForm', () => {
   let supplier: PreloadSupplier;
 
   beforeEach(() => {
     supplier = new PreloadSupplier(new FixtureDataSource(), new NullStorage());
   });
 
-  it("starts empty with no region", () => {
+  it('starts empty with no region', () => {
     const form = createAddressForm({ supplier });
     const state = form.getState();
-    expect(state.values).toEqual({ regionCode: "" });
+    expect(state.values).toEqual({ regionCode: '' });
     expect(state.layout).toBeNull();
     expect(state.regionTree).toBeNull();
     expect(state.loading).toBe(false);
   });
 
-  it("subscribe fires immediately with the current state and returns an unsubscribe fn", () => {
+  it('subscribe fires immediately with the current state and returns an unsubscribe fn', () => {
     const form = createAddressForm({ supplier });
     const seen: AddressFormState[] = [];
     const unsubscribe = form.subscribe((s) => seen.push(s));
     expect(seen).toHaveLength(1);
     unsubscribe();
-    form.setField("locality", "X");
+    form.setField('locality', 'X');
     expect(seen).toHaveLength(1); // no further notifications after unsubscribe
   });
 
-  it("setRegion loads data and builds layout + region tree", async () => {
+  it('setRegion loads data and builds layout + region tree', async () => {
     const form = createAddressForm({ supplier });
     const loadingStates: boolean[] = [];
     form.subscribe((s) => loadingStates.push(s.loading));
 
-    await form.setRegion("US");
+    await form.setRegion('US');
 
     const state = form.getState();
-    expect(state.values.regionCode).toBe("US");
+    expect(state.values.regionCode).toBe('US');
     expect(state.layout?.rows.length).toBeGreaterThan(0);
     expect(state.regionTree?.subRegions.length).toBeGreaterThan(0);
     expect(loadingStates).toContain(true);
@@ -52,158 +56,158 @@ describe("createAddressForm", () => {
 
   it("setRegion drops values the new region doesn't use", async () => {
     const form = createAddressForm({
+      initial: { dependentLocality: 'should be dropped for US', regionCode: 'US' },
       supplier,
-      initial: { regionCode: "US", dependentLocality: "should be dropped for US" },
     });
-    await form.setRegion("US");
+    await form.setRegion('US');
     // US's format doesn't include DEPENDENT_LOCALITY.
     expect(form.getState().values.dependentLocality).toBeUndefined();
   });
 
-  it("setRegion carries over values for fields the new region still uses", async () => {
+  it('setRegion carries over values for fields the new region still uses', async () => {
     const form = createAddressForm({
+      initial: { postalCode: '94043', regionCode: 'US' },
       supplier,
-      initial: { regionCode: "US", postalCode: "94043" },
     });
-    await form.setRegion("US");
-    expect(form.getState().values.postalCode).toBe("94043");
+    await form.setRegion('US');
+    expect(form.getState().values.postalCode).toBe('94043');
   });
 
   it("setRegion('') clears layout/region tree/values", async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    await form.setRegion("");
+    await form.setRegion('US');
+    await form.setRegion('');
     const state = form.getState();
-    expect(state.values).toEqual({ regionCode: "" });
+    expect(state.values).toEqual({ regionCode: '' });
     expect(state.layout).toBeNull();
     expect(state.regionTree).toBeNull();
   });
 
-  it("setField updates values, marks touched and dirty", async () => {
+  it('setField updates values, marks touched and dirty', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("locality", "Mountain View");
+    await form.setRegion('US');
+    form.setField('locality', 'Mountain View');
     const state = form.getState();
-    expect(state.values.locality).toBe("Mountain View");
+    expect(state.values.locality).toBe('Mountain View');
     expect(state.touched.locality).toBe(true);
     expect(state.dirty).toBe(true);
   });
 
-  it("validation is manual only, not triggered by setField", async () => {
+  it('validation is manual only, not triggered by setField', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("postalCode", "123"); // invalid format for US
+    await form.setRegion('US');
+    form.setField('postalCode', '123'); // invalid format for US
 
     expect(form.getState().problems).toEqual([]); // validation did not run
     await form.validate(); // manual validation required
-    expect(form.getState().problems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
+    expect(form.getState().problems.some((p) => p.field === 'POSTAL_CODE')).toBe(true);
   });
 
-  it("validate() bypasses the debounce and returns problems immediately", async () => {
+  it('validate() bypasses the debounce and returns problems immediately', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("postalCode", "123");
+    await form.setRegion('US');
+    form.setField('postalCode', '123');
     const problems = await form.validate();
-    expect(problems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
+    expect(problems.some((p) => p.field === 'POSTAL_CODE')).toBe(true);
     expect(form.getState().problems).toEqual(problems);
   });
 
-  it("normalizeValues converts a full admin-area name to its canonical key", async () => {
+  it('normalizeValues converts a full admin-area name to its canonical key', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("administrativeArea", "California");
+    await form.setRegion('US');
+    form.setField('administrativeArea', 'California');
     form.normalizeValues();
-    expect(form.getState().values.administrativeArea).toBe("CA");
+    expect(form.getState().values.administrativeArea).toBe('CA');
   });
 
-  it("reset restores the initial address and re-loads its region", async () => {
-    const form = createAddressForm({ supplier, initial: { regionCode: "US" } });
-    await form.setRegion("US");
-    form.setField("locality", "Mountain View");
+  it('reset restores the initial address and re-loads its region', async () => {
+    const form = createAddressForm({ initial: { regionCode: 'US' }, supplier });
+    await form.setRegion('US');
+    form.setField('locality', 'Mountain View');
     expect(form.getState().dirty).toBe(true);
 
     form.reset();
     await vi.waitFor(() => expect(form.getState().layout).not.toBeNull());
 
     const state = form.getState();
-    expect(state.values).toEqual({ regionCode: "US" });
+    expect(state.values).toEqual({ regionCode: 'US' });
     expect(state.dirty).toBe(false);
     expect(state.touched).toEqual({});
   });
 
   it("a superseded setRegion call doesn't clobber the latest one", async () => {
     const form = createAddressForm({ supplier });
-    const first = form.setRegion("US");
-    const second = form.setRegion("CA");
+    const first = form.setRegion('US');
+    const second = form.setRegion('CA');
     await Promise.all([first, second]);
-    expect(form.getState().values.regionCode).toBe("CA");
+    expect(form.getState().values.regionCode).toBe('CA');
   });
 
-  it("exposes userProblems and isValid correctly in state", async () => {
+  it('exposes userProblems and isValid correctly in state', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("locality", "Mountain View");
-    form.setField("administrativeArea", "CA");
-    form.setField("postalCode", "94043");
-    form.setField("addressLine", ["1600 Amphitheatre Pkwy"]);
+    await form.setRegion('US');
+    form.setField('locality', 'Mountain View');
+    form.setField('administrativeArea', 'CA');
+    form.setField('postalCode', '94043');
+    form.setField('addressLine', ['1600 Amphitheatre Pkwy']);
 
     await form.validate();
     const state = form.getState();
     // Raw problems may contain UNSUPPORTED_FIELD for locality/dependent locality
-    expect(state.problems.some((p) => p.problem === "UNSUPPORTED_FIELD")).toBe(true);
+    expect(state.problems.some((p) => p.problem === 'UNSUPPORTED_FIELD')).toBe(true);
     // userProblems filters them out, leaving 0 user errors
     expect(state.userProblems).toHaveLength(0);
     expect(state.isValid).toBe(true);
 
     // Enter invalid postal code
-    form.setField("postalCode", "invalid");
+    form.setField('postalCode', 'invalid');
     await form.validate();
     const invalidState = form.getState();
-    expect(invalidState.userProblems.some((p) => p.field === "POSTAL_CODE")).toBe(true);
+    expect(invalidState.userProblems.some((p) => p.field === 'POSTAL_CODE')).toBe(true);
     expect(invalidState.isValid).toBe(false);
   });
 
-  it("setField accepts AddressField enums directly", async () => {
+  it('setField accepts AddressField enums directly', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("LOCALITY", "Sunnyvale");
-    form.setField("ADMIN_AREA", "California");
-    expect(form.getState().values.locality).toBe("Sunnyvale");
-    expect(form.getState().values.administrativeArea).toBe("California");
+    await form.setRegion('US');
+    form.setField('LOCALITY', 'Sunnyvale');
+    form.setField('ADMIN_AREA', 'California');
+    expect(form.getState().values.locality).toBe('Sunnyvale');
+    expect(form.getState().values.administrativeArea).toBe('California');
   });
 
-  it("getSubRegions returns subregions from the loaded region tree", async () => {
+  it('getSubRegions returns subregions from the loaded region tree', async () => {
     const form = createAddressForm({ supplier });
     expect(form.getSubRegions()).toEqual([]);
 
-    await form.setRegion("US");
+    await form.setRegion('US');
     const usSubRegions = form.getSubRegions();
     expect(usSubRegions.length).toBeGreaterThan(0);
-    expect(usSubRegions.some((r) => r.key === "CA")).toBe(true);
+    expect(usSubRegions.some((r) => r.key === 'CA')).toBe(true);
   });
 
-  it("dispose clears listeners and prevents further notifications", async () => {
+  it('dispose clears listeners and prevents further notifications', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
+    await form.setRegion('US');
 
     const seen: AddressFormState[] = [];
     form.subscribe((s) => seen.push(s));
     expect(seen).toHaveLength(1); // Initial notification on subscribe
 
-    form.setField("postalCode", "123");
+    form.setField('postalCode', '123');
     expect(seen).toHaveLength(2); // setField triggers state update
     const countBeforeDispose = seen.length;
 
     form.dispose(); // Clear listeners
 
-    form.setField("postalCode", "456");
+    form.setField('postalCode', '456');
     expect(seen).toHaveLength(countBeforeDispose); // No new notifications after dispose
   });
 
-  it("reset restores initial state and clears dirty/touched", async () => {
+  it('reset restores initial state and clears dirty/touched', async () => {
     const form = createAddressForm({ supplier });
-    await form.setRegion("US");
-    form.setField("locality", "Mountain View");
+    await form.setRegion('US');
+    form.setField('locality', 'Mountain View');
 
     expect(form.getState().dirty).toBe(true);
     form.reset();

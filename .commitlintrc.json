@@ -6,11 +6,7 @@
       "always",
       ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore", "revert"]
     ],
-    "scope-enum": [
-      2,
-      "always",
-      ["core", "react", "examples", "docs", "ci", "deps", "release"]
-    ],
+    "scope-enum": [2, "always", ["core", "react", "examples", "docs", "ci", "deps", "release"]],
     "subject-case": [2, "never", ["start-case", "pascal-case", "upper-case"]],
     "subject-empty": [2, "never"],
     "subject-full-stop": [2, "never", "."],

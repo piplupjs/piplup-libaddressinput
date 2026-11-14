@@ -20,20 +20,19 @@ import {
   lookupKeyRegionCode,
   lookupKeyToString,
   lookupKeyDepth,
-  type LookupKey,
-} from "../internal/lookup-key.js";
-import * as RegionDataConstants from "../internal/region-data-constants.js";
-import { parseJsonRule, type Rule } from "../internal/rule.js";
-import { naturalKey } from "../internal/string-compare.js";
-import { Retriever } from "../internal/retriever.js";
-import type { Source } from "../source.js";
-import type { Storage } from "../storage.js";
-import {
-  createEmptyRuleHierarchy,
-  type RuleHierarchy,
-  type Supplier,
-  type SupplyResult,
-} from "./supplier.js";
+} from '../internal/lookup-key.js';
+import * as RegionDataConstants from '../internal/region-data-constants.js';
+import { Retriever } from '../internal/retriever.js';
+import { parseJsonRule } from '../internal/rule.js';
+import { naturalKey } from '../internal/string-compare.js';
+
+import { createEmptyRuleHierarchy } from './supplier.js';
+
+import type { LookupKey } from '../internal/lookup-key.js';
+import type { Rule } from '../internal/rule.js';
+import type { Source } from '../source.js';
+import type { Storage } from '../storage.js';
+import type { RuleHierarchy, Supplier, SupplyResult } from './supplier.js';
 
 function keyFromRegionCode(regionCode: string): string {
   return lookupKeyToString(lookupKeyFromAddress({ regionCode }), 0);
@@ -42,21 +41,27 @@ function keyFromRegionCode(regionCode: string): string {
 // The length of "data/ZZ" — a depth-0 lookup key is always this long, since
 // every region code is exactly 2 characters (verified by fallback.ts's
 // generator against RegionCodeHasTwoCharacters' invariant).
-const REGION_KEY_LENGTH = "data/ZZ".length;
+const REGION_KEY_LENGTH = 'data/ZZ'.length;
 
 export interface LoadRulesResult {
-  success: boolean;
   regionCode: string;
   ruleCount: number;
+  success: boolean;
 }
 
 export class PreloadSupplier implements Supplier {
   private readonly retriever: Retriever;
+
   private readonly pending = new Map<string, Promise<LoadRulesResult>>();
+
   private readonly loaded = new Set<string>();
+
   private readonly ruleIndex = new Map<string, Rule>();
+
   private readonly languageRuleIndex = new Map<string, Rule>();
+
   private readonly regionRules = new Map<string, Map<string, Rule>>();
+
   private readonly rawDataByRegion = new Map<string, string>();
 
   constructor(source: Source, storage: Storage) {
@@ -79,11 +84,7 @@ export class PreloadSupplier implements Supplier {
    * and `storage` are still required for loading any *further* regions
    * later via `loadRules()`.
    */
-  static from(
-    source: Source,
-    storage: Storage,
-    exported: Record<string, string>,
-  ): PreloadSupplier {
+  static from(source: Source, storage: Storage, exported: Record<string, string>): PreloadSupplier {
     const supplier = new PreloadSupplier(source, storage);
     for (const [regionCode, data] of Object.entries(exported)) {
       const key = keyFromRegionCode(regionCode);
@@ -104,7 +105,7 @@ export class PreloadSupplier implements Supplier {
     const key = keyFromRegionCode(regionCode);
 
     if (this.loaded.has(naturalKey(key))) {
-      return { success: true, regionCode, ruleCount: 0 };
+      return { regionCode, ruleCount: 0, success: true };
     }
 
     const inFlight = this.pending.get(key);
@@ -122,9 +123,9 @@ export class PreloadSupplier implements Supplier {
   }
 
   private async doLoad(regionCode: string, key: string): Promise<LoadRulesResult> {
-    const { success, data } = await this.retriever.retrieve(key);
+    const { data, success } = await this.retriever.retrieve(key);
     if (!success) {
-      return { success: false, regionCode, ruleCount: 0 };
+      return { regionCode, ruleCount: 0, success: false };
     }
     const result = this.processAggregateData(regionCode, key, data);
     if (result.success) {
@@ -137,19 +138,15 @@ export class PreloadSupplier implements Supplier {
   // Shared by doLoad() (data just came from the retriever) and the
   // export()/from() hydration path below (data was serialized earlier, e.g.
   // on a server, and handed to us directly with no fetch at all).
-  private processAggregateData(
-    regionCode: string,
-    key: string,
-    data: string,
-  ): LoadRulesResult {
+  private processAggregateData(regionCode: string, key: string, data: string): LoadRulesResult {
     let parsed: unknown;
     try {
       parsed = JSON.parse(data);
     } catch {
-      return { success: false, regionCode, ruleCount: 0 };
+      return { regionCode, ruleCount: 0, success: false };
     }
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-      return { success: false, regionCode, ruleCount: 0 };
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      return { regionCode, ruleCount: 0, success: false };
     }
 
     let ruleCount = 0;
@@ -161,18 +158,18 @@ export class PreloadSupplier implements Supplier {
     }
 
     for (const entry of Object.values(parsed as Record<string, unknown>)) {
-      if (typeof entry !== "object" || entry === null || Array.isArray(entry)) {
-        return { success: false, regionCode, ruleCount: 0 };
+      if (typeof entry !== 'object' || entry === null || Array.isArray(entry)) {
+        return { regionCode, ruleCount: 0, success: false };
       }
       const entryObj = entry as Record<string, unknown>;
-      const id = typeof entryObj.id === "string" ? entryObj.id : undefined;
+      const id = typeof entryObj.id === 'string' ? entryObj.id : undefined;
       if (id === undefined || id.length === 0) {
-        return { success: false, regionCode, ruleCount: 0 };
+        return { regionCode, ruleCount: 0, success: false };
       }
 
-      const depth = id.split("/").length - 2;
+      const depth = id.split('/').length - 2;
       if (depth < 0 || depth >= LOOKUP_KEY_HIERARCHY.length) {
-        return { success: false, regionCode, ruleCount: 0 };
+        return { regionCode, ruleCount: 0, success: false };
       }
 
       const rule =
@@ -185,12 +182,12 @@ export class PreloadSupplier implements Supplier {
       if (depth > 0) {
         subRules.push(rule);
       }
-      ruleCount++;
+      ruleCount += 1;
     }
 
     this.indexHumanReadableNames(subRules);
     this.loaded.add(naturalKey(key));
-    return { success: true, regionCode, ruleCount };
+    return { regionCode, ruleCount, success: true };
   }
 
   // Builds human-readable-name and Latin-name index entries for each
@@ -203,24 +200,28 @@ export class PreloadSupplier implements Supplier {
       const hierarchy: Rule[] = [rule];
       let parentId = rule.id;
       for (;;) {
-        const pos = parentId.lastIndexOf("/");
-        if (pos === REGION_KEY_LENGTH) break; // reached COUNTRY level
+        const pos = parentId.lastIndexOf('/');
+        if (pos === REGION_KEY_LENGTH) {
+          break;
+        } // reached COUNTRY level
         parentId = parentId.slice(0, pos);
         const parent = this.ruleIndex.get(naturalKey(parentId));
-        if (parent === undefined) break; // shouldn't happen with well-formed data
+        if (parent === undefined) {
+          break;
+        } // shouldn't happen with well-formed data
         hierarchy.push(parent);
       }
 
       let humanId = rule.id.slice(0, REGION_KEY_LENGTH);
       let latinId = humanId;
       // Walk from the country level back down to the leaf, appending names.
-      for (let i = hierarchy.length - 1; i >= 0; i--) {
+      for (let i = hierarchy.length - 1; i >= 0; i -= 1) {
         const level = hierarchy[i]!;
-        humanId += "/";
+        humanId += '/';
         if (level.name.length > 0) {
           humanId += level.name;
         } else {
-          const pos = level.id.lastIndexOf("/");
+          const pos = level.id.lastIndexOf('/');
           humanId += level.id.slice(pos + 1);
         }
         if (level.latinName.length > 0) {
@@ -229,7 +230,7 @@ export class PreloadSupplier implements Supplier {
       }
 
       const id = rule.id;
-      const langPos = id.lastIndexOf("--");
+      const langPos = id.lastIndexOf('--');
       if (langPos !== -1) {
         this.languageRuleIndex.set(naturalKey(humanId), rule);
         humanId += id.slice(langPos);
@@ -265,25 +266,27 @@ export class PreloadSupplier implements Supplier {
   /** Throws if the region isn't loaded — call `isLoaded()` first. */
   getRule(lookupKey: LookupKey): Rule | undefined {
     const hierarchy = this.getRuleHierarchy(lookupKey, false);
-    if (hierarchy === undefined) return undefined;
+    if (hierarchy === undefined) {
+      return undefined;
+    }
     return hierarchy[lookupKeyDepth(lookupKey)];
   }
 
   async supply(lookupKey: LookupKey): Promise<SupplyResult> {
     const hierarchy = this.getRuleHierarchy(lookupKey, false);
     return {
-      success: hierarchy !== undefined,
-      lookupKey,
       hierarchy: hierarchy ?? createEmptyRuleHierarchy(),
+      lookupKey,
+      success: hierarchy !== undefined,
     };
   }
 
   async supplyGlobally(lookupKey: LookupKey): Promise<SupplyResult> {
     const hierarchy = this.getRuleHierarchy(lookupKey, true);
     return {
-      success: hierarchy !== undefined,
-      lookupKey,
       hierarchy: hierarchy ?? createEmptyRuleHierarchy(),
+      lookupKey,
+      success: hierarchy !== undefined,
     };
   }
 
@@ -304,7 +307,7 @@ export class PreloadSupplier implements Supplier {
       RegionDataConstants.getMaxLookupKeyDepth(regionCode),
     );
 
-    for (let depth = 0; depth <= maxDepth; depth++) {
+    for (let depth = 0; depth <= maxDepth; depth += 1) {
       const key = lookupKeyToString(lookupKey, depth);
       let rule = this.ruleIndex.get(naturalKey(key));
       if (
@@ -328,8 +331,10 @@ export class PreloadSupplier implements Supplier {
     let depth = 0;
     let rule = this.ruleIndex.get(naturalKey(fullCode));
     while (rule !== undefined) {
-      depth++;
-      if (rule.subKeys.length === 0) return depth;
+      depth += 1;
+      if (rule.subKeys.length === 0) {
+        return depth;
+      }
       fullCode += `/${rule.subKeys[0]}`;
       rule = this.ruleIndex.get(naturalKey(fullCode));
     }

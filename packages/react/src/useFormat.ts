@@ -1,16 +1,15 @@
-import { useCallback } from "react";
-import {
-  formatAddress,
-  formatAddressAsSingleLine,
-  type AddressData,
-} from "@piplup/libaddressinput";
+import * as React from 'react';
+
+import { formatAddress, formatAddressAsSingleLine } from '@piplup/libaddressinput';
+
+import type { AddressData } from '@piplup/libaddressinput';
 
 export function useFormat() {
-  const format = useCallback((address: AddressData): string[] => {
+  const format = React.useCallback((address: AddressData): string[] => {
     return formatAddress(address);
   }, []);
 
-  const formatSingleLine = useCallback((address: AddressData): string => {
+  const formatSingleLine = React.useCallback((address: AddressData): string => {
     return formatAddressAsSingleLine(address);
   }, []);
 

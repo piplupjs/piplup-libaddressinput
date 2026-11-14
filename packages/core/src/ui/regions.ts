@@ -1,5 +1,6 @@
-import { getRegionCodes } from "../layout.js";
-import type { RegionData } from "../region-data.js";
+import { getRegionCodes } from '../layout.js';
+
+import type { RegionData } from '../region-data.js';
 
 export interface RegionOption {
   /** 2-letter CLDR/ISO 3166-1 alpha-2 region code (e.g. "US", "IN", "JP"). */
@@ -14,10 +15,10 @@ export interface RegionOption {
  *
  * @param locale BCP-47 language tag for display names (default: "en").
  */
-export function getRegionOptions(locale = "en"): RegionOption[] {
+export function getRegionOptions(locale = 'en'): RegionOption[] {
   let displayNames: Intl.DisplayNames | undefined;
   try {
-    displayNames = new Intl.DisplayNames([locale], { type: "region" });
+    displayNames = new Intl.DisplayNames([locale], { type: 'region' });
   } catch {
     // Environment may lack Intl.DisplayNames
   }
@@ -63,10 +64,10 @@ export function formatRegionOption(sub: { key: string; name?: string }): string 
  * @param parentKeyOrName The parent key (e.g. "CA") or name (e.g. "California").
  */
 export function findSubRegions(
-  tree: RegionData | null,
+  tree: null | RegionData,
   parentKeyOrName: string | undefined,
 ): RegionData[] {
-  if (tree === null || parentKeyOrName === undefined || parentKeyOrName === "") {
+  if (tree === null || parentKeyOrName === undefined || parentKeyOrName === '') {
     return [];
   }
   const match = tree.subRegions.find(

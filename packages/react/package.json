@@ -3,6 +3,11 @@
   "version": "0.2.7",
   "description": "Headless React hooks and context for @piplup/libaddressinput",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piplupjs/piplup-libaddressinput.git",
+    "directory": "packages/react"
+  },
   "type": "module",
   "sideEffects": false,
   "engines": {
@@ -33,11 +38,6 @@
     "@piplup/libaddressinput": "workspace:*",
     "react": ">=18"
   },
-  "peerDependenciesMeta": {
-    "react-dom": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@piplup/libaddressinput": "workspace:*",
     "@testing-library/react": "^16.3.3",
@@ -46,6 +46,10 @@
     "happy-dom": "^20.14.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tsup": "^8.3.5"
-  }
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
+  },
+  "browserslist": [
+    "baseline widely available"
+  ]
 }

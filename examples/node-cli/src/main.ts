@@ -16,8 +16,9 @@ import {
   normalize,
   validate,
   getUserProblems,
-  type AddressData,
-} from "@piplup/libaddressinput";
+} from '@piplup/libaddressinput';
+
+import type { AddressData } from '@piplup/libaddressinput';
 
 function printHelp(): void {
   console.log(`Usage: node main.ts [options]
@@ -38,46 +39,49 @@ Options:
 }
 
 function parseArgs(argv: string[]): AddressData | undefined {
-  if (argv.includes("--help") || argv.includes("-h")) {
+  if (argv.includes('--help') || argv.includes('-h')) {
     printHelp();
     return undefined;
   }
 
-  const address: AddressData = { regionCode: "" };
+  const address: AddressData = { regionCode: '' };
   const addressLine: string[] = [];
 
-  for (let i = 0; i < argv.length; i++) {
+  for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i];
-    const value = argv[++i];
+    i += 1;
+    const value = argv[i];
     switch (flag) {
-      case "--region":
-        address.regionCode = value ?? "";
+      case '--region':
+        address.regionCode = value ?? '';
         break;
-      case "--admin-area":
+      case '--admin-area':
         address.administrativeArea = value;
         break;
-      case "--locality":
+      case '--locality':
         address.locality = value;
         break;
-      case "--dependent-locality":
+      case '--dependent-locality':
         address.dependentLocality = value;
         break;
-      case "--postal-code":
+      case '--postal-code':
         address.postalCode = value;
         break;
-      case "--sorting-code":
+      case '--sorting-code':
         address.sortingCode = value;
         break;
-      case "--address-line":
-        if (value !== undefined) addressLine.push(value);
+      case '--address-line':
+        if (value !== undefined) {
+          addressLine.push(value);
+        }
         break;
-      case "--organization":
+      case '--organization':
         address.organization = value;
         break;
-      case "--recipient":
+      case '--recipient':
         address.recipient = value;
         break;
-      case "--language":
+      case '--language':
         address.languageCode = value;
         break;
       default:
@@ -87,10 +91,12 @@ function parseArgs(argv: string[]): AddressData | undefined {
     }
   }
 
-  if (addressLine.length > 0) address.addressLine = addressLine;
+  if (addressLine.length > 0) {
+    address.addressLine = addressLine;
+  }
 
   if (address.regionCode.length === 0) {
-    console.error("Error: --region is required.\n");
+    console.error('Error: --region is required.\n');
     printHelp();
     process.exit(1);
   }
@@ -100,7 +106,9 @@ function parseArgs(argv: string[]): AddressData | undefined {
 
 async function main(): Promise<void> {
   const address = parseArgs(process.argv.slice(2));
-  if (address === undefined) return; // --help
+  if (address === undefined) {
+    return;
+  } // --help
 
   const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
   const loaded = await supplier.loadRules(address.regionCode);
@@ -112,14 +120,14 @@ async function main(): Promise<void> {
 
   const normalized = normalize(supplier, address);
 
-  console.log("Formatted address:");
+  console.log('Formatted address:');
   for (const line of formatAddress(normalized)) {
     console.log(`  ${line}`);
   }
 
   const problems = getUserProblems(await validate(supplier, normalized));
   if (problems.length === 0) {
-    console.log("\nNo validation problems found.");
+    console.log('\nNo validation problems found.');
   } else {
     console.log(`\n${problems.length} validation problem(s):`);
     for (const problem of problems) {

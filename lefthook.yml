@@ -3,19 +3,19 @@ version: 2
 pre-commit:
   commands:
     format:
-      glob: "*.{ts,tsx,js,jsx,json,md,yml,yaml}"
+      glob: '*.{ts,tsx,js,jsx,json,md,yml,yaml}'
       run: pnpm fmt
       stage_fixed: true
     lint:
-      glob: "*.{ts,tsx,js,jsx}"
+      glob: '*.{ts,tsx,js,jsx}'
       run: pnpm lint
       pass_filename: false
     typecheck:
-      glob: "*.{ts,tsx}"
+      glob: '*.{ts,tsx}'
       run: pnpm typecheck
       pass_filename: false
     test:
-      glob: "**/*.{ts,tsx}"
+      glob: '**/*.{ts,tsx}'
       run: pnpm test
       pass_filename: false
 

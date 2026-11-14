@@ -17,8 +17,8 @@
 //
 // Usage: node --experimental-strip-types scripts/gen-golden-js.ts
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import {
   FetchSource,
   MemoryStorage,
@@ -32,8 +32,8 @@ import {
   type Source,
   type SourceResult,
   type ValidateOptions,
-} from "../packages/core/dist/index.js";
-import { FALLBACK_DATA } from "../packages/core/src/data/fallback.ts";
+} from '../packages/core/dist/index.js';
+import { FALLBACK_DATA } from '../packages/core/src/data/fallback.ts';
 
 // Inlined rather than imported from packages/core/test/fake-sources.ts:
 // that file uses a TS constructor parameter property, which
@@ -59,11 +59,11 @@ class FallbackAggregateSource implements Source {
       }
     }
     const hasAny = Object.keys(aggregate).length > 0;
-    return { success: true, data: hasAny ? JSON.stringify(aggregate) : "{}" };
+    return { success: true, data: hasAny ? JSON.stringify(aggregate) : '{}' };
   }
 }
 
-const ROOT = fileURLToPath(new URL("..", import.meta.url));
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const CORPUS_PATH = `${ROOT}/test/golden/corpus.json`;
 const OUTPUT_PATH = `${ROOT}/test/golden/js-output.json`;
 
@@ -73,7 +73,7 @@ interface CorpusEntry {
 }
 
 async function main(): Promise<void> {
-  const corpus = JSON.parse(readFileSync(CORPUS_PATH, "utf8")) as CorpusEntry[];
+  const corpus = JSON.parse(readFileSync(CORPUS_PATH, 'utf8')) as CorpusEntry[];
   const supplier = new PreloadSupplier(new FetchSource(), new MemoryStorage());
   const offlineSupplier = new PreloadSupplier(
     new FallbackAggregateSource(FALLBACK_DATA as Record<string, string>),
@@ -116,7 +116,7 @@ async function main(): Promise<void> {
       problems = problemsOffline;
     }
 
-    const layout = regionCode.length > 0 ? buildLayout(regionCode, "en") : undefined;
+    const layout = regionCode.length > 0 ? buildLayout(regionCode, 'en') : undefined;
 
     results.push({
       input: entry,
@@ -130,7 +130,7 @@ async function main(): Promise<void> {
     });
   }
 
-  writeFileSync(OUTPUT_PATH, JSON.stringify(results, null, 2), "utf8");
+  writeFileSync(OUTPUT_PATH, JSON.stringify(results, null, 2), 'utf8');
   console.log(`Wrote ${OUTPUT_PATH}: ${results.length} corpus entries.`);
 }
 

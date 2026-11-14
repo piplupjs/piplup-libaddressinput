@@ -12,18 +12,20 @@
 // callers who want it can memoize `buildRegionTree()` themselves on
 // `(regionCode, bestLanguageTag)`.
 
+import { chooseBestAddressLanguage, parseLanguage } from './internal/language.js';
 import {
   LOOKUP_KEY_HIERARCHY,
   lookupKeyDepth,
   lookupKeyFromAddress,
   lookupKeyFromParent,
   lookupKeyToString,
-  type LookupKey,
-} from "./internal/lookup-key.js";
-import { chooseBestAddressLanguage, parseLanguage } from "./internal/language.js";
-import * as RegionDataConstants from "./internal/region-data-constants.js";
-import { parseRule, type Rule } from "./internal/rule.js";
-import type { PreloadSupplier } from "./supplier/preload.js";
+} from './internal/lookup-key.js';
+import * as RegionDataConstants from './internal/region-data-constants.js';
+import { parseRule } from './internal/rule.js';
+
+import type { LookupKey } from './internal/lookup-key.js';
+import type { Rule } from './internal/rule.js';
+import type { PreloadSupplier } from './supplier/preload.js';
 
 export interface RegionData {
   key: string;
@@ -32,7 +34,6 @@ export interface RegionData {
 }
 
 export interface BuildRegionTreeResult {
-  tree: RegionData;
   /**
    * The BCP-47 tag of the language actually used for `name`s in the tree
    * (may differ from `uiLanguageTag` — see `chooseBestAddressLanguage`).
@@ -40,6 +41,7 @@ export interface BuildRegionTreeResult {
    * when the rule declares no languages (matches upstream's kUndefinedLanguage).
    */
   bestLanguageTag: string;
+  tree: RegionData;
 }
 
 const MAX_LOOKUP_KEY_DEPTH = LOOKUP_KEY_HIERARCHY.length - 1;
@@ -62,8 +64,7 @@ function buildRegionTreeRecursively(
     }
 
     const localName = rule.name.length === 0 ? key : rule.name;
-    const name =
-      preferLatinName && rule.latinName.length > 0 ? rule.latinName : localName;
+    const name = preferLatinName && rule.latinName.length > 0 ? rule.latinName : localName;
     const region: RegionData = { key, name, subRegions: [] };
     parentRegion.subRegions.push(region);
 
@@ -88,9 +89,7 @@ function buildRegion(
   const lookupKey = lookupKeyFromAddress({ regionCode });
   const rootRule = rules.get(lookupKeyToString(lookupKey, MAX_LOOKUP_KEY_DEPTH));
   if (rootRule === undefined) {
-    throw new Error(
-      `buildRegionTree: no rule for region "${regionCode}" (is it loaded?)`,
-    );
+    throw new Error(`buildRegionTree: no rule for region "${regionCode}" (is it loaded?)`);
   }
 
   const region: RegionData = { key: regionCode, name: regionCode, subRegions: [] };
@@ -134,11 +133,11 @@ export function buildRegionTree(
   };
   const bestLanguage =
     rule.languages.length === 0
-      ? parseLanguage("und")
+      ? parseLanguage('und')
       : chooseBestAddressLanguage(rule as Rule, parseLanguage(uiLanguageTag));
 
   const rules = supplier.getRulesForRegion(regionCode);
   const tree = buildRegion(rules, regionCode, bestLanguage);
 
-  return { tree, bestLanguageTag: bestLanguage.tag };
+  return { bestLanguageTag: bestLanguage.tag, tree };
 }

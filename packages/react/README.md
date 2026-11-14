@@ -32,32 +32,32 @@ Requires React 18+ and @piplup/libaddressinput as peer dependency.
 ## Quick Start (with React Hook Form)
 
 ```tsx
-import { useForm, FormProvider } from "react-hook-form";
-import { PreloadSupplier, HybridSource, MemoryStorage } from "@piplup/libaddressinput";
+import { useForm, FormProvider } from 'react-hook-form';
+import { PreloadSupplier, HybridSource, MemoryStorage } from '@piplup/libaddressinput';
 import {
   AddressProvider,
   useAddress,
   useAddressContext,
   useCountries,
   useField,
-} from "@piplup/libaddressinput-react";
+} from '@piplup/libaddressinput-react';
 
 const supplier = new PreloadSupplier(new HybridSource(), new MemoryStorage());
 
 export function ShippingForm() {
-  const methods = useForm({ defaultValues: { country: "US" } });
-  const country = methods.watch("country");
+  const methods = useForm({ defaultValues: { country: 'US' } });
+  const country = methods.watch('country');
   const address = useAddress({ supplier, region: country });
-  const countries = useCountries({ priority: ["US", "CA", "GB", "IN"] });
+  const countries = useCountries({ priority: ['US', 'CA', 'GB', 'IN'] });
 
   return (
     <FormProvider {...methods}>
       <AddressProvider value={address}>
-        <div style={{ maxWidth: 480, margin: "auto" }}>
+        <div style={{ maxWidth: 480, margin: 'auto' }}>
           {/* Country Selector */}
           <label>
             Country
-            <select {...methods.register("country")}>
+            <select {...methods.register('country')}>
               {countries.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.name}
@@ -83,11 +83,11 @@ function AddressFields() {
   return (
     <>
       {rows.map((row, i) => (
-        <div key={i} style={{ display: "flex", gap: "0.5rem" }}>
+        <div key={i} style={{ display: 'flex', gap: '0.5rem' }}>
           {row.map((item) => (
-            <div key={item.field} style={{ flex: item.length === "long" ? 1 : 0.5 }}>
+            <div key={item.field} style={{ flex: item.length === 'long' ? 1 : 0.5 }}>
               <label>
-                {item.label} {item.required && "*"}
+                {item.label} {item.required && '*'}
               </label>
 
               {item.isSelect ? (
@@ -100,11 +100,7 @@ function AddressFields() {
                   ))}
                 </select>
               ) : (
-                <input
-                  type="text"
-                  autoComplete={item.autoComplete}
-                  {...register(item.key)}
-                />
+                <input type="text" autoComplete={item.autoComplete} {...register(item.key)} />
               )}
             </div>
           ))}
@@ -123,7 +119,7 @@ Similar to React Hook Form's `useController`, you can isolate individual field l
 
 ```tsx
 function PostalCodeInput() {
-  const { label, required, autoComplete, key } = useField("POSTAL_CODE");
+  const { label, required, autoComplete, key } = useField('POSTAL_CODE');
   const {
     register,
     formState: { errors },
@@ -132,7 +128,7 @@ function PostalCodeInput() {
   return (
     <div>
       <label>
-        {label} {required && "*"}
+        {label} {required && '*'}
       </label>
       <input type="text" autoComplete={autoComplete} {...register(key)} />
       {errors[key] && <p className="error">{errors[key]?.message}</p>}

@@ -1,8 +1,9 @@
 // Port of cpp/include/libaddressinput/supplier.h (Apache-2.0, Google Inc.).
 
-import type { LookupKey } from "../internal/lookup-key.js";
-import { LOOKUP_KEY_HIERARCHY } from "../internal/lookup-key.js";
-import type { Rule } from "../internal/rule.js";
+import { LOOKUP_KEY_HIERARCHY } from '../internal/lookup-key.js';
+
+import type { LookupKey } from '../internal/lookup-key.js';
+import type { Rule } from '../internal/rule.js';
 
 /**
  * The hierarchical list of Rules for a LookupKey, one slot per level of
@@ -16,9 +17,9 @@ export function createEmptyRuleHierarchy(): RuleHierarchy {
 }
 
 export interface SupplyResult {
-  success: boolean;
-  lookupKey: LookupKey;
   hierarchy: RuleHierarchy;
+  lookupKey: LookupKey;
+  success: boolean;
 }
 
 /**
@@ -27,9 +28,9 @@ export interface SupplyResult {
  * necessary data hasn't already been loaded (see PreloadSupplier).
  */
 export interface Supplier {
+  /** Depth of rule data actually available for a region (0 if none/unloaded). */
+  getLoadedRuleDepth(regionCode: string): number;
   supply(lookupKey: LookupKey): Promise<SupplyResult>;
   /** Like `supply`, but also looks across all loaded languages for a match. */
   supplyGlobally(lookupKey: LookupKey): Promise<SupplyResult>;
-  /** Depth of rule data actually available for a region (0 if none/unloaded). */
-  getLoadedRuleDepth(regionCode: string): number;
 }

@@ -1,50 +1,51 @@
-import { describe, expect, it } from "vitest";
-import { renderHook } from "@testing-library/react";
-import type { AddressState } from "./types.js";
-import { AddressProvider } from "./context.js";
-import { useField } from "./useField.js";
+import { renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
+import { AddressProvider } from './context.js';
+import { useField } from './useField.js';
+
+import type { AddressState } from './types.js';
 
 const mockField = {
-  field: "POSTAL_CODE" as const,
-  key: "postalCode" as const,
-  label: "ZIP code",
-  required: true,
-  autoComplete: "postal-code",
+  autoComplete: 'postal-code',
+  field: 'POSTAL_CODE' as const,
   isSelect: false,
+  key: 'postalCode' as const,
+  label: 'ZIP code',
+  length: 'short' as const,
   multiline: false,
-  length: "short" as const,
+  required: true,
 };
 
 const mockState: AddressState = {
-  region: "US",
-  rows: [[mockField]],
-  fields: [mockField],
-  tree: null,
-  loading: false,
   error: null,
-  supplier: {} as unknown as AddressState["supplier"],
-  getField: (query) =>
-    query === "POSTAL_CODE" || query === "postalCode" ? mockField : undefined,
+  fields: [mockField],
+  getField: (query) => (query === 'POSTAL_CODE' || query === 'postalCode' ? mockField : undefined),
+  loading: false,
+  region: 'US',
+  rows: [[mockField]],
+  supplier: {} as unknown as AddressState['supplier'],
+  tree: null,
 };
 
-describe("useField", () => {
-  it("throws when called without context or state option", () => {
-    expect(() => renderHook(() => useField("POSTAL_CODE"))).toThrow(
-      "useField must be used within an AddressProvider or supplied with an explicit state option",
+describe('useField', () => {
+  it('throws when called without context or state option', () => {
+    expect(() => renderHook(() => useField('POSTAL_CODE'))).toThrow(
+      'useField must be used within an AddressProvider or supplied with an explicit state option',
     );
   });
 
-  it("reads field from context", () => {
+  it('reads field from context', () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <AddressProvider value={mockState}>{children}</AddressProvider>
     );
 
-    const { result } = renderHook(() => useField("POSTAL_CODE"), { wrapper });
+    const { result } = renderHook(() => useField('POSTAL_CODE'), { wrapper });
     expect(result.current).toEqual(mockField);
   });
 
-  it("reads field from explicit state option without context", () => {
-    const { result } = renderHook(() => useField("postalCode", { state: mockState }));
+  it('reads field from explicit state option without context', () => {
+    const { result } = renderHook(() => useField('postalCode', { state: mockState }));
     expect(result.current).toEqual(mockField);
   });
 });

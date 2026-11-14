@@ -9,10 +9,10 @@
 // implementation — not worth it for that guard alone. The staleness
 // (30-day TTL) behavior is preserved exactly.
 
-import type { Storage, StorageResult } from "../storage.js";
+import type { Storage, StorageResult } from '../storage.js';
 
-const TIMESTAMP_PREFIX = "timestamp=";
-const SEPARATOR = "\n";
+const TIMESTAMP_PREFIX = 'timestamp=';
+const SEPARATOR = '\n';
 
 // 30 days, matching upstream's "one month" (30 * 24 * 60 * 60 seconds).
 const STALENESS_THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
@@ -49,7 +49,7 @@ function unwrap(wrapped: string, nowMs: number): string | undefined {
 function unwrapAllowingStale(
   wrapped: string,
   nowMs: number,
-): { data: string; isStale: boolean } | undefined {
+): undefined | { data: string; isStale: boolean } {
   if (!wrapped.startsWith(TIMESTAMP_PREFIX)) {
     return undefined;
   }
@@ -80,6 +80,7 @@ export interface ValidatingStorageOptions {
  */
 export class ValidatingStorage {
   private readonly wrapped: Storage;
+
   private readonly now: () => number;
 
   constructor(wrapped: Storage, options: ValidatingStorageOptions = {}) {
@@ -101,16 +102,17 @@ export class ValidatingStorage {
   async get(key: string): Promise<StorageResult> {
     const result = await this.wrapped.get(key);
     if (!result.success || result.data === undefined) {
-      return { success: false, data: undefined };
+      return { data: undefined, success: false };
     }
     const unwrapped = unwrapAllowingStale(result.data, this.now());
     if (unwrapped === undefined) {
       // Malformed entry: treat like upstream's "corrupted" case.
-      return { success: false, data: undefined };
+      return { data: undefined, success: false };
     }
-    return { success: !unwrapped.isStale, data: unwrapped.data };
+    return { data: unwrapped.data, success: !unwrapped.isStale };
   }
 }
 
 // Exported for tests only.
-export const __internal = { wrap, unwrap, STALENESS_THRESHOLD_MS };
+// eslint-disable-next-line no-underscore-dangle, @typescript-eslint/naming-convention -- the name marks it as internal
+export const __internal = { STALENESS_THRESHOLD_MS, unwrap, wrap };

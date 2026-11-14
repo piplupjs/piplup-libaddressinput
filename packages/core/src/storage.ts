@@ -3,8 +3,8 @@
 // of a callback one (see .planning/PLAN.md §3, design decision 3).
 
 export interface StorageResult {
-  success: boolean;
   data: string | undefined;
+  success: boolean;
 }
 
 /**
@@ -13,8 +13,8 @@ export interface StorageResult {
  * network-side equivalent.
  */
 export interface Storage {
-  put(key: string, data: string): void | Promise<void>;
   get(key: string): Promise<StorageResult>;
+  put(key: string, data: string): Promise<void> | void;
 }
 
 /** In-memory Storage. The default; also doubles as the fake used in tests. */
@@ -27,7 +27,7 @@ export class MemoryStorage implements Storage {
 
   async get(key: string): Promise<StorageResult> {
     const data = this.data.get(key);
-    return { success: data !== undefined, data };
+    return { data, success: data !== undefined };
   }
 }
 
@@ -38,6 +38,6 @@ export class NullStorage implements Storage {
   }
 
   async get(_key: string): Promise<StorageResult> {
-    return { success: false, data: undefined };
+    return { data: undefined, success: false };
   }
 }

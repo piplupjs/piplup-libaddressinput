@@ -1,25 +1,24 @@
-import { describe, expect, it } from "vitest";
-import { act, renderHook } from "@testing-library/react";
-import {
-  FallbackAggregateSource,
-  MemoryStorage,
-  PreloadSupplier,
-} from "@piplup/libaddressinput";
-import { createValidator, useValidate } from "./useValidate.js";
+import { FallbackAggregateSource, MemoryStorage, PreloadSupplier } from '@piplup/libaddressinput';
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+
+import { createValidator, useValidate } from './useValidate.js';
+
+import type { ValidationProblem } from '@piplup/libaddressinput';
 
 const supplier = new PreloadSupplier(new FallbackAggregateSource(), new MemoryStorage());
 
-describe("useValidate & createValidator", () => {
-  it("validates an address asynchronously and exposes state", async () => {
-    await supplier.loadRules("US");
+describe('useValidate & createValidator', () => {
+  it('validates an address asynchronously and exposes state', async () => {
+    await supplier.loadRules('US');
     const { result } = renderHook(() => useValidate(supplier));
 
     expect(result.current.validating).toBe(false);
 
-    let problems: import("@piplup/libaddressinput").ValidationProblem[] = [];
+    let problems: ValidationProblem[] = [];
     await act(async () => {
       problems = await result.current.validate({
-        regionCode: "US",
+        regionCode: 'US',
         // missing required fields
       });
     });
@@ -29,16 +28,16 @@ describe("useValidate & createValidator", () => {
     expect(result.current.problems.length).toBe(problems.length);
   });
 
-  it("createValidator returns a reusable validation function", async () => {
-    await supplier.loadRules("US");
+  it('createValidator returns a reusable validation function', async () => {
+    await supplier.loadRules('US');
     const validator = createValidator(supplier);
 
     const validAddress = {
-      regionCode: "US",
-      administrativeArea: "CA",
-      locality: "San Jose",
-      postalCode: "95110",
-      addressLine: ["100 Main St"],
+      addressLine: ['100 Main St'],
+      administrativeArea: 'CA',
+      locality: 'San Jose',
+      postalCode: '95110',
+      regionCode: 'US',
     };
 
     const problems = await validator(validAddress);

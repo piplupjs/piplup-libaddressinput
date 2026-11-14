@@ -4,29 +4,28 @@
 // language/script to render an address's format in (used by lookup-key.ts
 // for the LookupKey language suffix and by layout.ts in Phase 6).
 
-import type { Rule } from "./rule.js";
+import type { Rule } from './rule.js';
 
 export interface Language {
-  /** The tag with "_" replaced by "-", e.g. "zh-Latn-CN". */
-  tag: string;
   /** The base subtag, lowercased, e.g. "zh". */
   base: string;
   /** True if the tag's 2nd or 3rd subtag is (case-insensitively) "Latn". */
   hasLatinScript: boolean;
+  /** The tag with "_" replaced by "-", e.g. "zh-Latn-CN". */
+  tag: string;
 }
 
-const LATIN_SCRIPT_SUBTAG = "latn";
+const LATIN_SCRIPT_SUBTAG = 'latn';
 
 export function parseLanguage(languageTag: string): Language {
-  const tag = languageTag.replace(/_/g, "-");
+  const tag = languageTag.replace(/_/g, '-');
   const lowercase = tag.toLowerCase();
-  const subtags = lowercase.length === 0 ? [] : lowercase.split("-");
-  const base = subtags[0] ?? "";
+  const subtags = lowercase.length === 0 ? [] : lowercase.split('-');
+  const base = subtags[0] ?? '';
   // Only the second and third subtag positions are supported for script,
   // matching upstream.
-  const hasLatinScript =
-    subtags[1] === LATIN_SCRIPT_SUBTAG || subtags[2] === LATIN_SCRIPT_SUBTAG;
-  return { tag, base, hasLatinScript };
+  const hasLatinScript = subtags[1] === LATIN_SCRIPT_SUBTAG || subtags[2] === LATIN_SCRIPT_SUBTAG;
+  return { base, hasLatinScript, tag };
 }
 
 /**
@@ -37,7 +36,7 @@ export function parseLanguage(languageTag: string): Language {
  * list one explicitly.
  */
 export function chooseBestAddressLanguage(
-  addressRegionRule: Pick<Rule, "languages" | "latinFormat">,
+  addressRegionRule: Pick<Rule, 'languages' | 'latinFormat'>,
   uiLanguage: Language,
 ): Language {
   if (addressRegionRule.languages.length === 0) {

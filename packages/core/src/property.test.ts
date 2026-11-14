@@ -2,21 +2,24 @@
 // *any* input, not just the specific cases ported from upstream's test
 // suite elsewhere in this package. Uses fast-check.
 
-import fc from "fast-check";
-import { beforeAll, describe, expect, it } from "vitest";
-import { FallbackAggregateSource } from "../test/fake-sources.js";
-import type { AddressData } from "./address-data.js";
-import { formatAddress, getStreetAddressLinesAsSingleLine } from "./formatter.js";
-import { buildLayout, getRegionCodes } from "./layout.js";
-import { normalize } from "./normalizer.js";
-import { NullStorage } from "./storage.js";
-import { PreloadSupplier } from "./supplier/preload.js";
-import { validate } from "./validator.js";
+import fc from 'fast-check';
+import { beforeAll, describe, expect, it } from 'vitest';
+
+import { FallbackAggregateSource } from '../test/fake-sources.js';
+
+import { formatAddress, getStreetAddressLinesAsSingleLine } from './formatter.js';
+import { buildLayout, getRegionCodes } from './layout.js';
+import { normalize } from './normalizer.js';
+import { NullStorage } from './storage.js';
+import { PreloadSupplier } from './supplier/preload.js';
+import { validate } from './validator.js';
+
+import type { AddressData } from './address-data.js';
 
 // A handful of structurally different regions (deep hierarchy, shallow,
 // Latin+native scripts, RTL-adjacent) rather than all 252 — enough to
 // exercise real code paths without making every property run slow.
-const SAMPLE_REGIONS = ["US", "CH", "JP", "CN", "GB", "AE", "ZW"] as const;
+const SAMPLE_REGIONS = ['US', 'CH', 'JP', 'CN', 'GB', 'AE', 'ZW'] as const;
 
 // Also cover the "no data for this region" paths (empty regionCode, and an
 // unsupported/made-up code) — every function under test must degrade
@@ -26,7 +29,7 @@ const SAMPLE_REGIONS = ["US", "CH", "JP", "CN", "GB", "AE", "ZW"] as const;
 // GetFormattedNationalAddress never actually guarantees is defined (it
 // silently ignores ParseSerializedRule's failure and keeps using the
 // default-only rule instead) — see formatter.ts's fix and its comment.
-const NO_DATA_REGIONS = ["", "QZ", "rrr"] as const;
+const NO_DATA_REGIONS = ['', 'QZ', 'rrr'] as const;
 
 const shortString = fc.string({ maxLength: 12 });
 const optionalShortString = fc.option(shortString, { nil: undefined });
@@ -34,20 +37,20 @@ const optionalShortString = fc.option(shortString, { nil: undefined });
 function addressArbitrary(regionCode: string): fc.Arbitrary<AddressData> {
   return fc.record(
     {
-      regionCode: fc.constant(regionCode),
       addressLine: fc.option(fc.array(shortString, { maxLength: 3 }), { nil: undefined }),
       administrativeArea: optionalShortString,
-      locality: optionalShortString,
       dependentLocality: optionalShortString,
-      postalCode: optionalShortString,
-      sortingCode: optionalShortString,
-      languageCode: fc.option(fc.constantFrom("en", "fr", "ja", "zh", "de", ""), {
+      languageCode: fc.option(fc.constantFrom('en', 'fr', 'ja', 'zh', 'de', ''), {
         nil: undefined,
       }),
+      locality: optionalShortString,
       organization: optionalShortString,
+      postalCode: optionalShortString,
       recipient: optionalShortString,
+      regionCode: fc.constant(regionCode),
+      sortingCode: optionalShortString,
     },
-    { requiredKeys: ["regionCode"] },
+    { requiredKeys: ['regionCode'] },
   );
 }
 
@@ -80,8 +83,8 @@ const anyAddressIncludingNoData = fc
   .constantFrom(...SAMPLE_REGIONS, ...NO_DATA_REGIONS)
   .chain((regionCode) => addressArbitrary(regionCode));
 
-describe("formatAddress: never throws, even with no data for the region", () => {
-  it("holds for regions with no rule at all (empty/unsupported region code)", () => {
+describe('formatAddress: never throws, even with no data for the region', () => {
+  it('holds for regions with no rule at all (empty/unsupported region code)', () => {
     fc.assert(
       fc.property(anyAddressIncludingNoData, (address) => {
         expect(() => formatAddress(address)).not.toThrow();
@@ -91,8 +94,8 @@ describe("formatAddress: never throws, even with no data for the region", () => 
   });
 });
 
-describe("formatAddress: never throws, never emits a blank line", () => {
-  it("holds for arbitrary field values across several regions", () => {
+describe('formatAddress: never throws, never emits a blank line', () => {
+  it('holds for arbitrary field values across several regions', () => {
     fc.assert(
       fc.property(anyRegionAddressNoBlankLines, (address) => {
         const lines = formatAddress(address);
@@ -102,7 +105,7 @@ describe("formatAddress: never throws, never emits a blank line", () => {
     );
   });
 
-  it("getStreetAddressLinesAsSingleLine never throws", () => {
+  it('getStreetAddressLinesAsSingleLine never throws', () => {
     fc.assert(
       fc.property(anyRegionAddress, (address) => {
         expect(() => getStreetAddressLinesAsSingleLine(address)).not.toThrow();
@@ -112,12 +115,12 @@ describe("formatAddress: never throws, never emits a blank line", () => {
   });
 });
 
-describe("buildLayout: never throws, for a real region or one with no data", () => {
-  it("holds across every supported region and a few UI languages", () => {
+describe('buildLayout: never throws, for a real region or one with no data', () => {
+  it('holds across every supported region and a few UI languages', () => {
     fc.assert(
       fc.property(
         fc.constantFrom(...getRegionCodes(), ...NO_DATA_REGIONS),
-        fc.constantFrom("en", "fr", "ja", "zh-Hans", ""),
+        fc.constantFrom('en', 'fr', 'ja', 'zh-Hans', ''),
         (regionCode, uiLanguageTag) => {
           expect(() => buildLayout(regionCode, uiLanguageTag)).not.toThrow();
         },
@@ -127,21 +130,18 @@ describe("buildLayout: never throws, for a real region or one with no data", () 
   });
 });
 
-describe("JSON-serializability: every public output survives a round-trip unchanged", () => {
-  it("AddressLayout", () => {
+describe('JSON-serializability: every public output survives a round-trip unchanged', () => {
+  it('AddressLayout', () => {
     fc.assert(
       fc.property(fc.constantFrom(...SAMPLE_REGIONS), (regionCode) => {
-        const layout = buildLayout(regionCode, "en");
+        const layout = buildLayout(regionCode, 'en');
         expect(JSON.parse(JSON.stringify(layout))).toEqual(layout);
       }),
     );
   });
 
-  it("ValidationProblem[]", async () => {
-    const supplier = new PreloadSupplier(
-      new FallbackAggregateSource(),
-      new NullStorage(),
-    );
+  it('ValidationProblem[]', async () => {
+    const supplier = new PreloadSupplier(new FallbackAggregateSource(), new NullStorage());
     await Promise.all(SAMPLE_REGIONS.map((r) => supplier.loadRules(r)));
 
     await fc.assert(
@@ -154,7 +154,7 @@ describe("JSON-serializability: every public output survives a round-trip unchan
   });
 });
 
-describe("validate: deterministic for a fixed address and loaded supplier", () => {
+describe('validate: deterministic for a fixed address and loaded supplier', () => {
   let supplier: PreloadSupplier;
 
   beforeAll(async () => {
@@ -162,7 +162,7 @@ describe("validate: deterministic for a fixed address and loaded supplier", () =
     await Promise.all(SAMPLE_REGIONS.map((r) => supplier.loadRules(r)));
   });
 
-  it("two calls with the same address produce the same problems", async () => {
+  it('two calls with the same address produce the same problems', async () => {
     await fc.assert(
       fc.asyncProperty(anyRegionAddress, async (address) => {
         const [first, second] = await Promise.all([
@@ -176,7 +176,7 @@ describe("validate: deterministic for a fixed address and loaded supplier", () =
   });
 });
 
-describe("normalize: never throws for a loaded region, and is idempotent", () => {
+describe('normalize: never throws for a loaded region, and is idempotent', () => {
   let supplier: PreloadSupplier;
 
   beforeAll(async () => {
@@ -184,7 +184,7 @@ describe("normalize: never throws for a loaded region, and is idempotent", () =>
     await Promise.all(SAMPLE_REGIONS.map((r) => supplier.loadRules(r)));
   });
 
-  it("holds for arbitrary field values", () => {
+  it('holds for arbitrary field values', () => {
     fc.assert(
       fc.property(anyRegionAddress, (address) => {
         const once = normalize(supplier, address);

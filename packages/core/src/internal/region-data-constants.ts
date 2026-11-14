@@ -17,8 +17,11 @@ import {
   FALLBACK_DEFAULT_REGION_DATA,
   FALLBACK_MAX_LOOKUP_KEY_DEPTH,
   FALLBACK_REGION_CODES,
-} from "../data/fallback.js";
-import { parseRule, type Rule } from "./rule.js";
+} from '../data/fallback.js';
+
+import { parseRule } from './rule.js';
+
+import type { Rule } from './rule.js';
 
 export function isSupported(regionCode: string): boolean {
   return Object.prototype.hasOwnProperty.call(FALLBACK_DATA, `data/${regionCode}`);
@@ -35,8 +38,8 @@ export function getRegionCodes(): readonly string[] {
  * returns an empty string for unknown keys/region codes.
  */
 export function getRegionData(key: string): string {
-  const normalizedKey = key.startsWith("data/") ? key : `data/${key}`;
-  return FALLBACK_DATA[normalizedKey] ?? "";
+  const normalizedKey = key.startsWith('data/') ? key : `data/${key}`;
+  return FALLBACK_DATA[normalizedKey] ?? '';
 }
 
 export function getDefaultRegionData(): string {
@@ -54,7 +57,7 @@ export function getDefaultRule(): Rule {
   if (defaultRule === undefined) {
     const parsed = parseRule(FALLBACK_DEFAULT_REGION_DATA);
     if (parsed === undefined) {
-      throw new Error("region-data-constants: default rule (data/ZZ) failed to parse");
+      throw new Error('region-data-constants: default rule (data/ZZ) failed to parse');
     }
     defaultRule = parsed;
   }

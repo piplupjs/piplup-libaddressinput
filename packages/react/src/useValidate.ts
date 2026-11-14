@@ -1,22 +1,20 @@
-import { useCallback, useState } from "react";
-import {
-  getUserProblems,
-  validate,
-  type AddressData,
-  type Supplier,
-  type ValidateOptions,
-  type ValidationProblem,
-} from "@piplup/libaddressinput";
+import * as React from 'react';
+
+import { getUserProblems, validate } from '@piplup/libaddressinput';
+
+import type {
+  AddressData,
+  Supplier,
+  ValidateOptions,
+  ValidationProblem,
+} from '@piplup/libaddressinput';
 
 export function useValidate(supplier: Supplier, defaultOptions?: ValidateOptions) {
-  const [validating, setValidating] = useState(false);
-  const [problems, setProblems] = useState<ValidationProblem[]>([]);
+  const [validating, setValidating] = React.useState(false);
+  const [problems, setProblems] = React.useState<ValidationProblem[]>([]);
 
-  const run = useCallback(
-    async (
-      address: AddressData,
-      options?: ValidateOptions,
-    ): Promise<ValidationProblem[]> => {
+  const run = React.useCallback(
+    async (address: AddressData, options?: ValidateOptions): Promise<ValidationProblem[]> => {
       setValidating(true);
       try {
         const result = await validate(supplier, address, options ?? defaultOptions);
@@ -31,18 +29,15 @@ export function useValidate(supplier: Supplier, defaultOptions?: ValidateOptions
   );
 
   return {
+    isValid: problems.length === 0,
+    problems,
     validate: run,
     validating,
-    problems,
-    isValid: problems.length === 0,
   };
 }
 
 export function createValidator(supplier: Supplier, defaultOptions?: ValidateOptions) {
-  return async (
-    address: AddressData,
-    options?: ValidateOptions,
-  ): Promise<ValidationProblem[]> => {
+  return async (address: AddressData, options?: ValidateOptions): Promise<ValidationProblem[]> => {
     const result = await validate(supplier, address, options ?? defaultOptions);
     return getUserProblems(result);
   };

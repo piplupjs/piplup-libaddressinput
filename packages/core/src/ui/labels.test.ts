@@ -1,80 +1,83 @@
-import { describe, expect, it } from "vitest";
-import { getFieldLabel, DEFAULT_FIELD_LABEL_IDS } from "./labels.js";
-import { en } from "../messages/en.js";
-import type { LayoutField } from "../layout.js";
+import { describe, expect, it } from 'vitest';
 
-describe("ui/labels", () => {
-  it("resolves default field labels from AddressField", () => {
-    expect(getFieldLabel("LOCALITY")).toBe("City");
-    expect(getFieldLabel("ADMIN_AREA")).toBe("State / Province");
-    expect(getFieldLabel("POSTAL_CODE")).toBe("Postal code");
-    expect(getFieldLabel("STREET_ADDRESS")).toBe("Street address");
-    expect(getFieldLabel("ORGANIZATION")).toBe("Organization");
-    expect(getFieldLabel("RECIPIENT")).toBe("Name");
-    expect(getFieldLabel("COUNTRY")).toBe("Country / Region");
-    expect(getFieldLabel("SORTING_CODE")).toBe("CEDEX");
+import { en } from '../messages/en.js';
+
+import { getFieldLabel, DEFAULT_FIELD_LABEL_IDS } from './labels.js';
+
+import type { LayoutField } from '../layout.js';
+
+describe('ui/labels', () => {
+  it('resolves default field labels from AddressField', () => {
+    expect(getFieldLabel('LOCALITY')).toBe('City');
+    expect(getFieldLabel('ADMIN_AREA')).toBe('State / Province');
+    expect(getFieldLabel('POSTAL_CODE')).toBe('Postal code');
+    expect(getFieldLabel('STREET_ADDRESS')).toBe('Street address');
+    expect(getFieldLabel('ORGANIZATION')).toBe('Organization');
+    expect(getFieldLabel('RECIPIENT')).toBe('Name');
+    expect(getFieldLabel('COUNTRY')).toBe('Country / Region');
+    expect(getFieldLabel('SORTING_CODE')).toBe('CEDEX');
   });
 
-  it("resolves labels from LayoutField with explicit labelId", () => {
+  it('resolves labels from LayoutField with explicit labelId', () => {
     const fieldWithCustomLabel: LayoutField = {
-      kind: "field",
-      field: "ADMIN_AREA",
-      labelId: "STATE",
-      required: true,
-      length: "short",
+      field: 'ADMIN_AREA',
+      kind: 'field',
+      labelId: 'STATE',
+      length: 'short',
       multiline: false,
+      required: true,
     };
-    expect(getFieldLabel(fieldWithCustomLabel)).toBe("State");
+    expect(getFieldLabel(fieldWithCustomLabel)).toBe('State');
 
     const pinCodeField: LayoutField = {
-      kind: "field",
-      field: "POSTAL_CODE",
-      labelId: "PIN_CODE_LABEL",
-      required: true,
-      length: "short",
+      field: 'POSTAL_CODE',
+      kind: 'field',
+      labelId: 'PIN_CODE_LABEL',
+      length: 'short',
       multiline: false,
+      required: true,
     };
-    expect(getFieldLabel(pinCodeField)).toBe("PIN code");
+    expect(getFieldLabel(pinCodeField)).toBe('PIN code');
   });
 
-  it("resolves CEDEX for SORTING_CODE LayoutField", () => {
+  it('resolves CEDEX for SORTING_CODE LayoutField', () => {
     const cedexField: LayoutField = {
-      kind: "field",
-      field: "SORTING_CODE",
-      labelId: "CEDEX",
+      field: 'SORTING_CODE',
+      kind: 'field',
+      labelId: 'CEDEX',
+      length: 'short',
+      multiline: false,
       required: false,
-      length: "short",
-      multiline: false,
     };
-    expect(getFieldLabel(cedexField)).toBe("CEDEX");
+    expect(getFieldLabel(cedexField)).toBe('CEDEX');
   });
 
-  it("falls back cleanly when labelId is undefined on LayoutField", () => {
+  it('falls back cleanly when labelId is undefined on LayoutField', () => {
     const standardLocalityField: LayoutField = {
-      kind: "field",
-      field: "LOCALITY",
+      field: 'LOCALITY',
+      kind: 'field',
       labelId: undefined,
-      required: true,
-      length: "short",
+      length: 'short',
       multiline: false,
+      required: true,
     };
-    expect(getFieldLabel(standardLocalityField)).toBe("City");
+    expect(getFieldLabel(standardLocalityField)).toBe('City');
   });
 
-  it("supports custom language dictionary", () => {
+  it('supports custom language dictionary', () => {
     const frenchMessages: Record<string, string> = {
       ...en,
-      LOCALITY_LABEL: "Ville",
-      POSTAL_CODE_LABEL: "Code postal",
-      PROVINCE: "Province",
+      LOCALITY_LABEL: 'Ville',
+      POSTAL_CODE_LABEL: 'Code postal',
+      PROVINCE: 'Province',
     };
-    expect(getFieldLabel("LOCALITY", frenchMessages)).toBe("Ville");
-    expect(getFieldLabel("POSTAL_CODE", frenchMessages)).toBe("Code postal");
+    expect(getFieldLabel('LOCALITY', frenchMessages)).toBe('Ville');
+    expect(getFieldLabel('POSTAL_CODE', frenchMessages)).toBe('Code postal');
   });
 
-  it("has valid DEFAULT_FIELD_LABEL_IDS for all address fields", () => {
-    expect(DEFAULT_FIELD_LABEL_IDS.LOCALITY).toBe("LOCALITY_LABEL");
-    expect(DEFAULT_FIELD_LABEL_IDS.ADMIN_AREA).toBe("PROVINCE");
-    expect(DEFAULT_FIELD_LABEL_IDS.POSTAL_CODE).toBe("POSTAL_CODE_LABEL");
+  it('has valid DEFAULT_FIELD_LABEL_IDS for all address fields', () => {
+    expect(DEFAULT_FIELD_LABEL_IDS.LOCALITY).toBe('LOCALITY_LABEL');
+    expect(DEFAULT_FIELD_LABEL_IDS.ADMIN_AREA).toBe('PROVINCE');
+    expect(DEFAULT_FIELD_LABEL_IDS.POSTAL_CODE).toBe('POSTAL_CODE_LABEL');
   });
 });
